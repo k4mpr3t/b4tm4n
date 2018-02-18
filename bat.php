@@ -2605,7 +2605,7 @@ if(any("x",$_REQUEST))
 		if($config['debug']==true)
 		{
 			$git_script=htmlentities(file_get_contents(__FILE__));
-			$latest_version=$current_version+0.1; //Test Update latest version -/+ 0.1
+			$latest_version=$current_version-0.1; //Test Update latest version -/+ 0.1
 		}
 		else
 		{
@@ -2615,7 +2615,7 @@ if(any("x",$_REQUEST))
 		}
 
 		$status="";
-		if((float)$latest_version>=(float)$current_version)
+		if((float)$latest_version>(float)$current_version)
 		{
 			if($config['debug']==true)
 			{
@@ -2623,7 +2623,7 @@ if(any("x",$_REQUEST))
 			}
 			else
 			{
-				$status.='New Version Available<br>Download -> [<font class="on"><a href="'.$link_update.'" >link</a></font>]';
+				$status.='New Version Available '.$latest_version.'<br>Download -> [<font class="on"><a href="'.$link_update.'" target="_blank">link</a></font>]';
 			}
 		}
 		else
