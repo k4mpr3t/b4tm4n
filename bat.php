@@ -2266,6 +2266,10 @@ if(any("x",$_REQUEST))
 	{
 		print "Coming Soon";
 	}
+	if($_REQUEST['x']=='symlink')
+	{
+		print "Coming Soon";
+	}
 	if($_REQUEST['x']=="account")
 	{
 		printf("<div id='account'><form class='new' method='post' action='?x=account&xa=change'>
