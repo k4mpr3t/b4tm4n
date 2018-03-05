@@ -1,9 +1,7 @@
 # B4TM4N ~ PHP WEBSHELL
-
-![alt text](https://raw.githubusercontent.com/k4mpr3t/b4tm4n/master/screenshot.png)
+![screenshot](screenshot.png "b4tm4n sh3ll")
 
 # Features
-
 * [0] File Manager
 * [1] Sec. Info
 * [2] Simply Database
