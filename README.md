@@ -17,6 +17,8 @@ Password : k4mpr3t
 [5] Run PHP Code
 [6] Custom Toolz
 [7] Self Script Encryptor !
+[8] Error Handler
+[9] Themes
 ```
 
 ## Self Script Encryptor
