@@ -16,7 +16,7 @@
  *		[9] Themes
  *
  * Account:
- *		[Username] B64E('user')
+ *		[Username] B64E('add')
  *		[Password] sha1(md5('pass'))
  */
 
